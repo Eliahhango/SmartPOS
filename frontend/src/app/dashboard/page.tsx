@@ -272,51 +272,51 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Bottom Row ───────────────────────────────────── */}
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid lg:grid-cols-3 gap-6 items-stretch">
         {/* Top Products */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-zinc-100">
-          <div className="flex items-center justify-between mb-4">
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-zinc-100 flex flex-col">
+          <div className="flex items-center justify-between mb-5">
             <h3 className="font-semibold text-zinc-900">Top Products</h3>
             <span className="text-xs text-zinc-400">30 days</span>
           </div>
           {data.topProducts.length > 0 ? (
-            <div className="space-y-4">
+            <div className="flex-1 space-y-0">
               {data.topProducts.map((p, i) => {
                 const maxQty = data.topProducts[0]?.quantitySold || 1;
                 const barWidth = (p.quantitySold / maxQty) * 100;
                 return (
-                  <div key={p.id} className="group">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold ${
-                          i === 0 ? 'bg-amber-50 text-amber-700' :
-                          i === 1 ? 'bg-zinc-100 text-zinc-500' :
-                          i === 2 ? 'bg-amber-50/50 text-amber-600' :
-                          'bg-zinc-50 text-zinc-400'
-                        }`}>{i + 1}</div>
-                        <div className="min-w-0">
+                  <div key={p.id} className="py-3 first:pt-0 last:pb-0">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className="w-7 h-7 rounded-full bg-zinc-100 flex items-center justify-center text-xs font-semibold text-zinc-600 shrink-0">
+                          {i + 1}
+                        </div>
+                        <div className="min-w-0 flex-1">
                           <p className="text-sm font-medium text-zinc-800 truncate">{p.name}</p>
-                          <p className="text-xs text-zinc-500">{p.category?.name || 'Uncategorized'}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-xs text-zinc-400">{p.category?.name || 'Uncategorized'}</p>
+                            <span className="text-zinc-300">·</span>
+                            <p className="text-xs text-zinc-400">{p.quantitySold} sold</p>
+                          </div>
                         </div>
                       </div>
-                      <span className="text-sm font-semibold text-zinc-700 ml-2 shrink-0">{formatCurrency(p.totalRevenue)}</span>
+                      <span className="text-sm font-semibold text-zinc-700 ml-3 shrink-0">{formatCurrency(p.totalRevenue)}</span>
                     </div>
                     <div className="h-1.5 bg-zinc-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-teal-500 to-emerald-500 rounded-full transition-all duration-500"
+                      <div className="h-full bg-teal-500 rounded-full transition-all duration-500"
                         style={{ width: `${barWidth}%` }} />
                     </div>
-                    <p className="text-xs text-zinc-500 mt-1">{p.quantitySold} units sold</p>
                   </div>
                 );
               })}
             </div>
           ) : (
-            <div className="flex items-center justify-center h-48 text-zinc-400 text-sm">No sales data yet</div>
+            <div className="flex-1 flex items-center justify-center text-zinc-400 text-sm">No sales data yet</div>
           )}
         </div>
 
         {/* Recent Transactions */}
-        <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-zinc-100">
+        <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-zinc-100 flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="font-semibold text-zinc-900">Recent Transactions</h3>
@@ -328,17 +328,17 @@ export default function DashboardPage() {
             </button>
           </div>
           {data.recentSales.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+            <div className="flex-1 overflow-x-auto">
+              <table className="w-full text-sm table-fixed">
                 <thead>
-                  <tr className="text-left text-zinc-400 text-xs uppercase tracking-wider">
-                    <th className="pb-3 font-medium">Invoice</th>
-                    <th className="pb-3 font-medium">Cashier</th>
-                    <th className="pb-3 font-medium">Customer</th>
-                    <th className="pb-3 font-medium text-center">Items</th>
-                    <th className="pb-3 font-medium">Payment</th>
-                    <th className="pb-3 font-medium text-right">Total</th>
-                    <th className="pb-3 font-medium text-center">Status</th>
+                  <tr className="text-slate-400 font-semibold text-xs uppercase tracking-wider">
+                    <th className="pb-3 text-left w-[18%]">Invoice</th>
+                    <th className="pb-3 text-left w-[12%]">Cashier</th>
+                    <th className="pb-3 text-left w-[14%]">Customer</th>
+                    <th className="pb-3 text-center w-[8%]">Items</th>
+                    <th className="pb-3 text-left w-[14%]">Payment</th>
+                    <th className="pb-3 text-right w-[16%]">Total</th>
+                    <th className="pb-3 text-center w-[18%]">Status</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -347,26 +347,26 @@ export default function DashboardPage() {
                     const itemCount = sale.items?.reduce((s: number, i: any) => s + i.quantity, 0) || 0;
                     return (
                       <tr key={sale.id} className="border-t border-zinc-50 hover:bg-zinc-50/50 transition-colors">
-                        <td className="py-3">
+                        <td className="py-3 pr-2">
                           <span className="font-mono text-xs font-medium text-zinc-700">{sale.invoiceNo}</span>
-                          <p className="text-xs text-zinc-500">{formatDateTime(sale.createdAt)}</p>
+                          <p className="text-xs text-zinc-400 mt-0.5">{formatDateTime(sale.createdAt)}</p>
                         </td>
-                        <td className="py-3 text-zinc-600">{sale.cashier?.name || '—'}</td>
-                        <td className="py-3 text-zinc-600">{sale.customer?.name || 'Walk-in'}</td>
+                        <td className="py-3 pr-2 text-zinc-600 text-xs">{sale.cashier?.name || '—'}</td>
+                        <td className="py-3 pr-2 text-zinc-600 text-xs truncate">{sale.customer?.name || 'Walk-in'}</td>
                         <td className="py-3 text-center">
-                          <span className="px-2 py-0.5 bg-zinc-100 rounded-full text-xs font-medium text-zinc-600">{itemCount}</span>
+                          <span className="inline-flex px-2 py-0.5 bg-zinc-100 rounded-full text-xs font-medium text-zinc-600">{itemCount}</span>
                         </td>
-                        <td className="py-3">
+                        <td className="py-3 pr-2">
                           <span className="text-xs text-zinc-500 capitalize">{paymentMethods.replace(/_/g, ' ')}</span>
                         </td>
-                        <td className="py-3 text-right font-semibold text-zinc-900">{formatCurrency(sale.grandTotal)}</td>
+                        <td className="py-3 text-right font-semibold text-zinc-900 text-xs">{formatCurrency(sale.grandTotal)}</td>
                         <td className="py-3 text-center">
-                          <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${
+                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
                             sale.status === 'completed' ? 'bg-emerald-50 text-emerald-700' :
                             sale.status === 'suspended' ? 'bg-amber-50 text-amber-700' :
                             'bg-red-50 text-red-700'
                           }`}>
-                            <div className={`w-1.5 h-1.5 rounded-full ${
+                            <span className={`w-1.5 h-1.5 rounded-full ${
                               sale.status === 'completed' ? 'bg-emerald-500' :
                               sale.status === 'suspended' ? 'bg-amber-500' : 'bg-red-500'
                             }`} />
@@ -380,7 +380,7 @@ export default function DashboardPage() {
               </table>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center h-48 text-zinc-400">
+            <div className="flex-1 flex flex-col items-center justify-center text-zinc-400">
               <Receipt size={32} className="mb-2 opacity-50" />
               <p className="text-sm">No transactions yet</p>
             </div>
