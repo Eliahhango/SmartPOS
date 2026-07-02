@@ -12,14 +12,6 @@ router.post('/', async (req, res) => {
     if (!items || !items.length) return res.status(400).json({ error: 'At least one item required' });
     if (!payments || !payments.length) return res.status(400).json({ error: 'At least one payment required' });
 
-    // Generate invoice number
-    const today = new Date();
-    const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');
-    const count = await prisma.sale.count({
-      where: { createdAt: { gte: new Date(today.getFullYear(), today.getMonth(), today.getDate()) } }
-    });
-    const invoiceNo = `INV-${dateStr}-${String(count + 1).padStart(4, '0')}`;
-
     // Calculate totals
     let subtotal = 0;
     let taxTotal = 0;
@@ -62,6 +54,14 @@ router.post('/', async (req, res) => {
 
     // Create sale with items and payments in transaction
     const sale = await prisma.$transaction(async (tx) => {
+      // Generate unique invoice number inside transaction to avoid race conditions
+      const today = new Date();
+      const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');
+      const count = await tx.sale.count({
+        where: { createdAt: { gte: new Date(today.getFullYear(), today.getMonth(), today.getDate()) } }
+      });
+      const invoiceNo = `INV-${dateStr}-${String(count + 1).padStart(4, '0')}`;
+
       const s = await tx.sale.create({
         data: {
           invoiceNo,

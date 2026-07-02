@@ -6,9 +6,12 @@
   "scripts": {
     "dev": "node --watch src/index.js",
     "start": "node src/index.js",
+    "build": "npx prisma generate",
     "db:push": "npx prisma db push",
     "db:seed": "node prisma/seed.js",
-    "db:studio": "npx prisma studio"
+    "db:setup": "npx prisma db push && node prisma/seed.js",
+    "db:studio": "npx prisma studio",
+    "railway:start": "npx prisma db push --accept-data-loss && node prisma/seed.js && node src/index.js"
   },
   "dependencies": {
     "@prisma/client": "5.22.0",
