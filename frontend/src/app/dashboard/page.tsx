@@ -88,7 +88,7 @@ export default function DashboardPage() {
           <div>
             <p className="text-zinc-400 text-sm font-medium mb-1">{greeting}</p>
             <h1 className="text-3xl font-bold mb-2 text-white">Dashboard Overview</h1>
-            <p className="text-zinc-300 text-sm max-w-md">
+            <p className="text-zinc-200 text-sm max-w-md">
               Track your store performance, monitor inventory levels, and stay on top of sales in real time.
             </p>
             <div className="flex gap-3 mt-4">
@@ -143,8 +143,8 @@ export default function DashboardPage() {
             sub: `${data.lowStockCount} low stock · ${data.outOfStockCount} out`,
             icon: Package,
             trend: data.lowStockCount > 0 ? 'down' : 'neutral',
-            iconBg: 'bg-teal-50',
-            iconColor: 'text-teal-600',
+            iconBg: data.lowStockCount > 0 ? 'bg-amber-50' : 'bg-teal-50',
+            iconColor: data.lowStockCount > 0 ? 'text-amber-500' : 'text-teal-600',
           },
           {
             label: 'Customers',
@@ -152,8 +152,8 @@ export default function DashboardPage() {
             sub: `${data.expiringCount} products expiring soon`,
             icon: Users,
             trend: data.expiringCount > 0 ? 'down' : 'neutral',
-            iconBg: 'bg-teal-50',
-            iconColor: 'text-teal-600',
+            iconBg: data.expiringCount > 0 ? 'bg-amber-50' : 'bg-teal-50',
+            iconColor: data.expiringCount > 0 ? 'text-amber-500' : 'text-teal-600',
           },
         ].map((card, i) => {
           const Icon = card.icon;
