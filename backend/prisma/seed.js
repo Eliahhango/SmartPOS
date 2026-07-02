@@ -136,6 +136,13 @@ async function main() {
   console.log('Customer created');
 
   // Create some sample sales
+  const sale1Items = [
+    { productId: products[0].id, quantity: 2, price: 1200, taxRateApplied: 18, total: 2400 },
+    { productId: products[3].id, quantity: 1, price: 2500, taxRateApplied: 0, total: 2500 },
+    { productId: products[8].id, quantity: 2, price: 800, taxRateApplied: 18, total: 1600 },
+    { productId: products[19].id, quantity: 1, price: 200, taxRateApplied: 18, total: 200 }
+  ];
+
   const sale1 = await prisma.sale.create({
     data: {
       invoiceNo: 'INV-20260702-0001',
@@ -147,21 +154,21 @@ async function main() {
       taxTotal: 900,
       grandTotal: 7000,
       status: 'completed',
-      items: {
-        create: [
-          { productId: products[0].id, quantity: 2, price: 1200, taxRateApplied: 18, total: 2400 },
-          { productId: products[3].id, quantity: 1, price: 2500, taxRateApplied: 0, total: 2500 },
-          { productId: products[8].id, quantity: 2, price: 800, taxRateApplied: 18, total: 1600 },
-          { productId: products[19].id, quantity: 1, price: 200, taxRateApplied: 18, total: 200 }
-        ]
-      },
+      items: { create: sale1Items },
       payments: {
         create: [
           { method: 'cash', amount: 7000, amountReceived: 10000, changeGiven: 3000 }
         ]
       }
-    }
+    },
+    include: { items: true }
   });
+
+  const sale2Items = [
+    { productId: products[2].id, quantity: 2, price: 2800, taxRateApplied: 0, total: 5600 },
+    { productId: products[12].id, quantity: 1, price: 1800, taxRateApplied: 0, total: 1800 },
+    { productId: products[17].id, quantity: 1, price: 800, taxRateApplied: 0, total: 800 }
+  ];
 
   const sale2 = await prisma.sale.create({
     data: {
@@ -173,37 +180,32 @@ async function main() {
       taxTotal: 0,
       grandTotal: 7500,
       status: 'completed',
-      items: {
-        create: [
-          { productId: products[2].id, quantity: 2, price: 2800, taxRateApplied: 0, total: 5600 },
-          { productId: products[12].id, quantity: 1, price: 1800, taxRateApplied: 0, total: 1800 },
-          { productId: products[17].id, quantity: 1, price: 800, taxRateApplied: 0, total: 800 }
-        ]
-      },
+      items: { create: sale2Items },
       payments: {
         create: [
           { method: 'mobile_money', amount: 4000, referenceNo: 'MPESA-TXN-001' },
           { method: 'cash', amount: 3500, amountReceived: 5000, changeGiven: 1500 }
         ]
       }
-    }
+    },
+    include: { items: true }
   });
 
   // Update stock for sales
-  for (const item of sale1.items) {
+  for (const item of sale1Items) {
     await prisma.product.update({ where: { id: item.productId }, data: { stockQuantity: { decrement: item.quantity } } });
   }
-  for (const item of sale2.items) {
+  for (const item of sale2Items) {
     await prisma.product.update({ where: { id: item.productId }, data: { stockQuantity: { decrement: item.quantity } } });
   }
 
   // Create stock movements for sales
-  for (const item of sale1.items) {
+  for (const item of sale1Items) {
     await prisma.stockMovement.create({
       data: { productId: item.productId, branchId: branch.id, changeQty: -item.quantity, reason: 'sale', referenceType: 'sale', referenceId: sale1.id, userId: cashier.id }
     });
   }
-  for (const item of sale2.items) {
+  for (const item of sale2Items) {
     await prisma.stockMovement.create({
       data: { productId: item.productId, branchId: branch.id, changeQty: -item.quantity, reason: 'sale', referenceType: 'sale', referenceId: sale2.id, userId: cashier.id }
     });
