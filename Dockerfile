@@ -1,4 +1,6 @@
-FROM node:18-alpine
+FROM node:18-slim
+
+RUN apt-get update && apt-get install -y openssl ca-certificates && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -12,5 +14,9 @@ RUN DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholde
 COPY backend/ .
 
 EXPOSE 5000
+
+# Use binary engine type to avoid OpenSSL compatibility issues
+ENV PRISMA_CLIENT_ENGINE_TYPE="binary"
+ENV PRISMA_CLI_QUERY_ENGINE_TYPE="binary"
 
 CMD npx prisma db push --accept-data-loss && node prisma/seed.js && node src/index.js
