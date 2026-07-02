@@ -33,7 +33,7 @@ export default function Sidebar() {
   const filteredNav = navItems.filter(item => user && item.roles.includes(user.role));
 
   return (
-    <aside className={`${collapsed ? 'w-16' : 'w-64'} bg-[#090727] text-white flex flex-col transition-all duration-300 min-h-screen`}>
+    <aside className={`${collapsed ? 'w-16' : 'w-64'} bg-[#090727] text-white flex flex-col transition-all duration-300 h-full`}>
       <div className="p-4 flex items-center justify-between border-b border-white/10">
         {!collapsed && (
           <Link href="/dashboard" className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
