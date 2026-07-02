@@ -27,17 +27,17 @@ export default function BranchesPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Branches</h1>
         <button onClick={() => { setEditing(null); setForm({ name: '', address: '', phone: '', isMainBranch: false }); setShowForm(true); }}
-          className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl text-sm font-medium flex items-center gap-2">
+          className="px-4 py-2 bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-xl text-sm font-medium flex items-center gap-2">
           <Plus size={16} /> Add Branch
         </button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {branches.map(b => (
-          <div key={b.id} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+          <div key={b.id} className="bg-white rounded-xl p-5 shadow-sm border border-slate-100">
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-2">
-                <div className="w-10 h-10 bg-gradient-to-br from-indigo-100 to-violet-100 rounded-xl flex items-center justify-center">
-                  <Store size={20} className="text-indigo-600" />
+                <div className="w-10 h-10 bg-gradient-to-br from-teal-100 to-emerald-100 rounded-xl flex items-center justify-center">
+                  <Store size={20} className="text-teal-600" />
                 </div>
                 <div>
                   <h3 className="font-semibold">{b.name}</h3>
@@ -45,19 +45,19 @@ export default function BranchesPage() {
                 </div>
               </div>
               <button onClick={() => { setEditing(b); setForm({ name: b.name, address: b.address || '', phone: b.phone || '', isMainBranch: b.isMainBranch }); setShowForm(true); }}
-                className="p-1.5 hover:bg-indigo-50 rounded-lg text-indigo-600"><Edit size={16} /></button>
+                className="p-1.5 hover:bg-teal-50 rounded-lg text-teal-600"><Edit size={16} /></button>
             </div>
-            <div className="text-sm text-gray-500 space-y-1">
+            <div className="text-sm text-slate-500 space-y-1">
               {b.address && <p>{b.address}</p>}
               {b.phone && <p>{b.phone}</p>}
             </div>
-            <p className="text-xs text-gray-400 mt-2">{b._count?.users || 0} users</p>
+            <p className="text-xs text-slate-400 mt-2">{b._count?.users || 0} users</p>
           </div>
         ))}
       </div>
       {showForm && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-md p-6 animate-zoom-in">
+          <div className="bg-white rounded-xl w-full max-w-md p-6 animate-zoom-in">
             <h3 className="text-lg font-bold mb-4">{editing ? 'Edit' : 'Add'} Branch</h3>
             <form onSubmit={handleSubmit} className="space-y-3">
               <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Branch Name" className="w-full px-3 py-2 border rounded-lg text-sm" required />
@@ -69,7 +69,7 @@ export default function BranchesPage() {
               </label>
               <div className="flex gap-2">
                 <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2 border rounded-xl text-sm">Cancel</button>
-                <button type="submit" className="flex-1 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl text-sm font-semibold">{editing ? 'Update' : 'Create'}</button>
+                <button type="submit" className="flex-1 py-2 bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-xl text-sm font-semibold">{editing ? 'Update' : 'Create'}</button>
               </div>
             </form>
           </div>

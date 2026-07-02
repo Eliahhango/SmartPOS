@@ -25,17 +25,17 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Navbar */}
-      <nav className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur border-b border-gray-100">
+      <nav className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
           <span className="text-2xl font-bold gradient-text">SmartPOS</span>
           <div className="hidden md:flex items-center gap-8">
-            <Link href="/" className="text-sm font-semibold text-indigo-600">Home</Link>
-            <span className="text-sm text-gray-600 cursor-pointer">Features</span>
-            <Link href="/dashboard" className="text-sm text-gray-600 hover:text-indigo-600">Dashboard</Link>
-            <span className="text-sm text-gray-600 cursor-pointer">Contact</span>
+            <Link href="/" className="text-sm font-semibold text-teal-600">Home</Link>
+            <span className="text-sm text-slate-600 cursor-pointer">Features</span>
+            <Link href="/dashboard" className="text-sm text-slate-600 hover:text-teal-600">Dashboard</Link>
+            <span className="text-sm text-slate-600 cursor-pointer">Contact</span>
           </div>
           <div className="hidden md:block">
-            <Link href="/login" className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:shadow-lg transition-shadow">
+            <Link href="/login" className="bg-gradient-to-r from-teal-500 to-emerald-500 text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:shadow-lg transition-shadow">
               Get Started
             </Link>
           </div>
@@ -45,11 +45,11 @@ export default function LandingPage() {
         </div>
         {mobileOpen && (
           <div className="md:hidden bg-white border-t p-4 flex flex-col gap-3">
-            <Link href="/" className="text-sm font-semibold text-indigo-600">Home</Link>
-            <span className="text-sm text-gray-600">Features</span>
-            <Link href="/dashboard" className="text-sm text-gray-600">Dashboard</Link>
-            <span className="text-sm text-gray-600">Contact</span>
-            <Link href="/login" className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-center px-6 py-2.5 rounded-full text-sm font-semibold">Get Started</Link>
+            <Link href="/" className="text-sm font-semibold text-teal-600">Home</Link>
+            <span className="text-sm text-slate-600">Features</span>
+            <Link href="/dashboard" className="text-sm text-slate-600">Dashboard</Link>
+            <span className="text-sm text-slate-600">Contact</span>
+            <Link href="/login" className="bg-gradient-to-r from-teal-500 to-emerald-500 text-white text-center px-6 py-2.5 rounded-full text-sm font-semibold">Get Started</Link>
           </div>
         )}
       </nav>
@@ -70,7 +70,7 @@ export default function LandingPage() {
               Process transactions, track inventory, and manage your entire business from a single intuitive platform trusted by over 10,000 stores worldwide.
             </p>
             <div className="flex gap-4 justify-center">
-              <Link href="/login" className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-8 py-3 rounded-full font-semibold hover:shadow-xl transition-all hover:scale-105">
+              <Link href="/login" className="bg-gradient-to-r from-teal-500 to-emerald-500 text-white px-8 py-3 rounded-full font-semibold hover:shadow-xl transition-all hover:scale-105">
                 Get Started
               </Link>
               <Link href="#features" className="border border-white/30 text-white px-8 py-3 rounded-full font-semibold hover:bg-white/10 transition-all">
@@ -88,7 +88,7 @@ export default function LandingPage() {
             {[{ value: '10K+', label: 'Active Stores' }, { value: '99.9%', label: 'Uptime' }, { value: '25%', label: 'Cost Reduction' }, { value: '15%', label: 'Faster Checkout' }].map((s, i) => (
               <div key={i} className="animate-fade-in-up" style={{ animationDelay: `${i * 100}ms` }}>
                 <div className="text-3xl md:text-4xl font-bold gradient-text">{s.value}</div>
-                <div className="text-gray-500 text-sm mt-1">{s.label}</div>
+                <div className="text-slate-500 text-sm mt-1">{s.label}</div>
               </div>
             ))}
           </div>
@@ -96,10 +96,10 @@ export default function LandingPage() {
       </section>
 
       {/* Features */}
-      <section id="features" className="py-20 bg-gray-50">
+      <section id="features" className="py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">Empowering Business Key Features</h2>
-          <p className="text-gray-500 text-center mb-12 max-w-xl mx-auto">From payment processing to staff management, SmartPOS delivers every tool you need to run your store efficiently.</p>
+          <p className="text-slate-500 text-center mb-12 max-w-xl mx-auto">From payment processing to staff management, SmartPOS delivers every tool you need to run your store efficiently.</p>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               { title: 'Data-Driven Decision-Making', desc: 'Identify your top-selling products, track sales trends, and adjust your inventory and marketing strategies accordingly.' },
@@ -109,12 +109,12 @@ export default function LandingPage() {
               { title: 'Staff Management', desc: 'Customized access for staff to prevent unauthorized access to sensitive data. Role-based permissions for every team member.' },
               { title: 'Split Payments', desc: 'Accept multiple payment methods in a single transaction — part cash, part mobile money, part card. Full flexibility.' },
             ].map((f, i) => (
-              <div key={i} className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow animate-fade-in-up" style={{ animationDelay: `${i * 100}ms` }}>
-                <div className="w-12 h-12 bg-gradient-to-br from-indigo-100 to-violet-100 rounded-xl flex items-center justify-center mb-4">
-                  <Star size={24} className="text-indigo-600" />
+              <div key={i} className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow animate-fade-in-up" style={{ animationDelay: `${i * 100}ms` }}>
+                <div className="w-12 h-12 bg-gradient-to-br from-teal-100 to-emerald-100 rounded-xl flex items-center justify-center mb-4">
+                  <Star size={24} className="text-teal-600" />
                 </div>
                 <h3 className="font-bold text-lg mb-2">{f.title}</h3>
-                <p className="text-gray-500 text-sm">{f.desc}</p>
+                <p className="text-slate-500 text-sm">{f.desc}</p>
               </div>
             ))}
           </div>
@@ -129,7 +129,7 @@ export default function LandingPage() {
             {tabs.map(tab => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                 className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${
-                  activeTab === tab.id ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  activeTab === tab.id ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-lg' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                 }`}>
                 {tab.title}
               </button>
@@ -137,21 +137,21 @@ export default function LandingPage() {
           </div>
           {tabs.filter(t => t.id === activeTab).map(tab => (
             <div key={tab.id} className="grid md:grid-cols-2 gap-8 items-center animate-fade-in-up">
-              <div className="bg-gradient-to-br from-indigo-50 to-violet-50 rounded-2xl h-80 flex items-center justify-center">
+              <div className="bg-gradient-to-br from-teal-50 to-emerald-50 rounded-xl h-80 flex items-center justify-center">
                 <div className="text-6xl">🏪</div>
               </div>
               <div>
                 <h3 className="text-2xl font-bold mb-4">Empowering Your {tab.title} Success</h3>
-                <p className="text-gray-500 mb-6">{tab.desc}</p>
+                <p className="text-slate-500 mb-6">{tab.desc}</p>
                 <div className="grid grid-cols-2 gap-3">
                   {tab.features.map((f, i) => (
                     <div key={i} className="flex items-center gap-2 text-sm">
-                      <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center"><span className="text-green-600 text-xs">✓</span></div>
-                      <span className="text-gray-700">{f}</span>
+                      <div className="w-5 h-5 bg-emerald-100 rounded-full flex items-center justify-center"><span className="text-emerald-600 text-xs">✓</span></div>
+                      <span className="text-slate-700">{f}</span>
                     </div>
                   ))}
                 </div>
-                <Link href="/login" className="inline-flex items-center gap-2 mt-6 text-indigo-600 font-semibold hover:gap-3 transition-all">
+                <Link href="/login" className="inline-flex items-center gap-2 mt-6 text-teal-600 font-semibold hover:gap-3 transition-all">
                   Learn More <ArrowRight size={16} />
                 </Link>
               </div>
@@ -161,7 +161,7 @@ export default function LandingPage() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Satisfied Clients Share Their Stories</h2>
           <div className="grid md:grid-cols-3 gap-6">
@@ -170,12 +170,12 @@ export default function LandingPage() {
               { name: 'John Doe', role: 'Cafe Owner', text: 'SmartPOS has been a game-changer for us. With their reliable payment processing and intuitive interface, we can focus on providing great food and service.' },
               { name: 'Camille Clark', role: 'Salon Owner', text: 'SmartPOS has simplified our appointment scheduling and payment processing. Our clients love the convenience, and we appreciate the security and ease of use.' },
             ].map((t, i) => (
-              <div key={i} className="bg-white rounded-2xl p-6 shadow-sm animate-fade-in-up" style={{ animationDelay: `${i * 150}ms` }}>
+              <div key={i} className="bg-white rounded-xl p-6 shadow-sm animate-fade-in-up" style={{ animationDelay: `${i * 150}ms` }}>
                 <div className="flex gap-1 mb-3">{Array(5).fill(0).map((_, j) => <Star key={j} size={16} className="text-yellow-400" fill="currentColor" />)}</div>
-                <p className="text-gray-600 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
+                <p className="text-slate-600 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-indigo-400 to-violet-400 rounded-full" />
-                  <div><p className="font-semibold text-sm">{t.name}</p><p className="text-gray-400 text-xs">{t.role}</p></div>
+                  <div className="w-10 h-10 bg-gradient-to-br from-teal-400 to-emerald-400 rounded-full" />
+                  <div><p className="font-semibold text-sm">{t.name}</p><p className="text-slate-400 text-xs">{t.role}</p></div>
                 </div>
               </div>
             ))}
@@ -187,21 +187,21 @@ export default function LandingPage() {
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">Get Quick Answers to Your Concerns</h2>
-          <p className="text-gray-500 text-center mb-12">Find answers to the most common questions about SmartPOS setup, security, pricing, and features.</p>
+          <p className="text-slate-500 text-center mb-12">Find answers to the most common questions about SmartPOS setup, security, pricing, and features.</p>
           <div className="space-y-3">
             {faqs.map((faq, i) => (
-              <div key={i} className="border border-gray-200 rounded-xl overflow-hidden">
-                <button onClick={() => setOpenFaq(openFaq === i ? -1 : i)} className="w-full flex items-center justify-between p-5 text-left font-semibold hover:bg-gray-50 transition-colors">
+              <div key={i} className="border border-slate-200 rounded-xl overflow-hidden">
+                <button onClick={() => setOpenFaq(openFaq === i ? -1 : i)} className="w-full flex items-center justify-between p-5 text-left font-semibold hover:bg-slate-50 transition-colors">
                   {faq.q}
-                  {openFaq === i ? <ChevronUp size={20} className="text-indigo-600" /> : <ChevronDown size={20} />}
+                  {openFaq === i ? <ChevronUp size={20} className="text-teal-600" /> : <ChevronDown size={20} />}
                 </button>
-                {openFaq === i && <div className="px-5 pb-5 text-gray-600 text-sm animate-fade-in-up">{faq.a}</div>}
+                {openFaq === i && <div className="px-5 pb-5 text-slate-600 text-sm animate-fade-in-up">{faq.a}</div>}
               </div>
             ))}
           </div>
-          <div className="text-center mt-8 text-gray-500 text-sm">
+          <div className="text-center mt-8 text-slate-500 text-sm">
             Have a question we didn&apos;t cover? Reach our support team at{' '}
-            <span className="text-indigo-600 font-semibold">support@smartpos.com</span>
+            <span className="text-teal-600 font-semibold">support@smartpos.com</span>
           </div>
         </div>
       </section>
@@ -215,7 +215,7 @@ export default function LandingPage() {
             <div className="flex items-center gap-2 text-white/80"><Phone size={16} /> +255 385 502 5004</div>
             <div className="flex items-center gap-2 text-white/80"><Mail size={16} /> contact@smartpos.com</div>
           </div>
-          <Link href="/login" className="inline-block mt-8 bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-10 py-3.5 rounded-full font-semibold hover:shadow-xl transition-all hover:scale-105">
+          <Link href="/login" className="inline-block mt-8 bg-gradient-to-r from-teal-500 to-emerald-500 text-white px-10 py-3.5 rounded-full font-semibold hover:shadow-xl transition-all hover:scale-105">
             Get Started Free
           </Link>
         </div>

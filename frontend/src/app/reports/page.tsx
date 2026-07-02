@@ -45,7 +45,7 @@ export default function ReportsPage() {
       <div className="flex gap-2 flex-wrap">
         {(['sales', 'inventory', 'financial', 'cashier'] as const).map(t => (
           <button key={t} onClick={() => setTab(t)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium capitalize ${tab === t ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600'}`}>{t}</button>
+            className={`px-4 py-2 rounded-xl text-sm font-medium capitalize ${tab === t ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600'}`}>{t}</button>
         ))}
       </div>
 
@@ -54,26 +54,26 @@ export default function ReportsPage() {
           <div className="flex gap-2">
             {['daily', 'weekly', 'monthly', 'annual'].map(p => (
               <button key={p} onClick={() => setPeriod(p)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize ${period === p ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-600'}`}>{p}</button>
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize ${period === p ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600'}`}>{p}</button>
             ))}
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { label: 'Total Sales', value: formatCurrency(salesData.totalSales), icon: DollarSign, color: 'text-green-600' },
-              { label: 'Transactions', value: salesData.totalTransactions, icon: ShoppingCart, color: 'text-indigo-600' },
+              { label: 'Total Sales', value: formatCurrency(salesData.totalSales), icon: DollarSign, color: 'text-emerald-600' },
+              { label: 'Transactions', value: salesData.totalTransactions, icon: ShoppingCart, color: 'text-teal-600' },
               { label: 'Items Sold', value: salesData.totalItems, icon: TrendingUp, color: 'text-violet-600' },
               { label: 'Avg. Transaction', value: formatCurrency(salesData.averageTransaction), icon: Users, color: 'text-orange-600' },
             ].map((s, i) => {
               const Icon = s.icon;
               return (
-                <div key={i} className="bg-white rounded-2xl p-4 shadow-sm border">
-                  <div className="flex items-center gap-2 text-sm text-gray-500 mb-1"><Icon size={16} className={s.color} /> {s.label}</div>
+                <div key={i} className="bg-white rounded-xl p-4 shadow-sm border">
+                  <div className="flex items-center gap-2 text-sm text-slate-500 mb-1"><Icon size={16} className={s.color} /> {s.label}</div>
                   <div className="text-xl font-bold">{s.value}</div>
                 </div>
               );
             })}
           </div>
-          <div className="bg-white rounded-2xl p-6 shadow-sm border">
+          <div className="bg-white rounded-xl p-6 shadow-sm border">
             <h3 className="font-semibold mb-4">Sales Trend</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={salesData.sales?.slice(-30)}>
@@ -98,13 +98,13 @@ export default function ReportsPage() {
               { label: 'Out of Stock', value: inventoryData.outOfStock },
               { label: 'Expiring Soon', value: inventoryData.expiringSoon },
             ].map((s, i) => (
-              <div key={i} className="bg-white rounded-2xl p-4 shadow-sm border">
-                <div className="text-sm text-gray-500 mb-1">{s.label}</div>
+              <div key={i} className="bg-white rounded-xl p-4 shadow-sm border">
+                <div className="text-sm text-slate-500 mb-1">{s.label}</div>
                 <div className="text-2xl font-bold">{s.value}</div>
               </div>
             ))}
           </div>
-          <div className="bg-white rounded-2xl p-6 shadow-sm border">
+          <div className="bg-white rounded-xl p-6 shadow-sm border">
             <h3 className="font-semibold mb-4">Stock Distribution</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
@@ -126,13 +126,13 @@ export default function ReportsPage() {
         <div className="space-y-4">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { label: 'Revenue', value: formatCurrency(financialData.revenue), color: 'text-green-600' },
+              { label: 'Revenue', value: formatCurrency(financialData.revenue), color: 'text-emerald-600' },
               { label: 'Expenses', value: formatCurrency(financialData.expenses), color: 'text-red-600' },
-              { label: 'Profit', value: formatCurrency(financialData.profit), color: 'text-indigo-600' },
+              { label: 'Profit', value: formatCurrency(financialData.profit), color: 'text-teal-600' },
               { label: 'Tax Collected', value: formatCurrency(financialData.taxCollected), color: 'text-violet-600' },
             ].map((s, i) => (
-              <div key={i} className="bg-white rounded-2xl p-4 shadow-sm border">
-                <div className="text-sm text-gray-500 mb-1">{s.label}</div>
+              <div key={i} className="bg-white rounded-xl p-4 shadow-sm border">
+                <div className="text-sm text-slate-500 mb-1">{s.label}</div>
                 <div className={`text-xl font-bold ${s.color}`}>{s.value}</div>
               </div>
             ))}
@@ -141,9 +141,9 @@ export default function ReportsPage() {
       )}
 
       {tab === 'cashier' && (
-        <div className="bg-white rounded-2xl shadow-sm border overflow-hidden">
+        <div className="bg-white rounded-xl border overflow-hidden">
           <table className="w-full text-sm">
-            <thead><tr className="text-left text-gray-500 bg-gray-50"><th className="p-4">Cashier</th><th className="p-4 text-right">Total Sales</th><th className="p-4 text-right">Total Amount</th></tr></thead>
+            <thead><tr className="text-left text-slate-500 bg-slate-50"><th className="p-4">Cashier</th><th className="p-4 text-right">Total Sales</th><th className="p-4 text-right">Total Amount</th></tr></thead>
             <tbody>
               {cashierData.map((c: any) => (
                 <tr key={c.id} className="border-t border-gray-50">

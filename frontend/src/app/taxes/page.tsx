@@ -27,30 +27,30 @@ export default function TaxesPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Tax Rates</h1>
         <button onClick={() => { setEditing(null); setForm({ name: '', ratePercent: '', isActive: true }); setShowForm(true); }}
-          className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl text-sm font-medium flex items-center gap-2">
+          className="px-4 py-2 bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-xl text-sm font-medium flex items-center gap-2">
           <Plus size={16} /> Add Tax Rate
         </button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {taxes.map(t => (
-          <div key={t.id} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+          <div key={t.id} className="bg-white rounded-xl p-5 shadow-sm border border-slate-100">
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="font-semibold">{t.name}</h3>
-                <p className="text-2xl font-bold text-indigo-600 mt-1">{t.ratePercent}%</p>
-                <span className={`text-xs px-2 py-0.5 rounded-full mt-2 inline-block ${t.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                <p className="text-2xl font-bold text-teal-600 mt-1">{t.ratePercent}%</p>
+                <span className={`text-xs px-2 py-0.5 rounded-full mt-2 inline-block ${t.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>
                   {t.isActive ? 'Active' : 'Inactive'}
                 </span>
               </div>
               <button onClick={() => { setEditing(t); setForm({ name: t.name, ratePercent: t.ratePercent, isActive: t.isActive }); setShowForm(true); }}
-                className="p-1.5 hover:bg-indigo-50 rounded-lg text-indigo-600"><Edit size={16} /></button>
+                className="p-1.5 hover:bg-teal-50 rounded-lg text-teal-600"><Edit size={16} /></button>
             </div>
           </div>
         ))}
       </div>
       {showForm && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-md p-6 animate-zoom-in">
+          <div className="bg-white rounded-xl w-full max-w-md p-6 animate-zoom-in">
             <h3 className="text-lg font-bold mb-4">{editing ? 'Edit' : 'Add'} Tax Rate</h3>
             <form onSubmit={handleSubmit} className="space-y-3">
               <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Name (e.g. Standard VAT)" className="w-full px-3 py-2 border rounded-lg text-sm" required />
@@ -61,7 +61,7 @@ export default function TaxesPage() {
               </label>
               <div className="flex gap-2">
                 <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2 border rounded-xl text-sm">Cancel</button>
-                <button type="submit" className="flex-1 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl text-sm font-semibold">{editing ? 'Update' : 'Create'}</button>
+                <button type="submit" className="flex-1 py-2 bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-xl text-sm font-semibold">{editing ? 'Update' : 'Create'}</button>
               </div>
             </form>
           </div>

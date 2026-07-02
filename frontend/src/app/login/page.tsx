@@ -52,45 +52,45 @@ export default function LoginPage() {
             <h1 className="text-3xl font-bold gradient-text">SmartPOS</h1>
           </div>
           <h2 className="text-2xl font-bold mb-2">Welcome back</h2>
-          <p className="text-gray-500 mb-8">Sign in to your account to continue</p>
+          <p className="text-slate-500 mb-8">Sign in to your account to continue</p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
               <div className="relative">
-                <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all"
                   placeholder="admin@smartpos.com" required />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">Password</label>
               <div className="relative">
-                <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input type="password" value={password} onChange={e => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all"
                   placeholder="••••••••" required />
               </div>
             </div>
             <button type="submit" disabled={loading}
-              className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+              className="w-full bg-gradient-to-r from-teal-500 to-emerald-500 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2">
               {loading && <Loader2 size={18} className="animate-spin" />}
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 
-          <div className="mt-8 p-4 bg-gray-50 rounded-xl">
-            <p className="text-xs font-semibold text-gray-500 mb-2">Demo Credentials:</p>
-            <div className="space-y-1 text-xs text-gray-600">
+          <div className="mt-8 p-4 bg-slate-50 rounded-xl">
+            <p className="text-xs font-semibold text-slate-500 mb-2">Demo Credentials:</p>
+            <div className="space-y-1 text-xs text-slate-600">
               <p><strong>Admin:</strong> admin@smartpos.com / admin123</p>
               <p><strong>Manager:</strong> manager@smartpos.com / manager123</p>
               <p><strong>Cashier:</strong> cashier@smartpos.com / cashier123</p>
             </div>
           </div>
 
-          <p className="text-center mt-6 text-sm text-gray-500">
-            <Link href="/" className="text-indigo-600 hover:underline">← Back to home</Link>
+          <p className="text-center mt-6 text-sm text-slate-500">
+            <Link href="/" className="text-teal-600 hover:underline">← Back to home</Link>
           </p>
         </div>
       </div>
