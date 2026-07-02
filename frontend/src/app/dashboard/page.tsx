@@ -272,35 +272,35 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Bottom Row ───────────────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch w-full mt-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch w-full mt-6 px-1">
         {/* Top Products Card */}
-        <div className="bg-white rounded-xl border border-slate-100 p-6 flex flex-col justify-between h-full">
+        <div className="bg-white rounded-xl border border-slate-100 p-6 flex flex-col justify-between">
           <div>
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between items-center mb-6">
               <h3 className="font-bold text-slate-800 text-lg">Top Products</h3>
               <span className="text-xs text-slate-400">30 days</span>
             </div>
             {data.topProducts.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-5">
                 {data.topProducts.map((p, i) => {
                   const maxQty = data.topProducts[0]?.quantitySold || 1;
                   const barWidth = (p.quantitySold / maxQty) * 100;
                   return (
-                    <div key={p.id} className="flex flex-col pb-2">
-                      <div className="flex items-center justify-between">
+                    <div key={p.id} className="group">
+                      <div className="flex items-center justify-between mb-1.5">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-xs font-semibold text-slate-500 border border-slate-100">
+                          <div className="w-7 h-7 rounded-full bg-slate-50 flex items-center justify-center text-xs font-semibold text-slate-500 border border-slate-100">
                             {i + 1}
                           </div>
                           <div>
-                            <p className="text-sm font-semibold text-slate-800">{p.name}</p>
-                            <p className="text-xs text-slate-400">{p.category?.name || 'Uncategorized'} • <span className="text-slate-500">{p.quantitySold} sold</span></p>
+                            <p className="text-sm font-semibold text-slate-800 leading-tight">{p.name}</p>
+                            <p className="text-xs text-slate-400 mt-0.5">{p.category?.name || 'Uncategorized'} • <span className="text-slate-500">{p.quantitySold} sold</span></p>
                           </div>
                         </div>
                         <span className="text-sm font-bold text-slate-800">{formatCurrency(p.totalRevenue)}</span>
                       </div>
-                      <div className="w-full bg-slate-100 h-1.5 rounded-full mt-2 overflow-hidden">
-                        <div className="bg-teal-500 h-full rounded-full" style={{ width: `${barWidth}%` }} />
+                      <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                        <div className="bg-teal-500 h-full rounded-full transition-all duration-500" style={{ width: `${barWidth}%` }} />
                       </div>
                     </div>
                   );
@@ -313,76 +313,79 @@ export default function DashboardPage() {
         </div>
 
         {/* Recent Transactions Card */}
-        <div className="bg-white rounded-xl border border-slate-100 p-6 lg:col-span-2 flex flex-col h-full">
-          <div className="flex justify-between items-center mb-4">
-            <div>
-              <h3 className="font-bold text-slate-800 text-lg">Recent Transactions</h3>
-              <p className="text-xs text-slate-400">Latest 8 sales</p>
+        <div className="bg-white rounded-xl border border-slate-100 p-6 lg:col-span-2 flex flex-col justify-between">
+          <div>
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h3 className="font-bold text-slate-800 text-lg">Recent Transactions</h3>
+                <p className="text-xs text-slate-400 mt-0.5">Latest 8 sales</p>
+              </div>
+              <button onClick={() => window.location.href = '/reports'}
+                className="text-sm font-semibold text-teal-600 hover:text-teal-700 transition-colors flex items-center gap-1">
+                View all <span className="text-xs">→</span>
+              </button>
             </div>
-            <button onClick={() => window.location.href = '/reports'}
-              className="text-sm font-medium text-teal-600 hover:text-teal-700 flex items-center gap-1">
-              View all <span>→</span>
-            </button>
-          </div>
 
-          {data.recentSales.length > 0 ? (
-            <div className="w-full overflow-x-auto flex-1">
-              <table className="w-full text-left border-collapse table-fixed min-w-[700px]">
-                <thead>
-                  <tr className="border-b border-slate-100">
-                    <th className="w-[22%] pb-3 text-xs font-semibold tracking-wider text-slate-400 uppercase">Invoice</th>
-                    <th className="w-[15%] pb-3 text-xs font-semibold tracking-wider text-slate-400 uppercase">Cashier</th>
-                    <th className="w-[15%] pb-3 text-xs font-semibold tracking-wider text-slate-400 uppercase">Customer</th>
-                    <th className="w-[10%] pb-3 text-xs font-semibold tracking-wider text-slate-400 uppercase text-center">Items</th>
-                    <th className="w-[18%] pb-3 text-xs font-semibold tracking-wider text-slate-400 uppercase">Payment</th>
-                    <th className="w-[12%] pb-3 text-xs font-semibold tracking-wider text-slate-400 uppercase">Total</th>
-                    <th className="w-[13%] pb-3 text-xs font-semibold tracking-wider text-slate-400 uppercase text-right">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-50">
-                  {data.recentSales.map((sale: any) => {
-                    const paymentMethods = sale.payments?.map((p: any) => p.method).join(', ') || '—';
-                    const itemCount = sale.items?.reduce((s: number, i: any) => s + i.quantity, 0) || 0;
-                    return (
-                      <tr key={sale.id} className="hover:bg-slate-50/50 transition-colors group">
-                        <td className="py-3.5">
-                          <p className="text-sm font-medium text-slate-700 group-hover:text-teal-600 transition-colors">{sale.invoiceNo}</p>
-                          <p className="text-[11px] text-slate-400">{formatDateTime(sale.createdAt)}</p>
-                        </td>
-                        <td className="py-3.5 text-sm text-slate-600">{sale.cashier?.name || '—'}</td>
-                        <td className="py-3.5 text-sm text-slate-600">{sale.customer?.name || 'Walk-in'}</td>
-                        <td className="py-3.5 text-center">
-                          <span className="inline-flex items-center justify-center bg-slate-50 text-slate-600 text-xs font-medium w-6 h-6 rounded-full border border-slate-100">
-                            {itemCount}
-                          </span>
-                        </td>
-                        <td className="py-3.5 text-sm text-slate-600 truncate">{paymentMethods.replace(/_/g, ' ')}</td>
-                        <td className="py-3.5 text-sm font-bold text-slate-800">{formatCurrency(sale.grandTotal)}</td>
-                        <td className="py-3.5 text-right">
-                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${
-                            sale.status === 'completed' ? 'bg-emerald-50 text-emerald-700 border-emerald-100/50' :
-                            sale.status === 'suspended' ? 'bg-amber-50 text-amber-700 border-amber-100/50' :
-                            'bg-red-50 text-red-700 border-red-100/50'
-                          }`}>
-                            <span className={`w-1.5 h-1.5 rounded-full ${
-                              sale.status === 'completed' ? 'bg-emerald-500' :
-                              sale.status === 'suspended' ? 'bg-amber-500' : 'bg-red-500'
-                            }`} />
-                            {sale.status}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-slate-400">
-              <Receipt size={32} className="mb-2 opacity-50" />
-              <p className="text-sm">No transactions yet</p>
-            </div>
-          )}
+            {data.recentSales.length > 0 ? (
+              <div className="w-full overflow-x-auto">
+                <div className="min-w-[750px]">
+                  {/* Header Grid Row */}
+                  <div className="grid grid-cols-[2fr_1.2fr_1.2fr_0.8fr_2fr_1.3fr_1.3fr] gap-4 items-center border-b border-slate-100 pb-3 mb-2">
+                    <span className="text-xs font-semibold tracking-wider text-slate-400 uppercase">Invoice</span>
+                    <span className="text-xs font-semibold tracking-wider text-slate-400 uppercase">Cashier</span>
+                    <span className="text-xs font-semibold tracking-wider text-slate-400 uppercase">Customer</span>
+                    <span className="text-xs font-semibold tracking-wider text-slate-400 uppercase text-center">Items</span>
+                    <span className="text-xs font-semibold tracking-wider text-slate-400 uppercase">Payment</span>
+                    <span className="text-xs font-semibold tracking-wider text-slate-400 uppercase">Total</span>
+                    <span className="text-xs font-semibold tracking-wider text-slate-400 uppercase text-right">Status</span>
+                  </div>
+
+                  {/* Data Grid Rows */}
+                  <div className="divide-y divide-slate-50">
+                    {data.recentSales.map((sale: any) => {
+                      const paymentMethods = sale.payments?.map((p: any) => p.method).join(', ') || '—';
+                      const itemCount = sale.items?.reduce((s: number, i: any) => s + i.quantity, 0) || 0;
+                      return (
+                        <div key={sale.id} className="grid grid-cols-[2fr_1.2fr_1.2fr_0.8fr_2fr_1.3fr_1.3fr] gap-4 items-center py-3.5 hover:bg-slate-50/40 rounded-lg px-1 -mx-1 transition-colors group">
+                          <div>
+                            <p className="text-sm font-medium text-slate-700 group-hover:text-teal-600 transition-colors">{sale.invoiceNo}</p>
+                            <p className="text-[11px] text-slate-400 mt-0.5">{formatDateTime(sale.createdAt)}</p>
+                          </div>
+                          <span className="text-sm text-slate-600 truncate">{sale.cashier?.name || '—'}</span>
+                          <span className="text-sm text-slate-600 truncate">{sale.customer?.name || 'Walk-in'}</span>
+                          <div className="text-center">
+                            <span className="inline-flex items-center justify-center bg-slate-50 text-slate-600 text-xs font-semibold w-6 h-6 rounded-full border border-slate-100">
+                              {itemCount}
+                            </span>
+                          </div>
+                          <span className="text-sm text-slate-600 truncate capitalize">{paymentMethods.replace(/_/g, ' ')}</span>
+                          <span className="text-sm font-bold text-slate-800">{formatCurrency(sale.grandTotal)}</span>
+                          <div className="text-right">
+                            <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border ${
+                              sale.status === 'completed' ? 'bg-emerald-50 text-emerald-700 border-emerald-100/50' :
+                              sale.status === 'suspended' ? 'bg-amber-50 text-amber-700 border-amber-100/50' :
+                              'bg-red-50 text-red-700 border-red-100/50'
+                            }`}>
+                              <span className={`w-1 h-1 rounded-full mr-0.5 ${
+                                sale.status === 'completed' ? 'bg-emerald-500' :
+                                sale.status === 'suspended' ? 'bg-amber-500' : 'bg-red-500'
+                              }`} />
+                              {sale.status}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-16 text-slate-400">
+                <Receipt size={32} className="mb-2 opacity-50" />
+                <p className="text-sm">No transactions yet</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
