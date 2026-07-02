@@ -6,7 +6,7 @@ import {
   TrendingUp, ShoppingCart, Package, AlertTriangle, DollarSign,
   Users, ArrowUpRight, ArrowDownRight, CreditCard, Clock,
   Wallet, Smartphone, Building, Banknote, Star, ChevronRight,
-  BarChart3, Receipt, Plus, RefreshCw
+  BarChart3, Receipt, Plus
 } from 'lucide-react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
@@ -33,20 +33,21 @@ interface DashboardData {
   paymentBreakdown: { method: string; amount: number; color: string }[];
 }
 
-// ── Design System: Core Palette ──────────────────────────────
-// Primary brand: indigo-600 (#4f46e5)
-// Dark base:    #0c0a2e (sidebar + banner)
-// Semantic:     emerald-600 (positive), amber-500 (warning), red-500 (danger)
-// Neutral:      zinc-500 (secondary text), zinc-900 (headings)
-// ──────────────────────────────────────────────────────────────
+// ── Axpos Design System ─────────────────────────────────────
+// Primary brand:  teal-500  (#14b8a6)  — vibrant, modern
+// Accent:         emerald-500 (#10b981) — complementary green
+// Dark surfaces:  zinc-900  (#18181b)  — deep charcoal, no purple
+// Semantic:       emerald-500 (positive), amber-500 (warning), red-500 (danger)
+// Neutral:        zinc-500 (secondary text), zinc-900 (headings)
+// ─────────────────────────────────────────────────────────────
 
-const BRAND_INDIGO  = '#4f46e5';
-const BRAND_VIOLET  = '#7c3aed';
+const BRAND_TEAL    = '#14b8a6';
+const BRAND_EMERALD = '#10b981';
 const SEMANTIC_GREEN  = '#059669';
 const SEMANTIC_AMBER  = '#d97706';
 const SEMANTIC_RED    = '#ef4444';
 
-const PAYMENT_COLORS = ['#4f46e5', '#7c3aed', '#a78bfa', '#c4b5fd'];
+const PAYMENT_COLORS = ['#14b8a6', '#10b981', '#34d399', '#6ee7b7'];
 
 export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
@@ -80,36 +81,36 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6 pb-8">
       {/* ── Welcome Banner ──────────────────────────────── */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0c0a2e] via-[#131040] to-[#1a1050] p-8 text-white">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(79,70,229,0.18),transparent_50%)]" />
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-full blur-3xl" />
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 p-8 text-white">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(20,184,166,0.12),transparent_50%)]" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-teal-500/8 to-emerald-500/8 rounded-full blur-3xl" />
         <div className="relative z-10 flex items-center justify-between">
           <div>
-            <p className="text-white/60 text-sm font-medium mb-1">{greeting}</p>
-            <h1 className="text-3xl font-bold mb-2">Dashboard Overview</h1>
-            <p className="text-white/50 text-sm max-w-md">
+            <p className="text-zinc-400 text-sm font-medium mb-1">{greeting}</p>
+            <h1 className="text-3xl font-bold mb-2 text-white">Dashboard Overview</h1>
+            <p className="text-zinc-300 text-sm max-w-md">
               Track your store performance, monitor inventory levels, and stay on top of sales in real time.
             </p>
             <div className="flex gap-3 mt-4">
               <button onClick={() => window.location.href = '/pos'}
-                className="px-4 py-2 bg-indigo-500/20 hover:bg-indigo-500/30 rounded-xl text-sm font-medium flex items-center gap-2 transition-all border border-indigo-400/20">
+                className="px-4 py-2 bg-teal-500 hover:bg-teal-600 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all text-white shadow-lg shadow-teal-500/25">
                 <Plus size={16} /> New Sale
               </button>
               <button onClick={() => window.location.href = '/reports'}
-                className="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl text-sm font-medium flex items-center gap-2 transition-all border border-white/10">
+                className="px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-all border border-zinc-600 text-zinc-200 hover:bg-zinc-800 hover:border-zinc-500">
                 <BarChart3 size={16} /> View Reports
               </button>
             </div>
           </div>
           <div className="hidden lg:flex gap-6">
             <div className="text-center">
-              <div className="text-3xl font-bold">{formatCurrency(data.monthSales)}</div>
-              <div className="text-white/50 text-xs mt-1">Monthly Revenue</div>
+              <div className="text-3xl font-bold text-white">{formatCurrency(data.monthSales)}</div>
+              <div className="text-zinc-400 text-xs mt-1">Monthly Revenue</div>
             </div>
             <div className="w-px bg-white/10" />
             <div className="text-center">
-              <div className="text-3xl font-bold">{data.monthTransactions}</div>
-              <div className="text-white/50 text-xs mt-1">Monthly Orders</div>
+              <div className="text-3xl font-bold text-white">{data.monthTransactions}</div>
+              <div className="text-zinc-400 text-xs mt-1">Monthly Orders</div>
             </div>
           </div>
         </div>
@@ -124,7 +125,6 @@ export default function DashboardPage() {
             sub: `${data.todayTransactions} transactions`,
             icon: DollarSign,
             trend: data.todaySales > 0 ? 'up' : 'neutral',
-            // Revenue is the only semantic exception — green for money
             iconBg: 'bg-emerald-50',
             iconColor: 'text-emerald-600',
           },
@@ -134,39 +134,45 @@ export default function DashboardPage() {
             sub: `Tax: ${formatCurrency(data.todayTax)}`,
             icon: Receipt,
             trend: 'up',
-            iconBg: 'bg-indigo-50',
-            iconColor: 'text-indigo-600',
+            iconBg: 'bg-teal-50',
+            iconColor: 'text-teal-600',
           },
           {
             label: 'Active Products',
             value: data.totalProducts,
             sub: `${data.lowStockCount} low stock · ${data.outOfStockCount} out`,
             icon: Package,
-            trend: data.lowStockCount > 5 ? 'down' : 'up',
-            iconBg: 'bg-indigo-50',
-            iconColor: 'text-indigo-600',
+            trend: data.lowStockCount > 0 ? 'down' : 'neutral',
+            iconBg: 'bg-teal-50',
+            iconColor: 'text-teal-600',
           },
           {
             label: 'Customers',
             value: data.totalCustomers,
             sub: `${data.expiringCount} products expiring soon`,
             icon: Users,
-            trend: 'up',
-            iconBg: 'bg-indigo-50',
-            iconColor: 'text-indigo-600',
+            trend: data.expiringCount > 0 ? 'down' : 'neutral',
+            iconBg: 'bg-teal-50',
+            iconColor: 'text-teal-600',
           },
         ].map((card, i) => {
           const Icon = card.icon;
-          // Determine sub-text color based on semantic meaning
           const isWarning = card.label === 'Active Products' && data.lowStockCount > 0;
           const isExpiring = card.label === 'Customers' && data.expiringCount > 0;
           const subColor = isWarning || isExpiring
             ? 'text-amber-600 font-medium'
             : 'text-zinc-500';
 
+          // Arrow color: green only for revenue/transactions, amber for warnings, neutral gray otherwise
+          const arrowColor = card.trend === 'up'
+            ? 'text-emerald-500'
+            : card.trend === 'down'
+              ? 'text-amber-500'
+              : 'text-zinc-300';
+
           return (
             <div key={i}
-              className="group bg-white rounded-2xl p-5 shadow-sm border border-zinc-100 hover:shadow-lg hover:border-indigo-100 transition-all duration-300">
+              className="group bg-white rounded-2xl p-5 shadow-sm border border-zinc-100 hover:shadow-lg hover:border-teal-100 transition-all duration-300">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-sm font-medium text-zinc-500">{card.label}</span>
                 <div className={`p-2.5 rounded-xl ${card.iconBg} group-hover:scale-110 transition-transform`}>
@@ -175,8 +181,11 @@ export default function DashboardPage() {
               </div>
               <div className="text-2xl font-bold text-zinc-900 mb-1">{card.value}</div>
               <div className="flex items-center gap-1.5">
-                {card.trend === 'up' && <ArrowUpRight size={14} className="text-emerald-500" />}
-                {card.trend === 'down' && <ArrowDownRight size={14} className="text-amber-500" />}
+                {card.trend !== 'neutral' && (
+                  card.trend === 'up'
+                    ? <ArrowUpRight size={14} className={arrowColor} />
+                    : <ArrowDownRight size={14} className={arrowColor} />
+                )}
                 <span className={`text-xs ${subColor}`}>{card.sub}</span>
               </div>
             </div>
@@ -201,8 +210,8 @@ export default function DashboardPage() {
             <AreaChart data={data.revenueTrend}>
               <defs>
                 <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={BRAND_INDIGO} stopOpacity={0.25} />
-                  <stop offset="100%" stopColor={BRAND_INDIGO} stopOpacity={0} />
+                  <stop offset="0%" stopColor={BRAND_TEAL} stopOpacity={0.25} />
+                  <stop offset="100%" stopColor={BRAND_TEAL} stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#f4f4f5" vertical={false} />
@@ -217,9 +226,9 @@ export default function DashboardPage() {
                 formatter={(v: number) => [formatCurrency(v), 'Revenue']}
                 labelFormatter={l => new Date(l).toLocaleDateString('en', { weekday: 'long', month: 'short', day: 'numeric' })}
               />
-              <Area type="monotone" dataKey="total" stroke={BRAND_INDIGO} strokeWidth={2.5}
-                fill="url(#revenueGradient)" dot={{ r: 4, fill: BRAND_INDIGO, strokeWidth: 2, stroke: '#fff' }}
-                activeDot={{ r: 6, fill: BRAND_INDIGO, strokeWidth: 3, stroke: '#fff' }} />
+              <Area type="monotone" dataKey="total" stroke={BRAND_TEAL} strokeWidth={2.5}
+                fill="url(#revenueGradient)" dot={{ r: 4, fill: BRAND_TEAL, strokeWidth: 2, stroke: '#fff' }}
+                activeDot={{ r: 6, fill: BRAND_TEAL, strokeWidth: 3, stroke: '#fff' }} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -293,7 +302,7 @@ export default function DashboardPage() {
                       <span className="text-sm font-semibold text-zinc-700 ml-2 shrink-0">{formatCurrency(p.totalRevenue)}</span>
                     </div>
                     <div className="h-1.5 bg-zinc-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full transition-all duration-500"
+                      <div className="h-full bg-gradient-to-r from-teal-500 to-emerald-500 rounded-full transition-all duration-500"
                         style={{ width: `${barWidth}%` }} />
                     </div>
                     <p className="text-xs text-zinc-500 mt-1">{p.quantitySold} units sold</p>
@@ -314,7 +323,7 @@ export default function DashboardPage() {
               <p className="text-xs text-zinc-500 mt-0.5">Latest 8 sales</p>
             </div>
             <button onClick={() => window.location.href = '/reports'}
-              className="text-sm text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1 transition-colors">
+              className="text-sm text-teal-600 hover:text-teal-700 font-medium flex items-center gap-1 transition-colors">
               View all <ChevronRight size={16} />
             </button>
           </div>
