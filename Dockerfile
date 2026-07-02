@@ -5,7 +5,9 @@ WORKDIR /app
 COPY backend/package*.json ./
 COPY backend/prisma ./prisma
 RUN npm install
-RUN npx prisma generate
+
+# Prisma generate needs DATABASE_URL to resolve the provider during build
+RUN DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder" npx prisma generate
 
 COPY backend/ .
 
