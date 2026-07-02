@@ -36,50 +36,89 @@ export default function ExpensesPage() {
   const total = expenses.reduce((s, e) => s + parseFloat(e.amount), 0);
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold">Expenses</h1><p className="text-slate-500 text-sm">Total: {formatCurrency(total)}</p></div>
+    <div className="p-6 bg-slate-50/50 min-h-screen w-full -m-6">
+      {/* Page Header */}
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-800">Expenses</h1>
+          <p className="text-xs font-bold text-teal-600 mt-1 bg-teal-50 border border-teal-100/50 rounded-md px-2.5 py-0.5 inline-block">
+            Total: {formatCurrency(total)}
+          </p>
+        </div>
         <button onClick={() => { setEditing(null); setForm({ expenseType: 'Rent', amount: '', description: '', date: '' }); setShowForm(true); }}
-          className="px-4 py-2 bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-xl text-sm font-medium flex items-center gap-2">
+          className="inline-flex items-center gap-1.5 px-4 py-2 bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold rounded-lg shadow-sm shadow-teal-500/10 transition-colors">
           <Plus size={16} /> Add Expense
         </button>
       </div>
-      <div className="bg-white rounded-xl border border-slate-100 overflow-hidden">
-        <table className="w-full text-sm">
-          <thead><tr className="text-left text-slate-500 bg-slate-50"><th className="p-4">Date</th><th className="p-4">Type</th><th className="p-4">Description</th><th className="p-4 text-right">Amount</th><th className="p-4"></th></tr></thead>
-          <tbody>
-            {expenses.map(e => (
-              <tr key={e.id} className="border-t border-gray-50">
-                <td className="p-4 text-xs">{formatDate(e.date)}</td>
-                <td className="p-4"><span className="px-2 py-0.5 bg-slate-100 rounded-full text-xs">{e.expenseType}</span></td>
-                <td className="p-4 text-slate-500">{e.description || '-'}</td>
-                <td className="p-4 text-right font-semibold text-red-600">{formatCurrency(e.amount)}</td>
-                <td className="p-4">
-                  <div className="flex gap-1">
-                    <button onClick={() => { setEditing(e); setForm({ expenseType: e.expenseType, amount: e.amount, description: e.description || '', date: e.date?.slice(0, 10) }); setShowForm(true); }}
-                      className="p-1.5 hover:bg-teal-50 rounded-lg text-teal-600"><Edit size={16} /></button>
-                    <button onClick={() => handleDelete(e.id)} className="p-1.5 hover:bg-red-50 rounded-lg text-red-500"><Trash2 size={16} /></button>
-                  </div>
-                </td>
+
+      {/* Expenses Ledger Sheet */}
+      <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
+        <div className="w-full overflow-x-auto">
+          <table className="w-full text-left border-collapse table-auto">
+            <thead>
+              <tr className="border-b border-slate-100 bg-slate-50/70">
+                <th className="py-3.5 px-6 text-xs font-semibold tracking-wider text-slate-400 uppercase">Date</th>
+                <th className="py-3.5 px-4 text-xs font-semibold tracking-wider text-slate-400 uppercase">Type</th>
+                <th className="py-3.5 px-4 text-xs font-semibold tracking-wider text-slate-400 uppercase">Description</th>
+                <th className="py-3.5 px-4 text-xs font-semibold tracking-wider text-slate-400 uppercase text-right">Amount</th>
+                <th className="py-3.5 px-6 text-xs font-semibold tracking-wider text-slate-400 uppercase text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {expenses.map(e => (
+                <tr key={e.id} className="hover:bg-slate-50/40 transition-colors group">
+                  <td className="py-4 px-6 text-sm font-medium text-slate-600">{formatDate(e.date)}</td>
+                  <td className="py-4 px-4">
+                    <span className="inline-flex items-center text-xs font-semibold text-slate-600 bg-slate-50 border border-slate-100 px-2.5 py-0.5 rounded-full">
+                      {e.expenseType}
+                    </span>
+                  </td>
+                  <td className="py-4 px-4 text-sm text-slate-500">{e.description || '—'}</td>
+                  <td className="py-4 px-4 text-sm font-bold text-slate-800 text-right">{formatCurrency(e.amount)}</td>
+                  <td className="py-4 px-6 text-right">
+                    <div className="flex items-center justify-end gap-1">
+                      <button onClick={() => { setEditing(e); setForm({ expenseType: e.expenseType, amount: e.amount, description: e.description || '', date: e.date?.slice(0, 10) }); setShowForm(true); }}
+                        className="p-1.5 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors" title="Edit">
+                        <Edit size={15} />
+                      </button>
+                      <button onClick={() => handleDelete(e.id)}
+                        className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
+
+      {/* Form Modal */}
       {showForm && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl w-full max-w-md p-6 animate-zoom-in">
-            <h3 className="text-lg font-bold mb-4">{editing ? 'Edit' : 'Add'} Expense</h3>
+          <div className="bg-white rounded-2xl w-full max-w-md p-6 animate-zoom-in">
+            <h3 className="text-lg font-bold text-slate-800 mb-4">{editing ? 'Edit' : 'Add'} Expense</h3>
             <form onSubmit={handleSubmit} className="space-y-3">
-              <select value={form.expenseType} onChange={e => setForm({ ...form, expenseType: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm">
+              <select value={form.expenseType} onChange={e => setForm({ ...form, expenseType: e.target.value })}
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500">
                 {expenseTypes.map(t => <option key={t} value={t}>{t}</option>)}
               </select>
-              <input type="number" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} placeholder="Amount" className="w-full px-3 py-2 border rounded-lg text-sm" required />
-              <input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Description" className="w-full px-3 py-2 border rounded-lg text-sm" />
-              <input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" />
-              <div className="flex gap-2">
-                <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2 border rounded-xl text-sm">Cancel</button>
-                <button type="submit" className="flex-1 py-2 bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-xl text-sm font-semibold">{editing ? 'Update' : 'Create'}</button>
+              <input type="number" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} placeholder="Amount"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500" required />
+              <input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Description"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500" />
+              <input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })}
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500" />
+              <div className="flex gap-2 pt-1">
+                <button type="button" onClick={() => setShowForm(false)}
+                  className="flex-1 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
+                  Cancel
+                </button>
+                <button type="submit"
+                  className="flex-1 py-2.5 bg-teal-500 hover:bg-teal-600 text-white rounded-xl text-sm font-semibold shadow-sm shadow-teal-500/10 transition-colors">
+                  {editing ? 'Update' : 'Create'}
+                </button>
               </div>
             </form>
           </div>
