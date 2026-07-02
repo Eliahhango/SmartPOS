@@ -93,7 +93,7 @@ export default function ProductsPage() {
             <input type="file" accept=".xlsx,.xls" onChange={handleImport} className="hidden" />
           </label>
           <button onClick={() => { setEditing(null); setForm({ name: '', barcode: '', sku: '', categoryId: '', supplierId: '', costPrice: '', sellingPrice: '', taxClassId: '', unit: 'pcs', stockQuantity: 0, minimumStock: 0, expiryDate: '' }); setShowForm(true); }}
-            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm font-medium flex items-center gap-2">
+            className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl text-sm font-medium flex items-center gap-2">
             <Plus size={16} /> Add Product
           </button>
         </div>
@@ -102,7 +102,7 @@ export default function ProductsPage() {
       <div className="relative">
         <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
         <input type="text" value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
-          placeholder="Search by name, barcode, or SKU..." className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" />
+          placeholder="Search by name, barcode, or SKU..." className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" />
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -115,14 +115,14 @@ export default function ProductsPage() {
                 <td className="p-4 text-xs font-mono text-gray-500">{p.barcode || '-'} / {p.sku || '-'}</td>
                 <td className="p-4 text-gray-500">{p.category?.name || '-'}</td>
                 <td className="p-4">{formatCurrency(p.costPrice)}</td>
-                <td className="p-4 font-semibold text-blue-600">{formatCurrency(p.sellingPrice)}</td>
+                <td className="p-4 font-semibold text-indigo-600">{formatCurrency(p.sellingPrice)}</td>
                 <td className="p-4">
                   <span className={`${p.stockQuantity <= p.minimumStock ? 'text-red-600' : 'text-green-600'}`}>{p.stockQuantity}</span>
                 </td>
                 <td className="p-4"><span className={`px-2 py-0.5 rounded-full text-xs ${p.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>{p.status}</span></td>
                 <td className="p-4">
                   <div className="flex gap-1">
-                    <button onClick={() => handleEdit(p)} className="p-1.5 hover:bg-blue-50 rounded-lg text-blue-600"><Edit size={16} /></button>
+                    <button onClick={() => handleEdit(p)} className="p-1.5 hover:bg-indigo-50 rounded-lg text-indigo-600"><Edit size={16} /></button>
                     <button onClick={() => handleDelete(p.id)} className="p-1.5 hover:bg-red-50 rounded-lg text-red-500"><Trash2 size={16} /></button>
                   </div>
                 </td>
@@ -177,7 +177,7 @@ export default function ProductsPage() {
               <input type="date" value={form.expiryDate} onChange={e => setForm({ ...form, expiryDate: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" />
               <div className="flex gap-2 pt-2">
                 <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2 border rounded-xl text-sm">Cancel</button>
-                <button type="submit" className="flex-1 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm font-semibold">{editing ? 'Update' : 'Create'}</button>
+                <button type="submit" className="flex-1 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl text-sm font-semibold">{editing ? 'Update' : 'Create'}</button>
               </div>
             </form>
           </div>

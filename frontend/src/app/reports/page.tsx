@@ -45,7 +45,7 @@ export default function ReportsPage() {
       <div className="flex gap-2 flex-wrap">
         {(['sales', 'inventory', 'financial', 'cashier'] as const).map(t => (
           <button key={t} onClick={() => setTab(t)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium capitalize ${tab === t ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'}`}>{t}</button>
+            className={`px-4 py-2 rounded-xl text-sm font-medium capitalize ${tab === t ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600'}`}>{t}</button>
         ))}
       </div>
 
@@ -54,14 +54,14 @@ export default function ReportsPage() {
           <div className="flex gap-2">
             {['daily', 'weekly', 'monthly', 'annual'].map(p => (
               <button key={p} onClick={() => setPeriod(p)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize ${period === p ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>{p}</button>
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize ${period === p ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-600'}`}>{p}</button>
             ))}
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               { label: 'Total Sales', value: formatCurrency(salesData.totalSales), icon: DollarSign, color: 'text-green-600' },
-              { label: 'Transactions', value: salesData.totalTransactions, icon: ShoppingCart, color: 'text-blue-600' },
-              { label: 'Items Sold', value: salesData.totalItems, icon: TrendingUp, color: 'text-purple-600' },
+              { label: 'Transactions', value: salesData.totalTransactions, icon: ShoppingCart, color: 'text-indigo-600' },
+              { label: 'Items Sold', value: salesData.totalItems, icon: TrendingUp, color: 'text-violet-600' },
               { label: 'Avg. Transaction', value: formatCurrency(salesData.averageTransaction), icon: Users, color: 'text-orange-600' },
             ].map((s, i) => {
               const Icon = s.icon;
@@ -128,8 +128,8 @@ export default function ReportsPage() {
             {[
               { label: 'Revenue', value: formatCurrency(financialData.revenue), color: 'text-green-600' },
               { label: 'Expenses', value: formatCurrency(financialData.expenses), color: 'text-red-600' },
-              { label: 'Profit', value: formatCurrency(financialData.profit), color: 'text-blue-600' },
-              { label: 'Tax Collected', value: formatCurrency(financialData.taxCollected), color: 'text-purple-600' },
+              { label: 'Profit', value: formatCurrency(financialData.profit), color: 'text-indigo-600' },
+              { label: 'Tax Collected', value: formatCurrency(financialData.taxCollected), color: 'text-violet-600' },
             ].map((s, i) => (
               <div key={i} className="bg-white rounded-2xl p-4 shadow-sm border">
                 <div className="text-sm text-gray-500 mb-1">{s.label}</div>

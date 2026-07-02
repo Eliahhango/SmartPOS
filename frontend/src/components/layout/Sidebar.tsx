@@ -33,10 +33,10 @@ export default function Sidebar() {
   const filteredNav = navItems.filter(item => user && item.roles.includes(user.role));
 
   return (
-    <aside className={`${collapsed ? 'w-16' : 'w-64'} bg-[#090727] text-white flex flex-col transition-all duration-300 h-full`}>
+    <aside className={`${collapsed ? 'w-16' : 'w-64'} bg-[#0c0a2e] text-white flex flex-col transition-all duration-300 h-full`}>
       <div className="p-4 flex items-center justify-between border-b border-white/10">
         {!collapsed && (
-          <Link href="/dashboard" className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+          <Link href="/dashboard" className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
             SmartPOS
           </Link>
         )}
@@ -55,7 +55,7 @@ export default function Sidebar() {
               href={item.href}
               className={`flex items-center gap-3 px-4 py-3 mx-2 rounded-lg transition-all ${
                 isActive
-                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
+                  ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25'
                   : 'text-white/70 hover:bg-white/10 hover:text-white'
               }`}
             >

@@ -45,7 +45,7 @@ export default function InventoryPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Inventory Management</h1>
         <button onClick={() => setShowAdjust(true)}
-          className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm font-medium flex items-center gap-2">
+          className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl text-sm font-medium flex items-center gap-2">
           <Plus size={16} /> Stock Adjustment
         </button>
       </div>
@@ -53,7 +53,7 @@ export default function InventoryPage() {
       <div className="flex gap-2">
         {['stock', 'movements'].map(t => (
           <button key={t} onClick={() => setTab(t as any)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium ${tab === t ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'}`}>
+            className={`px-4 py-2 rounded-xl text-sm font-medium ${tab === t ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600'}`}>
             {t === 'stock' ? 'Current Stock' : 'Stock Movements'}
           </button>
         ))}
@@ -65,7 +65,7 @@ export default function InventoryPage() {
             <div className="relative flex-1">
               <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input type="text" value={search} onChange={e => setSearch(e.target.value)}
-                placeholder="Search products..." className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm" />
+                placeholder="Search products..." className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm" />
             </div>
             <select value={filter} onChange={e => setFilter(e.target.value)}
               className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm">
@@ -144,7 +144,7 @@ export default function InventoryPage() {
                 placeholder="Notes (required)" className="w-full px-3 py-2 border rounded-lg text-sm" rows={2} />
               <div className="flex gap-2">
                 <button type="button" onClick={() => setShowAdjust(false)} className="flex-1 py-2 border rounded-xl text-sm">Cancel</button>
-                <button type="submit" className="flex-1 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm font-semibold">Submit</button>
+                <button type="submit" className="flex-1 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl text-sm font-semibold">Submit</button>
               </div>
             </form>
           </div>

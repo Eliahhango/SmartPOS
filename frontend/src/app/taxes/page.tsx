@@ -27,7 +27,7 @@ export default function TaxesPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Tax Rates</h1>
         <button onClick={() => { setEditing(null); setForm({ name: '', ratePercent: '', isActive: true }); setShowForm(true); }}
-          className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm font-medium flex items-center gap-2">
+          className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl text-sm font-medium flex items-center gap-2">
           <Plus size={16} /> Add Tax Rate
         </button>
       </div>
@@ -37,13 +37,13 @@ export default function TaxesPage() {
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="font-semibold">{t.name}</h3>
-                <p className="text-2xl font-bold text-blue-600 mt-1">{t.ratePercent}%</p>
+                <p className="text-2xl font-bold text-indigo-600 mt-1">{t.ratePercent}%</p>
                 <span className={`text-xs px-2 py-0.5 rounded-full mt-2 inline-block ${t.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                   {t.isActive ? 'Active' : 'Inactive'}
                 </span>
               </div>
               <button onClick={() => { setEditing(t); setForm({ name: t.name, ratePercent: t.ratePercent, isActive: t.isActive }); setShowForm(true); }}
-                className="p-1.5 hover:bg-blue-50 rounded-lg text-blue-600"><Edit size={16} /></button>
+                className="p-1.5 hover:bg-indigo-50 rounded-lg text-indigo-600"><Edit size={16} /></button>
             </div>
           </div>
         ))}
@@ -61,7 +61,7 @@ export default function TaxesPage() {
               </label>
               <div className="flex gap-2">
                 <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2 border rounded-xl text-sm">Cancel</button>
-                <button type="submit" className="flex-1 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm font-semibold">{editing ? 'Update' : 'Create'}</button>
+                <button type="submit" className="flex-1 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl text-sm font-semibold">{editing ? 'Update' : 'Create'}</button>
               </div>
             </form>
           </div>

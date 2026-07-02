@@ -60,7 +60,7 @@ export default function LoginPage() {
               <div className="relative">
                 <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
                   placeholder="admin@smartpos.com" required />
               </div>
             </div>
@@ -69,12 +69,12 @@ export default function LoginPage() {
               <div className="relative">
                 <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input type="password" value={password} onChange={e => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
                   placeholder="••••••••" required />
               </div>
             </div>
             <button type="submit" disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+              className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2">
               {loading && <Loader2 size={18} className="animate-spin" />}
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
@@ -90,7 +90,7 @@ export default function LoginPage() {
           </div>
 
           <p className="text-center mt-6 text-sm text-gray-500">
-            <Link href="/" className="text-blue-600 hover:underline">← Back to home</Link>
+            <Link href="/" className="text-indigo-600 hover:underline">← Back to home</Link>
           </p>
         </div>
       </div>

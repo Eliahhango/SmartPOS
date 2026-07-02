@@ -47,7 +47,7 @@ export default function UsersPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Users</h1>
         <button onClick={() => { setEditing(null); setForm({ name: '', email: '', phone: '', password: '', role: 'cashier', branchId: '' }); setShowForm(true); }}
-          className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm font-medium flex items-center gap-2">
+          className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl text-sm font-medium flex items-center gap-2">
           <Plus size={16} /> Add User
         </button>
       </div>
@@ -65,7 +65,7 @@ export default function UsersPage() {
                 <td className="p-4">
                   <div className="flex gap-1">
                     <button onClick={() => { setEditing(u); setForm({ name: u.name, email: u.email, phone: u.phone || '', password: '', role: u.role, branchId: u.branchId || '' }); setShowForm(true); }}
-                      className="p-1.5 hover:bg-blue-50 rounded-lg text-blue-600"><Edit size={16} /></button>
+                      className="p-1.5 hover:bg-indigo-50 rounded-lg text-indigo-600"><Edit size={16} /></button>
                     <button onClick={() => toggleStatus(u)}
                       className={`p-1.5 rounded-lg ${u.status === 'active' ? 'hover:bg-red-50 text-red-500' : 'hover:bg-green-50 text-green-600'}`}>
                       {u.status === 'active' ? <UserX size={16} /> : <UserCheck size={16} />}
@@ -95,7 +95,7 @@ export default function UsersPage() {
               </select>
               <div className="flex gap-2">
                 <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2 border rounded-xl text-sm">Cancel</button>
-                <button type="submit" className="flex-1 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm font-semibold">{editing ? 'Update' : 'Create'}</button>
+                <button type="submit" className="flex-1 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl text-sm font-semibold">{editing ? 'Update' : 'Create'}</button>
               </div>
             </form>
           </div>

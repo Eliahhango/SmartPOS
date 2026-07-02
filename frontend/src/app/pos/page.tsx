@@ -171,8 +171,8 @@ export default function POSPage() {
 
   const paymentMethods = [
     { method: 'cash' as const, icon: Banknote, label: 'Cash', color: 'text-green-600' },
-    { method: 'mobile_money' as const, icon: Smartphone, label: 'Mobile Money', color: 'text-blue-600' },
-    { method: 'card' as const, icon: CreditCard, label: 'Card', color: 'text-purple-600' },
+    { method: 'mobile_money' as const, icon: Smartphone, label: 'Mobile Money', color: 'text-indigo-600' },
+    { method: 'card' as const, icon: CreditCard, label: 'Card', color: 'text-violet-600' },
     { method: 'bank' as const, icon: Building, label: 'Bank Transfer', color: 'text-orange-600' },
   ];
 
@@ -196,13 +196,13 @@ export default function POSPage() {
               <input
                 type="text" value={search} onChange={e => setSearch(e.target.value)}
                 placeholder="Search products by name, barcode, or SKU..."
-                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
               />
             </div>
             <input
               type="text" value={barcodeInput} onChange={e => setBarcodeInput(e.target.value)} onKeyDown={handleBarcode}
               placeholder="Scan barcode..."
-              className="w-48 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-mono text-sm"
+              className="w-48 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-mono text-sm"
             />
           </div>
 
@@ -210,10 +210,10 @@ export default function POSPage() {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-[500px] overflow-y-auto">
             {products.map(p => (
               <button key={p.id} onClick={() => addToCart(p)}
-                className="text-left p-3 bg-white border border-gray-100 rounded-xl hover:border-blue-300 hover:shadow-sm transition-all">
+                className="text-left p-3 bg-white border border-gray-100 rounded-xl hover:border-indigo-300 hover:shadow-sm transition-all">
                 <p className="text-sm font-medium truncate">{p.name}</p>
                 <p className="text-xs text-gray-400">{p.barcode || p.sku}</p>
-                <p className="text-sm font-bold text-blue-600 mt-1">{formatCurrency(p.sellingPrice)}</p>
+                <p className="text-sm font-bold text-indigo-600 mt-1">{formatCurrency(p.sellingPrice)}</p>
                 <p className="text-xs text-gray-400">Stock: {p.stockQuantity}</p>
               </button>
             ))}
@@ -223,7 +223,7 @@ export default function POSPage() {
         {/* Right - Cart */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-col h-[calc(100vh-180px)]">
           <div className="flex items-center gap-2 mb-4">
-            <ShoppingCart size={20} className="text-blue-600" />
+            <ShoppingCart size={20} className="text-indigo-600" />
             <h2 className="font-semibold">Current Sale</h2>
             <span className="ml-auto text-sm text-gray-400">{cart.length} items</span>
           </div>
@@ -256,7 +256,7 @@ export default function POSPage() {
                 className="w-24 text-right px-2 py-1 border border-gray-200 rounded-lg text-sm" />
             </div>
             <div className="flex justify-between text-lg font-bold pt-2 border-t">
-              <span>Total</span><span className="text-blue-600">{formatCurrency(grandTotal)}</span>
+              <span>Total</span><span className="text-indigo-600">{formatCurrency(grandTotal)}</span>
             </div>
           </div>
 
@@ -266,7 +266,7 @@ export default function POSPage() {
               <Pause size={16} /> Hold
             </button>
             <button onClick={() => setShowPayment(true)} disabled={cart.length === 0}
-              className="flex-[2] flex items-center justify-center gap-2 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm font-semibold hover:shadow-lg disabled:opacity-50 transition-all">
+              className="flex-[2] flex items-center justify-center gap-2 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl text-sm font-semibold hover:shadow-lg disabled:opacity-50 transition-all">
               <CreditCard size={16} /> Pay {formatCurrency(grandTotal)}
             </button>
           </div>
@@ -281,7 +281,7 @@ export default function POSPage() {
               <h3 className="text-lg font-bold">Payment</h3>
               <button onClick={() => { setShowPayment(false); setPayments([]); }}><X size={20} /></button>
             </div>
-            <p className="text-2xl font-bold text-blue-600 mb-4">{formatCurrency(grandTotal)}</p>
+            <p className="text-2xl font-bold text-indigo-600 mb-4">{formatCurrency(grandTotal)}</p>
 
             <div className="space-y-2 mb-4">
               {payments.map((p, i) => (
@@ -308,7 +308,7 @@ export default function POSPage() {
                 const Icon = pm.icon;
                 return (
                   <button key={pm.method} onClick={() => addPayment(pm.method)}
-                    className="flex items-center gap-2 p-3 border border-gray-200 rounded-xl hover:border-blue-300 hover:bg-blue-50 transition-all text-sm">
+                    className="flex items-center gap-2 p-3 border border-gray-200 rounded-xl hover:border-indigo-300 hover:bg-indigo-50 transition-all text-sm">
                     <Icon size={18} className={pm.color} /> {pm.label}
                   </button>
                 );
@@ -323,7 +323,7 @@ export default function POSPage() {
             </div>
 
             <button onClick={completeSale}
-              className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all">
+              className="w-full py-3 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all">
               Complete Sale
             </button>
           </div>
@@ -344,10 +344,10 @@ export default function POSPage() {
               <div className="space-y-2">
                 {suspendedSales.map((s, i) => (
                   <button key={i} onClick={() => resumeSale(i)}
-                    className="w-full text-left p-3 bg-gray-50 rounded-xl hover:bg-blue-50 transition-colors">
+                    className="w-full text-left p-3 bg-gray-50 rounded-xl hover:bg-indigo-50 transition-colors">
                     <div className="flex justify-between">
                       <span className="font-medium">{s.cart.length} items</span>
-                      <span className="text-blue-600 font-semibold">{formatCurrency(s.cart.reduce((sum: number, item: CartItem) => sum + item.total, 0))}</span>
+                      <span className="text-indigo-600 font-semibold">{formatCurrency(s.cart.reduce((sum: number, item: CartItem) => sum + item.total, 0))}</span>
                     </div>
                     <span className="text-xs text-gray-400">{new Date(s.date).toLocaleString()}</span>
                   </button>

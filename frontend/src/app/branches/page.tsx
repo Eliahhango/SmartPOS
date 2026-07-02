@@ -27,7 +27,7 @@ export default function BranchesPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Branches</h1>
         <button onClick={() => { setEditing(null); setForm({ name: '', address: '', phone: '', isMainBranch: false }); setShowForm(true); }}
-          className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm font-medium flex items-center gap-2">
+          className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl text-sm font-medium flex items-center gap-2">
           <Plus size={16} /> Add Branch
         </button>
       </div>
@@ -36,8 +36,8 @@ export default function BranchesPage() {
           <div key={b.id} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-2">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl flex items-center justify-center">
-                  <Store size={20} className="text-blue-600" />
+                <div className="w-10 h-10 bg-gradient-to-br from-indigo-100 to-violet-100 rounded-xl flex items-center justify-center">
+                  <Store size={20} className="text-indigo-600" />
                 </div>
                 <div>
                   <h3 className="font-semibold">{b.name}</h3>
@@ -45,7 +45,7 @@ export default function BranchesPage() {
                 </div>
               </div>
               <button onClick={() => { setEditing(b); setForm({ name: b.name, address: b.address || '', phone: b.phone || '', isMainBranch: b.isMainBranch }); setShowForm(true); }}
-                className="p-1.5 hover:bg-blue-50 rounded-lg text-blue-600"><Edit size={16} /></button>
+                className="p-1.5 hover:bg-indigo-50 rounded-lg text-indigo-600"><Edit size={16} /></button>
             </div>
             <div className="text-sm text-gray-500 space-y-1">
               {b.address && <p>{b.address}</p>}
@@ -69,7 +69,7 @@ export default function BranchesPage() {
               </label>
               <div className="flex gap-2">
                 <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2 border rounded-xl text-sm">Cancel</button>
-                <button type="submit" className="flex-1 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm font-semibold">{editing ? 'Update' : 'Create'}</button>
+                <button type="submit" className="flex-1 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl text-sm font-semibold">{editing ? 'Update' : 'Create'}</button>
               </div>
             </form>
           </div>

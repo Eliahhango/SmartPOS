@@ -40,20 +40,20 @@ export default function CustomersPage() {
       <div className="flex items-center justify-between">
         <div><h1 className="text-2xl font-bold">Customers</h1><p className="text-gray-500 text-sm">{total} customers</p></div>
         <button onClick={() => { setEditing(null); setForm({ name: '', phone: '', email: '', address: '' }); setShowForm(true); }}
-          className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm font-medium flex items-center gap-2">
+          className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl text-sm font-medium flex items-center gap-2">
           <Plus size={16} /> Add Customer
         </button>
       </div>
       <div className="relative">
         <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
         <input type="text" value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
-          placeholder="Search customers..." className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" />
+          placeholder="Search customers..." className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {customers.map(c => (
           <div key={c.id} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow cursor-pointer" onClick={() => viewDetails(c.id)}>
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full flex items-center justify-center text-white font-bold">{c.name[0]}</div>
+              <div className="w-10 h-10 bg-gradient-to-br from-indigo-400 to-violet-400 rounded-full flex items-center justify-center text-white font-bold">{c.name[0]}</div>
               <div>
                 <h3 className="font-semibold">{c.name}</h3>
                 <div className="flex items-center gap-1 text-xs text-yellow-500"><Star size={12} fill="currentColor" /> {c.points} pts</div>
@@ -115,7 +115,7 @@ export default function CustomersPage() {
               <input value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} placeholder="Address" className="w-full px-3 py-2 border rounded-lg text-sm" />
               <div className="flex gap-2">
                 <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2 border rounded-xl text-sm">Cancel</button>
-                <button type="submit" className="flex-1 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm font-semibold">{editing ? 'Update' : 'Create'}</button>
+                <button type="submit" className="flex-1 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl text-sm font-semibold">{editing ? 'Update' : 'Create'}</button>
               </div>
             </form>
           </div>

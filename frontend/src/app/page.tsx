@@ -29,13 +29,13 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
           <span className="text-2xl font-bold gradient-text">SmartPOS</span>
           <div className="hidden md:flex items-center gap-8">
-            <Link href="/" className="text-sm font-semibold text-blue-600">Home</Link>
+            <Link href="/" className="text-sm font-semibold text-indigo-600">Home</Link>
             <span className="text-sm text-gray-600 cursor-pointer">Features</span>
-            <Link href="/dashboard" className="text-sm text-gray-600 hover:text-blue-600">Dashboard</Link>
+            <Link href="/dashboard" className="text-sm text-gray-600 hover:text-indigo-600">Dashboard</Link>
             <span className="text-sm text-gray-600 cursor-pointer">Contact</span>
           </div>
           <div className="hidden md:block">
-            <Link href="/login" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:shadow-lg transition-shadow">
+            <Link href="/login" className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:shadow-lg transition-shadow">
               Get Started
             </Link>
           </div>
@@ -45,11 +45,11 @@ export default function LandingPage() {
         </div>
         {mobileOpen && (
           <div className="md:hidden bg-white border-t p-4 flex flex-col gap-3">
-            <Link href="/" className="text-sm font-semibold text-blue-600">Home</Link>
+            <Link href="/" className="text-sm font-semibold text-indigo-600">Home</Link>
             <span className="text-sm text-gray-600">Features</span>
             <Link href="/dashboard" className="text-sm text-gray-600">Dashboard</Link>
             <span className="text-sm text-gray-600">Contact</span>
-            <Link href="/login" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white text-center px-6 py-2.5 rounded-full text-sm font-semibold">Get Started</Link>
+            <Link href="/login" className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-center px-6 py-2.5 rounded-full text-sm font-semibold">Get Started</Link>
           </div>
         )}
       </nav>
@@ -60,7 +60,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 relative z-10">
           <div className="text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-1.5 text-sm mb-6 animate-pulse-glow">
-              <Play size={14} className="text-blue-400" fill="currentColor" />
+              <Play size={14} className="text-indigo-400" fill="currentColor" />
               Fully Integrated Point-of-sale System
             </div>
             <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
@@ -70,7 +70,7 @@ export default function LandingPage() {
               Process transactions, track inventory, and manage your entire business from a single intuitive platform trusted by over 10,000 stores worldwide.
             </p>
             <div className="flex gap-4 justify-center">
-              <Link href="/login" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-full font-semibold hover:shadow-xl transition-all hover:scale-105">
+              <Link href="/login" className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-8 py-3 rounded-full font-semibold hover:shadow-xl transition-all hover:scale-105">
                 Get Started
               </Link>
               <Link href="#features" className="border border-white/30 text-white px-8 py-3 rounded-full font-semibold hover:bg-white/10 transition-all">
@@ -110,8 +110,8 @@ export default function LandingPage() {
               { title: 'Split Payments', desc: 'Accept multiple payment methods in a single transaction — part cash, part mobile money, part card. Full flexibility.' },
             ].map((f, i) => (
               <div key={i} className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow animate-fade-in-up" style={{ animationDelay: `${i * 100}ms` }}>
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl flex items-center justify-center mb-4">
-                  <Star size={24} className="text-blue-600" />
+                <div className="w-12 h-12 bg-gradient-to-br from-indigo-100 to-violet-100 rounded-xl flex items-center justify-center mb-4">
+                  <Star size={24} className="text-indigo-600" />
                 </div>
                 <h3 className="font-bold text-lg mb-2">{f.title}</h3>
                 <p className="text-gray-500 text-sm">{f.desc}</p>
@@ -129,7 +129,7 @@ export default function LandingPage() {
             {tabs.map(tab => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                 className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${
-                  activeTab === tab.id ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  activeTab === tab.id ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}>
                 {tab.title}
               </button>
@@ -137,7 +137,7 @@ export default function LandingPage() {
           </div>
           {tabs.filter(t => t.id === activeTab).map(tab => (
             <div key={tab.id} className="grid md:grid-cols-2 gap-8 items-center animate-fade-in-up">
-              <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl h-80 flex items-center justify-center">
+              <div className="bg-gradient-to-br from-indigo-50 to-violet-50 rounded-2xl h-80 flex items-center justify-center">
                 <div className="text-6xl">🏪</div>
               </div>
               <div>
@@ -151,7 +151,7 @@ export default function LandingPage() {
                     </div>
                   ))}
                 </div>
-                <Link href="/login" className="inline-flex items-center gap-2 mt-6 text-blue-600 font-semibold hover:gap-3 transition-all">
+                <Link href="/login" className="inline-flex items-center gap-2 mt-6 text-indigo-600 font-semibold hover:gap-3 transition-all">
                   Learn More <ArrowRight size={16} />
                 </Link>
               </div>
@@ -174,7 +174,7 @@ export default function LandingPage() {
                 <div className="flex gap-1 mb-3">{Array(5).fill(0).map((_, j) => <Star key={j} size={16} className="text-yellow-400" fill="currentColor" />)}</div>
                 <p className="text-gray-600 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full" />
+                  <div className="w-10 h-10 bg-gradient-to-br from-indigo-400 to-violet-400 rounded-full" />
                   <div><p className="font-semibold text-sm">{t.name}</p><p className="text-gray-400 text-xs">{t.role}</p></div>
                 </div>
               </div>
@@ -193,7 +193,7 @@ export default function LandingPage() {
               <div key={i} className="border border-gray-200 rounded-xl overflow-hidden">
                 <button onClick={() => setOpenFaq(openFaq === i ? -1 : i)} className="w-full flex items-center justify-between p-5 text-left font-semibold hover:bg-gray-50 transition-colors">
                   {faq.q}
-                  {openFaq === i ? <ChevronUp size={20} className="text-blue-600" /> : <ChevronDown size={20} />}
+                  {openFaq === i ? <ChevronUp size={20} className="text-indigo-600" /> : <ChevronDown size={20} />}
                 </button>
                 {openFaq === i && <div className="px-5 pb-5 text-gray-600 text-sm animate-fade-in-up">{faq.a}</div>}
               </div>
@@ -201,7 +201,7 @@ export default function LandingPage() {
           </div>
           <div className="text-center mt-8 text-gray-500 text-sm">
             Have a question we didn&apos;t cover? Reach our support team at{' '}
-            <span className="text-blue-600 font-semibold">support@smartpos.com</span>
+            <span className="text-indigo-600 font-semibold">support@smartpos.com</span>
           </div>
         </div>
       </section>
@@ -215,7 +215,7 @@ export default function LandingPage() {
             <div className="flex items-center gap-2 text-white/80"><Phone size={16} /> +255 385 502 5004</div>
             <div className="flex items-center gap-2 text-white/80"><Mail size={16} /> contact@smartpos.com</div>
           </div>
-          <Link href="/login" className="inline-block mt-8 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 py-3.5 rounded-full font-semibold hover:shadow-xl transition-all hover:scale-105">
+          <Link href="/login" className="inline-block mt-8 bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-10 py-3.5 rounded-full font-semibold hover:shadow-xl transition-all hover:scale-105">
             Get Started Free
           </Link>
         </div>
