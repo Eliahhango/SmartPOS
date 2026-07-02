@@ -222,7 +222,7 @@ export default function POSPage() {
               ))}
             </div>
           ) : (
-            <div className="border-2 border-dashed border-slate-200 rounded-2xl h-[500px] flex flex-col items-center justify-center p-6 bg-white/50">
+            <div className="border-2 border-dashed border-slate-200 rounded-xl h-[500px] flex flex-col items-center justify-center p-6 bg-slate-50/50">
               <ShoppingCart size={32} className="text-slate-300 mb-3" />
               <p className="text-sm font-medium text-slate-400">Search for products to display them here.</p>
             </div>
@@ -291,7 +291,7 @@ export default function POSPage() {
             </div>
 
             {/* Action Buttons */}
-            <div className="grid grid-cols-3 gap-2.5 pt-1">
+            <div className="grid grid-cols-3 gap-2.5 mt-4 pt-2">
               <button onClick={suspendSale} disabled={cart.length === 0}
                 className="col-span-1 py-3 border border-slate-200 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all flex items-center justify-center gap-1 disabled:opacity-50">
                 <Pause size={16} /> Hold
