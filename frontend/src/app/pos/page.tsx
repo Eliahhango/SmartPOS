@@ -40,17 +40,22 @@ export default function POSPage() {
   const handlePrint = useReactToPrint({ contentRef: receiptRef });
 
   const fetchProducts = useCallback(async (query: string) => {
-    if (!query) { setProducts([]); return; }
     try {
-      const { data } = await api.get('/products', { params: { search: query, limit: 20 } });
+      const params: any = { limit: 50 };
+      if (query) params.search = query;
+      const { data } = await api.get('/products', { params });
       setProducts(data.products || []);
     } catch {}
   }, []);
 
+  // Load initial products on mount; refine on search
+  useEffect(() => { fetchProducts(''); }, [fetchProducts]);
+
   useEffect(() => {
+    if (!search && products.length > 0) return; // already loaded
     const timer = setTimeout(() => fetchProducts(search), 300);
     return () => clearTimeout(timer);
-  }, [search, fetchProducts]);
+  }, [search]);
 
   const handleBarcode = async (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -224,7 +229,7 @@ export default function POSPage() {
           ) : (
             <div className="border-2 border-dashed border-slate-200 rounded-xl min-h-[300px] sm:min-h-[500px] flex flex-col items-center justify-center p-6 bg-slate-50/50">
               <ShoppingCart size={32} className="text-slate-300 mb-3 shrink-0" />
-              <p className="text-sm font-medium text-slate-400 text-center">Search for products to display them here.</p>
+              <p className="text-sm font-medium text-slate-400 text-center">No products found. Try a different search term.</p>
             </div>
           )}
         </div>

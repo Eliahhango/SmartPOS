@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
-import { Plus, Edit } from 'lucide-react';
+import { Plus, Edit, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function TaxesPage() {
@@ -20,6 +20,17 @@ export default function TaxesPage() {
       else { await api.post('/taxes', form); toast.success('Created'); }
       setShowForm(false); setEditing(null); setForm({ name: '', ratePercent: '', isActive: true }); fetch();
     } catch (err: any) { toast.error(err.response?.data?.error || 'Failed'); }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm('Delete this tax rate?')) return;
+    try {
+      await api.delete(`/taxes/${id}`);
+      toast.success('Tax rate deleted');
+      fetch();
+    } catch (err: any) {
+      toast.error(err.response?.data?.error || 'Failed to delete');
+    }
   };
 
   return (
@@ -42,8 +53,12 @@ export default function TaxesPage() {
                   {t.isActive ? 'Active' : 'Inactive'}
                 </span>
               </div>
-              <button onClick={() => { setEditing(t); setForm({ name: t.name, ratePercent: t.ratePercent, isActive: t.isActive }); setShowForm(true); }}
-                className="p-1.5 hover:bg-teal-50 rounded-lg text-teal-600"><Edit size={16} /></button>
+              <div className="flex items-center gap-1">
+                <button onClick={() => { setEditing(t); setForm({ name: t.name, ratePercent: t.ratePercent, isActive: t.isActive }); setShowForm(true); }}
+                  className="p-1.5 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors" title="Edit"><Edit size={15} /></button>
+                <button onClick={() => handleDelete(t.id)}
+                  className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Delete"><Trash2 size={15} /></button>
+              </div>
             </div>
           </div>
         ))}

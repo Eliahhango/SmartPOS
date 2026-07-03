@@ -48,4 +48,27 @@ router.put('/:id', authorize('admin'), async (req, res) => {
   }
 });
 
+// DELETE /api/taxes/:id
+router.delete('/:id', authorize('admin'), async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+
+    // Check if any products reference this tax rate
+    const productCount = await prisma.product.count({ where: { taxClassId: id } });
+    if (productCount > 0) {
+      return res.status(409).json({
+        error: `Cannot delete tax rate: ${productCount} product(s) still use it. Set them to a different tax rate first, or deactivate this rate instead.`
+      });
+    }
+
+    await prisma.taxRate.delete({ where: { id } });
+    res.json({ message: 'Tax rate deleted' });
+  } catch (error) {
+    if (error.code === 'P2025') {
+      return res.status(404).json({ error: 'Tax rate not found' });
+    }
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;
