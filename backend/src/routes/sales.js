@@ -92,7 +92,13 @@ router.post('/', async (req, res) => {
             }))
           }
         },
-        include: { items: { include: { product: true } }, payments: true, customer: true, cashier: true }
+        include: {
+          items: { include: { product: { include: { taxClass: true } } } },
+          payments: true,
+          customer: true,
+          cashier: { include: { branch: true } },
+          branch: true
+        }
       });
 
       // Update stock and create stock movements

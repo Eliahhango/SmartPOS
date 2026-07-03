@@ -395,38 +395,153 @@ export default function POSPage() {
         </div>
       )}
 
-      {/* Receipt (hidden, for printing) */}
-      <div ref={receiptRef} className="hidden print:block p-4 text-sm" style={{ width: '80mm' }}>
+      {/* ── Professional Receipt (hidden, thermal 80mm) ── */}
+      <div ref={receiptRef} className="hidden print:block" style={{ width: '80mm', fontFamily: '"Courier New", "Lucida Console", monospace', fontSize: '10px', lineHeight: '1.35', color: '#000', padding: '4mm 3mm' }}>
         {lastSale && (
           <>
-            <div className="text-center mb-2">
-              <p className="font-bold">SmartPOS Supermarket</p>
-              <p className="text-xs">123 Main Street, Dar es Salaam</p>
-              <p className="text-xs">+255 123 456 789</p>
+            {/* Store Header */}
+            <div style={{ textAlign: 'center', marginBottom: '3mm', paddingBottom: '2mm', borderBottom: '1px dashed #000' }}>
+              <div style={{ fontSize: '16px', fontWeight: 'bold', letterSpacing: '0.5px' }}>SMARTPOS</div>
+              <div style={{ fontSize: '9px', marginTop: '0.5mm' }}>{lastSale.branch?.name || 'Supermarket'}</div>
+              <div style={{ fontSize: '8px' }}>123 Main Street, Dar es Salaam</div>
+              <div style={{ fontSize: '8px' }}>Tel: +255 123 456 789 | TIN: 123-456-789</div>
             </div>
-            <div className="border-t border-b border-dashed py-1 mb-2 text-xs">
-              <p>Receipt: {lastSale.invoiceNo}</p>
-              <p>Date: {new Date(lastSale.createdAt).toLocaleString()}</p>
-              <p>Cashier: {lastSale.cashier?.name}</p>
-            </div>
-            <table className="w-full text-xs mb-2">
-              <thead><tr className="border-b border-dashed"><th className="text-left">Item</th><th className="text-right">Qty</th><th className="text-right">Total</th></tr></thead>
+
+            {/* Receipt Metadata */}
+            <table style={{ width: '100%', fontSize: '8.5px', marginBottom: '2mm' }}>
               <tbody>
-                {lastSale.items?.map((item: any) => (
-                  <tr key={item.id}><td>{item.product?.name}</td><td className="text-right">{item.quantity}</td><td className="text-right">{formatCurrency(item.total)}</td></tr>
-                ))}
+                <tr><td style={{ width: '30%' }}>Receipt:</td><td style={{ fontWeight: 'bold' }}>{lastSale.invoiceNo}</td></tr>
+                <tr><td>Date:</td><td>{new Date(lastSale.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</td></tr>
+                <tr><td>Time:</td><td>{new Date(lastSale.createdAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</td></tr>
+                <tr><td>Cashier:</td><td>{lastSale.cashier?.name || '—'}</td></tr>
+                {lastSale.cashier?.branch?.name && (
+                  <tr><td>Branch:</td><td>{lastSale.cashier.branch.name}</td></tr>
+                )}
               </tbody>
             </table>
-            <div className="border-t border-dashed pt-1 text-xs space-y-0.5">
-              <div className="flex justify-between"><span>Subtotal</span><span>{formatCurrency(lastSale.subtotal)}</span></div>
-              <div className="flex justify-between"><span>Tax</span><span>{formatCurrency(lastSale.taxTotal)}</span></div>
-              <div className="flex justify-between"><span>Discount</span><span>{formatCurrency(lastSale.discount)}</span></div>
-              <div className="flex justify-between font-bold"><span>TOTAL</span><span>{formatCurrency(lastSale.grandTotal)}</span></div>
+
+            {/* Customer Section */}
+            {lastSale.customer && (
+              <div style={{ borderTop: '1px dashed #000', borderBottom: '1px dashed #000', padding: '1.5mm 0', marginBottom: '2mm', fontSize: '8.5px' }}>
+                <table style={{ width: '100%' }}>
+                  <tbody>
+                    <tr><td style={{ width: '30%' }}>Customer:</td><td style={{ fontWeight: 'bold' }}>{lastSale.customer.name}</td></tr>
+                    {lastSale.customer.phone && <tr><td>Phone:</td><td>{lastSale.customer.phone}</td></tr>}
+                    <tr><td>Points:</td><td>{lastSale.customer.points} pts</td></tr>
+                    <tr><td>Earned:</td><td>{Math.floor(lastSale.grandTotal / 1000)} pts</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* Items Header */}
+            <div style={{ borderTop: '1px dashed #000', borderBottom: '1px dashed #000', padding: '1mm 0', marginBottom: '1mm', fontSize: '8.5px', fontWeight: 'bold' }}>
+              <table style={{ width: '100%' }}>
+                <thead>
+                  <tr>
+                    <td style={{ width: '50%' }}>ITEM</td>
+                    <td style={{ width: '15%', textAlign: 'right' }}>QTY</td>
+                    <td style={{ width: '15%', textAlign: 'right' }}>TAX</td>
+                    <td style={{ width: '20%', textAlign: 'right' }}>TOTAL</td>
+                  </tr>
+                </thead>
+              </table>
             </div>
-            <div className="text-xs mt-1">
-              <p>Payment: {lastSale.payments?.map((p: any) => `${p.method} ${formatCurrency(p.amount)}`).join(', ')}</p>
+
+            {/* Line Items */}
+            <div style={{ marginBottom: '2mm', fontSize: '8px' }}>
+              {lastSale.items?.map((item: any, idx: number) => (
+                <div key={item.id} style={{ marginBottom: '1mm' }}>
+                  <table style={{ width: '100%' }}>
+                    <tbody>
+                      <tr>
+                        <td style={{ width: '50%', fontWeight: 'bold', fontSize: '8.5px' }}>{item.product?.name || 'Unknown'}</td>
+                        <td style={{ width: '15%', textAlign: 'right' }}>{item.quantity}</td>
+                        <td style={{ width: '15%', textAlign: 'right' }}>{item.taxRateApplied > 0 ? `${item.taxRateApplied}%` : '—'}</td>
+                        <td style={{ width: '20%', textAlign: 'right', fontWeight: 'bold' }}>{formatCurrency(item.total)}</td>
+                      </tr>
+                      <tr>
+                        <td style={{ color: '#555', fontSize: '7.5px' }}>
+                          @ {formatCurrency(item.price)} × {item.quantity}
+                          {item.product?.barcode ? `  [${item.product.barcode}]` : ''}
+                        </td>
+                        <td colSpan={3} style={{ textAlign: 'right', color: '#555', fontSize: '7.5px' }}>
+                          {item.product?.taxClass?.name ? `Tax: ${item.product.taxClass.name}` : ''}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              ))}
             </div>
-            <p className="text-center text-xs mt-3">Thank You! Please come again.</p>
+
+            {/* Totals Section */}
+            <div style={{ borderTop: '1px dashed #000', padding: '1.5mm 0', marginBottom: '2mm', fontSize: '9px' }}>
+              <table style={{ width: '100%' }}>
+                <tbody>
+                  <tr>
+                    <td style={{ width: '60%' }}>Subtotal</td>
+                    <td style={{ width: '40%', textAlign: 'right' }}>{formatCurrency(lastSale.subtotal)}</td>
+                  </tr>
+                  <tr>
+                    <td>Tax ({lastSale.taxTotal > 0 ? `${((lastSale.taxTotal / (lastSale.subtotal + lastSale.taxTotal)) * 100).toFixed(1)}%` : '0%'})</td>
+                    <td style={{ textAlign: 'right' }}>{formatCurrency(lastSale.taxTotal)}</td>
+                  </tr>
+                  {lastSale.discount > 0 && (
+                    <tr>
+                      <td>Discount</td>
+                      <td style={{ textAlign: 'right' }}>-{formatCurrency(lastSale.discount)}</td>
+                    </tr>
+                  )}
+                  <tr style={{ borderTop: '1px solid #000', fontWeight: 'bold', fontSize: '11px' }}>
+                    <td style={{ paddingTop: '0.5mm' }}>TOTAL DUE</td>
+                    <td style={{ textAlign: 'right', paddingTop: '0.5mm' }}>{formatCurrency(lastSale.grandTotal)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* Payment Breakdown */}
+            <div style={{ borderTop: '1px dashed #000', padding: '1.5mm 0', marginBottom: '2mm', fontSize: '8.5px' }}>
+              <div style={{ fontWeight: 'bold', marginBottom: '0.5mm' }}>PAYMENT</div>
+              <table style={{ width: '100%' }}>
+                <tbody>
+                  {lastSale.payments?.map((p: any, i: number) => (
+                    <tr key={i}>
+                      <td style={{ width: '60%', textTransform: 'capitalize' }}>
+                        {p.method.replace(/_/g, ' ')}
+                        {p.referenceNo ? ` (${p.referenceNo})` : ''}
+                      </td>
+                      <td style={{ width: '40%', textAlign: 'right' }}>{formatCurrency(p.amount)}</td>
+                    </tr>
+                  ))}
+                  <tr style={{ borderTop: '1px dashed #000' }}>
+                    <td style={{ paddingTop: '0.5mm' }}>Amount Paid</td>
+                    <td style={{ textAlign: 'right', paddingTop: '0.5mm', fontWeight: 'bold' }}>{formatCurrency(lastSale.payments?.reduce((s: number, p: any) => s + p.amount, 0) || 0)}</td>
+                  </tr>
+                  {lastSale.payments?.some((p: any) => p.changeGiven > 0) && (
+                    <tr>
+                      <td>Change Given</td>
+                      <td style={{ textAlign: 'right' }}>{formatCurrency(lastSale.payments?.reduce((s: number, p: any) => s + (p.changeGiven || 0), 0) || 0)}</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Footer */}
+            <div style={{ borderTop: '1px dashed #000', paddingTop: '2mm', textAlign: 'center', fontSize: '8px' }}>
+              {lastSale.customer && (
+                <p style={{ marginBottom: '0.5mm' }}>
+                  Points earned this transaction: <strong>{Math.floor(lastSale.grandTotal / 1000)} pts</strong>
+                </p>
+              )}
+              <p style={{ fontWeight: 'bold', fontSize: '9px', margin: '1mm 0' }}>Thank you for shopping with us!</p>
+              <p style={{ marginBottom: '0.5mm' }}>Returns accepted within 7 days</p>
+              <p style={{ marginBottom: '0.5mm' }}>with original receipt.</p>
+              <p style={{ marginTop: '1mm', fontSize: '7px', color: '#555' }}>{lastSale.invoiceNo}</p>
+              <p style={{ fontSize: '7px', color: '#555' }}>Powered by SmartPOS</p>
+            </div>
           </>
         )}
       </div>
