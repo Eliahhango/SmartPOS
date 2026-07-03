@@ -16,7 +16,7 @@ const { authenticate } = require('../middleware/auth');
 const ipTimestamps = new Map();    // key: realIP → [timestamp, ...]
 const emailTimestamps = new Map(); // key: normalized-email → [timestamp, ...]
 const WINDOW_MS = 60_000;
-const MAX_ATTEMPTS = 5;
+const MAX_ATTEMPTS = 3;
 
 // Periodic cleanup to prevent memory leaks
 setInterval(() => {
