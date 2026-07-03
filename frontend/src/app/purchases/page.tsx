@@ -153,14 +153,16 @@ export default function PurchasesPage() {
           ))}
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-slate-100 shadow-sm h-[400px] flex flex-col items-center justify-center">
-          <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4 border border-slate-100 text-slate-300">
+        <div className="flex flex-col items-center justify-center text-center p-6 sm:p-8 w-full min-h-[300px] bg-white rounded-xl border border-slate-100 shadow-sm">
+          <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 text-slate-300">
             <Package size={28} />
           </div>
-          <h3 className="text-slate-800 font-semibold">No Purchase Orders</h3>
-          <p className="text-slate-400 text-sm mt-1">Create your first purchase order to track inventory.</p>
+          <h3 className="text-slate-800 font-semibold mt-4">No Purchase Orders</h3>
+          <p className="text-xs sm:text-sm text-slate-400 max-w-sm mt-2 mb-6 block whitespace-normal break-words">
+            Create your first purchase order to track inventory.
+          </p>
           <button onClick={() => setShowForm(true)}
-            className="mt-6 px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white text-sm font-medium rounded-lg transition-colors">
+            className="px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white text-sm font-medium rounded-lg transition-colors">
             Create Order
           </button>
         </div>
