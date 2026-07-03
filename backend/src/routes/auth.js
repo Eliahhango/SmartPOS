@@ -17,7 +17,9 @@ setInterval(() => {
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    const ip = req.ip || req.connection.remoteAddress || 'unknown';
+    // Get client IP from x-forwarded-for (Railway proxy) or fallback
+    const forwarded = req.headers['x-forwarded-for'];
+    const ip = (forwarded ? forwarded.split(',')[0].trim() : null) || req.ip || req.socket.remoteAddress || 'unknown';
     const rateKey = `${ip}:${email || 'unknown'}`;
     const now = Date.now();
 
