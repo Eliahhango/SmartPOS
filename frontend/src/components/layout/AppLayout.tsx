@@ -4,11 +4,13 @@ import { AuthProvider, useAuth } from '@/lib/auth';
 import Sidebar from './Sidebar';
 import { usePathname } from 'next/navigation';
 import { Toaster } from 'react-hot-toast';
+import { Menu } from 'lucide-react';
+import { useState } from 'react';
 
 function Footer() {
   return (
     <footer className="bg-white border-t border-slate-100">
-      <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 font-semibold tracking-wide uppercase">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 font-semibold tracking-wide uppercase">
         <p className="text-center sm:text-left leading-relaxed">
           &copy; {new Date().getFullYear()} SmartPOS Technologies Inc. All rights reserved.
         </p>
@@ -25,6 +27,7 @@ function AppContent({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const pathname = usePathname();
   const isAuthPage = pathname === '/login' || pathname === '/';
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   if (loading) {
     return (
@@ -50,11 +53,34 @@ function AppContent({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex bg-gray-50 min-h-screen">
-      <div className="sticky top-0 h-screen shrink-0">
+      {/* Mobile sidebar overlay */}
+      <Sidebar
+        mobileOpen={mobileSidebarOpen}
+        onMobileToggle={() => setMobileSidebarOpen(false)}
+      />
+
+      {/* Desktop sidebar */}
+      <div className="hidden md:block sticky top-0 h-screen shrink-0">
         <Sidebar />
       </div>
+
       <main className="flex-1 min-w-0 flex flex-col">
-        <div className="flex-1 p-6 max-w-[1600px] mx-auto w-full">
+        {/* Mobile top bar with hamburger */}
+        <div className="sticky top-0 z-30 md:hidden bg-white border-b border-slate-200 px-4 h-14 flex items-center gap-3">
+          <button
+            onClick={() => setMobileSidebarOpen(true)}
+            className="p-2 -ml-2 hover:bg-slate-100 rounded-lg transition-colors"
+            aria-label="Open navigation menu"
+          >
+            <Menu size={20} className="text-slate-600" />
+          </button>
+          <Link href="/dashboard" className="text-lg font-bold bg-gradient-to-r from-teal-500 to-emerald-500 bg-clip-text text-transparent">
+            SmartPOS
+          </Link>
+        </div>
+        {/* Spacer for fixed top bar on mobile */}
+        <div className="md:hidden h-0" />
+        <div className="flex-1 p-4 sm:p-6 max-w-[1600px] mx-auto w-full">
           {children}
         </div>
         <Footer />

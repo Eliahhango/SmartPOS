@@ -5,9 +5,9 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, ShoppingCart, Package, Tags, Truck, Users,
   ClipboardList, DollarSign, BarChart3, Settings, LogOut,
-  ChevronLeft, ChevronRight, Store, Receipt, Shield
+  ChevronLeft, ChevronRight, Store, Receipt, Shield, X, Menu
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['admin', 'manager', 'cashier', 'stock_officer'] },
@@ -25,24 +25,44 @@ const navItems = [
   { href: '/branches', label: 'Branches', icon: Store, roles: ['admin'] },
 ];
 
-export default function Sidebar() {
+interface SidebarProps {
+  mobileOpen?: boolean;
+  onMobileToggle?: () => void;
+}
+
+export default function Sidebar({ mobileOpen = false, onMobileToggle }: SidebarProps) {
   const { user, logout } = useAuth();
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
 
   const filteredNav = navItems.filter(item => user && item.roles.includes(user.role));
 
-  return (
-    <aside className={`${collapsed ? 'w-16' : 'w-64'} bg-zinc-900 text-white flex flex-col transition-all duration-300 h-full`}>
+  // Close mobile sidebar on route change
+  useEffect(() => {
+    if (mobileOpen && onMobileToggle) onMobileToggle();
+  }, [pathname]);
+
+  const handleNavClick = useCallback(() => {
+    if (mobileOpen && onMobileToggle) onMobileToggle();
+  }, [mobileOpen, onMobileToggle]);
+
+  const sidebarContent = (
+    <div className="flex flex-col h-full">
       <div className="p-4 flex items-center justify-between border-b border-white/10">
         {!collapsed && (
-          <Link href="/dashboard" className="text-xl font-bold bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent">
+          <Link href="/dashboard" onClick={handleNavClick} className="text-xl font-bold bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent">
             SmartPOS
           </Link>
         )}
-        <button onClick={() => setCollapsed(!collapsed)} className="p-1 hover:bg-white/10 rounded">
+        <button onClick={() => setCollapsed(!collapsed)} className="p-1 hover:bg-white/10 rounded hidden md:block">
           {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
         </button>
+        {/* Close button for mobile overlay */}
+        {mobileOpen && (
+          <button onClick={onMobileToggle} className="p-1 hover:bg-white/10 rounded md:hidden">
+            <X size={20} />
+          </button>
+        )}
       </div>
 
       <nav className="flex-1 py-4 overflow-y-auto">
@@ -53,6 +73,7 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={handleNavClick}
               className={`flex items-center gap-3 px-4 py-3 mx-2 rounded-lg transition-all ${
                 isActive
                   ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-lg shadow-teal-500/25 [&_svg]:text-white'
@@ -81,6 +102,27 @@ export default function Sidebar() {
           {!collapsed && 'Logout'}
         </button>
       </div>
-    </aside>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <aside className={`hidden md:flex ${collapsed ? 'w-16' : 'w-64'} bg-zinc-900 text-white flex-col transition-all duration-300 h-full shrink-0`}>
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onMobileToggle} />
+          {/* Drawer */}
+          <aside className="relative w-72 max-w-[85vw] h-full bg-zinc-900 text-white flex flex-col shadow-2xl">
+            {sidebarContent}
+          </aside>
+        </div>
+      )}
+    </>
   );
 }

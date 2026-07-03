@@ -29,9 +29,9 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-slate-50 p-4 font-sans selection:bg-teal-500/10 selection:text-teal-600">
-      {/* Decorative Brand Background Ambient Glows */}
-      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] rounded-full bg-teal-500/5 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full bg-slate-400/10 blur-[100px] pointer-events-none" />
+      {/* Decorative Brand Background Ambient Glows — hidden on mobile */}
+      <div className="hidden sm:block absolute top-0 left-1/4 w-[500px] h-[500px] rounded-full bg-teal-500/5 blur-[120px] pointer-events-none" />
+      <div className="hidden sm:block absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full bg-slate-400/10 blur-[100px] pointer-events-none" />
 
       {/* Main Professional Login Card */}
       <div className="relative z-10 w-full max-w-md bg-white border border-slate-200/60 rounded-2xl shadow-xl shadow-slate-200/40 p-8 md:p-10">
@@ -105,18 +105,18 @@ export default function LoginPage() {
             <span className="block font-bold text-slate-500 uppercase tracking-wide mb-2.5 text-[10px]">
               Demo Accounts:
             </span>
-            <div className="space-y-1.5 text-slate-500">
-              <div className="flex justify-between items-center">
+            <div className="space-y-2 text-slate-500">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5">
                 <span className="font-semibold text-slate-700">Administrator:</span>
-                <span className="font-mono text-slate-400">admin@smartpos.com</span>
+                <span className="font-mono text-slate-400 break-all">admin@smartpos.com</span>
               </div>
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5">
                 <span className="font-semibold text-slate-700">Store Manager:</span>
-                <span className="font-mono text-slate-400">manager@smartpos.com</span>
+                <span className="font-mono text-slate-400 break-all">manager@smartpos.com</span>
               </div>
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5">
                 <span className="font-semibold text-slate-700">Store Cashier:</span>
-                <span className="font-mono text-slate-400">cashier@smartpos.com</span>
+                <span className="font-mono text-slate-400 break-all">cashier@smartpos.com</span>
               </div>
             </div>
           </div>

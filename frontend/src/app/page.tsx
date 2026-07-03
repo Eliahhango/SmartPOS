@@ -36,7 +36,7 @@ export default function HomePage() {
       
       {/* 1. Global Enterprise Navigation Header */}
       <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-slate-200/50 transition-all">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-xl font-black tracking-tight text-slate-900">
               Smart<span className="text-teal-500">POS</span>
@@ -62,11 +62,11 @@ export default function HomePage() {
 
       {/* 2. Asymmetric Conversion Hero Area */}
       <section className="relative overflow-hidden pt-20 pb-16 lg:pt-32 lg:pb-24 border-b border-slate-100 bg-white">
-        {/* Subtle Brand Background Glow Gradients */}
-        <div className="absolute top-0 right-1/4 w-[600px] h-[600px] rounded-full bg-teal-500/5 blur-[140px] pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 w-[500px] h-[500px] rounded-full bg-slate-200 blur-[120px] pointer-events-none" />
+        {/* Subtle Brand Background Glow Gradients — hidden on mobile to avoid overflow */}
+        <div className="absolute top-0 right-1/4 w-[300px] sm:w-[600px] h-[300px] sm:h-[600px] rounded-full bg-teal-500/5 blur-[100px] sm:blur-[140px] pointer-events-none" />
+        <div className="absolute bottom-0 left-1/3 w-[250px] sm:w-[500px] h-[250px] sm:h-[500px] rounded-full bg-slate-200 blur-[80px] sm:blur-[120px] pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto px-6 relative z-10 text-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 text-center">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-teal-50 text-teal-700 border border-teal-200/40 mb-6 uppercase tracking-wider">
             Next-Gen Point of Sale Ecosystem
           </div>
@@ -98,7 +98,7 @@ export default function HomePage() {
 
       {/* 3. Micro Validation Performance Metrics Row */}
       <section id="metrics" className="bg-slate-100/60 py-10 border-b border-slate-200/30">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
               <span className="block text-2xl lg:text-3xl font-black text-slate-800 tracking-tight">99.98%</span>
@@ -121,10 +121,10 @@ export default function HomePage() {
       </section>
 
       {/* 4. Core System Capability Grid */}
-      <section id="features" className="max-w-7xl mx-auto px-6 py-20 lg:py-28">
-        <div className="text-center max-w-xl mx-auto mb-16">
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Engineered for Modern Enterprise Retail</h2>
-          <p className="text-sm text-slate-400 mt-2 font-medium">Everything you need to handle high-frequency checkout operations smoothly and safely.</p>
+      <section id="features" className="max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-20 lg:py-28">
+        <div className="text-center max-w-xl mx-auto mb-12 sm:mb-16">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 tracking-tight px-2">Engineered for Modern Enterprise Retail</h2>
+          <p className="text-xs sm:text-sm text-slate-400 mt-2 font-medium px-4">Everything you need to handle high-frequency checkout operations smoothly and safely.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
