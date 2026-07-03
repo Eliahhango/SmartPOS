@@ -5,16 +5,18 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Seeding SmartPOS database...');
 
-  // Create main branch
-  const branch = await prisma.branch.create({
-    data: {
+  // Create main branch (upsert to prevent duplicates on re-seed)
+  const branch = await prisma.branch.upsert({
+    where: { name: 'Main Store' },
+    update: {},
+    create: {
       name: 'Main Store',
       address: '123 Main Street, Dar es Salaam',
       phone: '+255 123 456 789',
       isMainBranch: true
     }
   });
-  console.log('Branch created:', branch.name);
+  console.log('Branch:', branch.name, branch.id);
 
   // Create tax rates
   const standardVat = await prisma.taxRate.create({
