@@ -4,7 +4,7 @@ import api from '@/lib/api';
 import { formatCurrency } from '@/lib/utils';
 import { Search, Plus, Minus, Trash2, ShoppingCart, Pause, X, CreditCard, Smartphone, Banknote, Building } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useReactToPrint } from 'react-to-print';
+
 
 interface CartItem {
   productId: number;
@@ -37,7 +37,28 @@ export default function POSPage() {
   const [lastSale, setLastSale] = useState<any>(null);
   const receiptRef = useRef<HTMLDivElement>(null);
 
-  const handlePrint = useReactToPrint({ contentRef: receiptRef });
+  const printReceipt = () => {
+    if (!receiptRef.current) return;
+    const printWindow = window.open('', '_blank', 'width=300,height=600');
+    if (!printWindow) return;
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Receipt - ${lastSale?.invoiceNo || ''}</title>
+        <style>
+          @page { margin: 0; size: 80mm auto; }
+          body { margin: 0; padding: 0; font-family: 'Courier New', monospace; }
+          @media print { body { margin: 0; } }
+        </style>
+      </head>
+      <body>${receiptRef.current.innerHTML}</body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => { printWindow.print(); printWindow.close(); }, 300);
+  };
 
   const fetchProducts = useCallback(async (query: string) => {
     try {
@@ -378,7 +399,7 @@ export default function POSPage() {
             <p className="text-xs text-slate-400 mb-1">{lastSale.invoiceNo}</p>
             <p className="text-2xl font-extrabold text-teal-600 mb-5">{formatCurrency(lastSale.grandTotal)}</p>
             <div className="flex flex-col gap-2.5">
-              <button onClick={() => { handlePrint(); }}
+              <button onClick={() => { printReceipt(); }}
                 className="w-full py-3 bg-teal-500 hover:bg-teal-600 text-white font-bold rounded-xl text-sm transition-all shadow-md shadow-teal-500/10 flex items-center justify-center gap-2">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
                 Print Receipt
