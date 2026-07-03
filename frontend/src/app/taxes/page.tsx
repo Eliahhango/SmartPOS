@@ -27,7 +27,7 @@ export default function TaxesPage() {
       <div className="w-full flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <h1 className="text-2xl font-bold text-slate-800">Tax Rates</h1>
         <button onClick={() => { setEditing(null); setForm({ name: '', ratePercent: '', isActive: true }); setShowForm(true); }}
-          className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-xl text-sm font-medium flex items-center justify-center gap-2">
+          className="w-full sm:w-auto px-4 py-2 bg-teal-500 hover:bg-teal-600 text-white rounded-xl text-sm font-semibold flex items-center justify-center gap-2 shadow-sm shadow-teal-500/10 transition-colors">
           <Plus size={16} /> Add Tax Rate
         </button>
       </div>
@@ -38,7 +38,7 @@ export default function TaxesPage() {
               <div>
                 <h3 className="font-semibold">{t.name}</h3>
                 <p className="text-2xl font-bold text-teal-600 mt-1">{t.ratePercent}%</p>
-                <span className={`text-xs px-2 py-0.5 rounded-full mt-2 inline-block ${t.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold mt-2 border ${t.isActive ? 'bg-emerald-50 text-emerald-700 border-emerald-100/50' : 'bg-slate-100 text-slate-500 border-slate-100'}`}>
                   {t.isActive ? 'Active' : 'Inactive'}
                 </span>
               </div>
@@ -50,18 +50,18 @@ export default function TaxesPage() {
       </div>
       {showForm && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl w-full max-w-md p-6 animate-zoom-in">
-            <h3 className="text-lg font-bold mb-4">{editing ? 'Edit' : 'Add'} Tax Rate</h3>
+          <div className="bg-white rounded-2xl w-full max-w-md p-6 animate-zoom-in">
+            <h3 className="text-lg font-bold text-slate-800 mb-4">{editing ? 'Edit' : 'Add'} Tax Rate</h3>
             <form onSubmit={handleSubmit} className="space-y-3">
-              <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Name (e.g. Standard VAT)" className="w-full px-3 py-2 border rounded-lg text-sm" required />
-              <input type="number" value={form.ratePercent} onChange={e => setForm({ ...form, ratePercent: e.target.value })} placeholder="Rate %" className="w-full px-3 py-2 border rounded-lg text-sm" required />
-              <label className="flex items-center gap-2 text-sm">
-                <input type="checkbox" checked={form.isActive} onChange={e => setForm({ ...form, isActive: e.target.checked })} />
+              <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Name (e.g. Standard VAT)" className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500" required />
+              <input type="number" value={form.ratePercent} onChange={e => setForm({ ...form, ratePercent: e.target.value })} placeholder="Rate %" className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500" required />
+              <label className="flex items-center gap-2 text-sm text-slate-600 font-medium">
+                <input type="checkbox" checked={form.isActive} onChange={e => setForm({ ...form, isActive: e.target.checked })} className="rounded border-slate-300 text-teal-500 focus:ring-teal-500" />
                 Active
               </label>
-              <div className="flex gap-2">
-                <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2 border rounded-xl text-sm">Cancel</button>
-                <button type="submit" className="flex-1 py-2 bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-xl text-sm font-semibold">{editing ? 'Update' : 'Create'}</button>
+              <div className="flex gap-2 pt-1">
+                <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">Cancel</button>
+                <button type="submit" className="flex-1 py-2.5 bg-teal-500 hover:bg-teal-600 text-white rounded-xl text-sm font-semibold shadow-sm shadow-teal-500/10 transition-colors">{editing ? 'Update' : 'Create'}</button>
               </div>
             </form>
           </div>

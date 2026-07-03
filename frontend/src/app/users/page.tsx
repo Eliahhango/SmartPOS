@@ -47,29 +47,29 @@ export default function UsersPage() {
       <div className="w-full flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <h1 className="text-2xl font-bold text-slate-800">Users</h1>
         <button onClick={() => { setEditing(null); setForm({ name: '', email: '', phone: '', password: '', role: 'cashier', branchId: '' }); setShowForm(true); }}
-          className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-xl text-sm font-medium flex items-center justify-center gap-2">
+          className="w-full sm:w-auto px-4 py-2 bg-teal-500 hover:bg-teal-600 text-white rounded-xl text-sm font-semibold flex items-center justify-center gap-2 shadow-sm shadow-teal-500/10 transition-colors">
           <Plus size={16} /> Add User
         </button>
       </div>
       <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="w-full overflow-x-auto scrollbar-thin">
-          <table className="w-full min-w-[600px] md:min-w-full text-sm">
-          <thead><tr className="text-left text-slate-500 bg-slate-50"><th className="p-4">Name</th><th className="p-4">Email</th><th className="p-4">Role</th><th className="p-4">Branch</th><th className="p-4">Status</th><th className="p-4"></th></tr></thead>
+          <table className="w-full min-w-[600px] md:min-w-full text-left border-collapse table-auto">
+          <thead><tr className="border-b border-slate-100 bg-slate-50/70"><th className="py-3.5 px-6 text-xs font-semibold tracking-wider text-slate-400 uppercase">Name</th><th className="py-3.5 px-4 text-xs font-semibold tracking-wider text-slate-400 uppercase">Email</th><th className="py-3.5 px-4 text-xs font-semibold tracking-wider text-slate-400 uppercase">Role</th><th className="py-3.5 px-4 text-xs font-semibold tracking-wider text-slate-400 uppercase">Branch</th><th className="py-3.5 px-4 text-xs font-semibold tracking-wider text-slate-400 uppercase">Status</th><th className="py-3.5 px-6 text-xs font-semibold tracking-wider text-slate-400 uppercase text-right">Actions</th></tr></thead>
           <tbody>
             {users.map(u => (
-              <tr key={u.id} className="border-t border-gray-50">
-                <td className="p-4 font-medium">{u.name}</td>
-                <td className="p-4 text-slate-500">{u.email}</td>
-                <td className="p-4"><span className="px-2 py-0.5 bg-slate-100 rounded-full text-xs capitalize">{u.role.replace('_', ' ')}</span></td>
-                <td className="p-4 text-slate-500">{u.branch?.name || '-'}</td>
-                <td className="p-4"><span className={`px-2 py-0.5 rounded-full text-xs ${u.status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>{u.status}</span></td>
-                <td className="p-4">
-                  <div className="flex gap-1">
+              <tr key={u.id} className="hover:bg-slate-50/40 transition-colors">
+                <td className="py-4 px-6 text-sm font-semibold text-slate-800">{u.name}</td>
+                <td className="py-4 px-4 text-sm text-slate-500">{u.email}</td>
+                <td className="py-4 px-4"><span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-100 capitalize">{u.role.replace('_', ' ')}</span></td>
+                <td className="py-4 px-4 text-sm text-slate-500">{u.branch?.name || '-'}</td>
+                <td className="py-4 px-4"><span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${u.status === 'active' ? 'bg-emerald-50 text-emerald-700 border-emerald-100/50' : 'bg-red-50 text-red-700 border-red-100/50'}`}>{u.status}</span></td>
+                <td className="py-4 px-6">
+                  <div className="flex items-center justify-end gap-1">
                     <button onClick={() => { setEditing(u); setForm({ name: u.name, email: u.email, phone: u.phone || '', password: '', role: u.role, branchId: u.branchId || '' }); setShowForm(true); }}
-                      className="p-1.5 hover:bg-teal-50 rounded-lg text-teal-600"><Edit size={16} /></button>
+                      className="p-1.5 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors" title="Edit"><Edit size={15} /></button>
                     <button onClick={() => toggleStatus(u)}
-                      className={`p-1.5 rounded-lg ${u.status === 'active' ? 'hover:bg-red-50 text-red-500' : 'hover:bg-emerald-50 text-emerald-600'}`}>
-                      {u.status === 'active' ? <UserX size={16} /> : <UserCheck size={16} />}
+                      className={`p-1.5 rounded-lg transition-colors ${u.status === 'active' ? 'text-slate-400 hover:text-red-500 hover:bg-red-50' : 'text-slate-400 hover:text-emerald-600 hover:bg-emerald-50'}`} title={u.status === 'active' ? 'Suspend' : 'Activate'}>
+                      {u.status === 'active' ? <UserX size={15} /> : <UserCheck size={15} />}
                     </button>
                   </div>
                 </td>
@@ -81,23 +81,23 @@ export default function UsersPage() {
       </div>
       {showForm && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl w-full max-w-md p-6 animate-zoom-in">
-            <h3 className="text-lg font-bold mb-4">{editing ? 'Edit' : 'Add'} User</h3>
+          <div className="bg-white rounded-2xl w-full max-w-md p-6 animate-zoom-in">
+            <h3 className="text-lg font-bold text-slate-800 mb-4">{editing ? 'Edit' : 'Add'} User</h3>
             <form onSubmit={handleSubmit} className="space-y-3">
-              <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Full Name" className="w-full px-3 py-2 border rounded-lg text-sm" required />
-              <input value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="Email" className="w-full px-3 py-2 border rounded-lg text-sm" required />
-              <input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="Phone" className="w-full px-3 py-2 border rounded-lg text-sm" />
-              <input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} placeholder={editing ? 'New password (leave blank to keep)' : 'Password'} className="w-full px-3 py-2 border rounded-lg text-sm" required={!editing} />
-              <select value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm">
+              <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Full Name" className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500" required />
+              <input value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="Email" className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500" required />
+              <input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="Phone" className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500" />
+              <input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} placeholder={editing ? 'New password (leave blank to keep)' : 'Password'} className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500" required={!editing} />
+              <select value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500">
                 {roles.map(r => <option key={r} value={r}>{r.replace('_', ' ')}</option>)}
               </select>
-              <select value={form.branchId} onChange={e => setForm({ ...form, branchId: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm">
+              <select value={form.branchId} onChange={e => setForm({ ...form, branchId: e.target.value })} className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500">
                 <option value="">No Branch</option>
                 {branches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
               </select>
-              <div className="flex gap-2">
-                <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2 border rounded-xl text-sm">Cancel</button>
-                <button type="submit" className="flex-1 py-2 bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-xl text-sm font-semibold">{editing ? 'Update' : 'Create'}</button>
+              <div className="flex gap-2 pt-1">
+                <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">Cancel</button>
+                <button type="submit" className="flex-1 py-2.5 bg-teal-500 hover:bg-teal-600 text-white rounded-xl text-sm font-semibold shadow-sm shadow-teal-500/10 transition-colors">{editing ? 'Update' : 'Create'}</button>
               </div>
             </form>
           </div>
