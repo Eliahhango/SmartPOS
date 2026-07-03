@@ -32,7 +32,10 @@ app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:3000', cred
 app.use(morgan('dev'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
-app.use('/uploads', express.static(path.join(__dirname, '..', 'public', 'uploads')));
+// Only serve /uploads in development; in production, remove this attack surface
+if (process.env.NODE_ENV === 'development') {
+  app.use('/uploads', express.static(path.join(__dirname, '..', 'public', 'uploads')));
+}
 
 // Routes
 app.use('/api/auth', authRoutes);

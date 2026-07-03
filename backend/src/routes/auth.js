@@ -5,53 +5,68 @@ const crypto = require('crypto');
 const prisma = require('../utils/prisma');
 const { authenticate } = require('../middleware/auth');
 
-// In-memory rate limiter for login (IP-based, 5 attempts per minute)
-const loginAttempts = new Map();
+// Rate limiter — dual key: per-socket-IP + per-account (email).
+// Uses req.socket.remoteAddress (not X-Forwarded-For) to prevent spoofing.
+const ipLimiter = new Map();    // key: realIP → count
+const emailLimiter = new Map(); // key: normalized-email → count
+const WINDOW_MS = 60_000;
+const MAX_ATTEMPTS = 5;
+
 setInterval(() => {
-  for (const [key, entry] of loginAttempts) {
-    if (Date.now() - entry.resetAt > 60_000) loginAttempts.delete(key);
+  const now = Date.now();
+  for (const [k, v] of ipLimiter)    { if (now > v.resetAt) ipLimiter.delete(k); }
+  for (const [k, v] of emailLimiter)  { if (now > v.resetAt) emailLimiter.delete(k); }
+}, WINDOW_MS);
+
+/** Always returns the same generic message to prevent user enumeration */
+const GENERIC_LOGIN_ERROR = 'Invalid email or password';
+
+function checkRateLimit(map, key) {
+  const now = Date.now();
+  let entry = map.get(key);
+  if (!entry || now > entry.resetAt) {
+    entry = { count: 0, resetAt: now + WINDOW_MS };
+    map.set(key, entry);
   }
-}, 60_000);
+  entry.count++;
+  return entry.count > MAX_ATTEMPTS;
+}
 
 // POST /api/auth/login
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    // Get client IP from x-forwarded-for (Railway proxy) or fallback
-    const forwarded = req.headers['x-forwarded-for'];
-    const ip = (forwarded ? forwarded.split(',')[0].trim() : null) || req.ip || req.socket.remoteAddress || 'unknown';
-    const rateKey = `${ip}:${email || 'unknown'}`;
-    const now = Date.now();
 
-    // Rate limiting (per IP+email combo — 5 attempts/min)
-    if (!loginAttempts.has(rateKey)) {
-      loginAttempts.set(rateKey, { count: 0, resetAt: now + 60_000 });
+    // Basic field validation (same generic response for all failures)
+    if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
+      return res.status(401).json({ error: GENERIC_LOGIN_ERROR });
     }
-    const entry = loginAttempts.get(rateKey);
-    if (now > entry.resetAt) {
-      entry.count = 0;
-      entry.resetAt = now + 60_000;
+
+    // Real connection IP — NOT from headers (prevents X-Forwarded-For spoofing)
+    const realIP = req.socket.remoteAddress || 'unknown';
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Dual rate limiting: per-IP AND per-account (harder to bypass)
+    if (checkRateLimit(ipLimiter, realIP)) {
+      return res.status(429).json({ error: GENERIC_LOGIN_ERROR });
     }
-    entry.count++;
-    if (entry.count > 5) {
-      return res.status(429).json({ error: 'Too many login attempts. Try again in 1 minute.' });
-    }
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password required' });
+    if (checkRateLimit(emailLimiter, normalizedEmail)) {
+      return res.status(429).json({ error: GENERIC_LOGIN_ERROR });
     }
 
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { email: normalizedEmail },
       include: { branch: true }
     });
 
+    // Single generic message for: no user, suspended, wrong password
     if (!user || user.status === 'suspended') {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: GENERIC_LOGIN_ERROR });
     }
 
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: GENERIC_LOGIN_ERROR });
     }
 
     // Generate jti for token uniqueness / revocation
@@ -62,10 +77,21 @@ router.post('/login', async (req, res) => {
       { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
     );
 
-    const { password: _, ...userData } = user;
+    // Return only safe fields — never expose password hash or internal metadata
+    const userData = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+      status: user.status,
+      branchId: user.branchId,
+      branch: user.branch ? { id: user.branch.id, name: user.branch.name } : null,
+      createdAt: user.createdAt
+    };
     res.json({ token, user: userData });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
@@ -110,10 +136,19 @@ router.post('/logout', authenticate, (req, res) => {
   res.json({ message: 'Logged out successfully' });
 });
 
-// GET /api/auth/me
+// GET /api/auth/me — minimal field exposure, no branch internals
 router.get('/me', authenticate, async (req, res) => {
-  const { password: _, ...userData } = req.user;
-  res.json(userData);
+  res.json({
+    id: req.user.id,
+    name: req.user.name,
+    email: req.user.email,
+    phone: req.user.phone,
+    role: req.user.role,
+    status: req.user.status,
+    branchId: req.user.branchId,
+    branch: req.user.branch ? { id: req.user.branch.id, name: req.user.branch.name } : null,
+    createdAt: req.user.createdAt
+  });
 });
 
 // PUT /api/auth/profile
