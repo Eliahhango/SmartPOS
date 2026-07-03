@@ -59,8 +59,8 @@ export default function Sidebar({ mobileOpen = false, onMobileToggle }: SidebarP
         </button>
         {/* Close button for mobile overlay */}
         {mobileOpen && (
-          <button onClick={onMobileToggle} className="p-1 hover:bg-white/10 rounded md:hidden">
-            <X size={20} />
+          <button onClick={onMobileToggle} className="p-2.5 hover:bg-white/10 rounded md:hidden" aria-label="Close navigation menu">
+            <X size={22} />
           </button>
         )}
       </div>

@@ -34,7 +34,7 @@ export default function LoginPage() {
       <div className="hidden sm:block absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full bg-slate-400/10 blur-[100px] pointer-events-none" />
 
       {/* Main Professional Login Card */}
-      <div className="relative z-10 w-full max-w-md bg-white border border-slate-200/60 rounded-2xl shadow-xl shadow-slate-200/40 p-8 md:p-10">
+      <div className="relative z-10 w-full max-w-md bg-white border border-slate-200/60 rounded-2xl shadow-xl shadow-slate-200/40 p-6 sm:p-8 md:p-10">
         
         {/* Central Card Header & Branding */}
         <div className="text-center mb-8">
@@ -61,7 +61,7 @@ export default function LoginPage() {
                 onChange={e => setEmail(e.target.value)}
                 placeholder="admin@smartpos.com"
                 required
-                className="w-full pl-9 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-sm text-slate-700 placeholder-slate-400 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all duration-150"
+                className="w-full pl-9 pr-4 py-3 sm:py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-base sm:text-sm text-slate-700 placeholder-slate-400 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all duration-150"
               />
             </div>
           </div>
@@ -71,7 +71,7 @@ export default function LoginPage() {
               <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                 Password
               </label>
-              <button type="button" className="text-[11px] font-semibold text-slate-400 hover:text-teal-600 transition-colors">
+              <button type="button" className="text-[11px] font-semibold text-slate-400 hover:text-teal-600 transition-colors py-1 min-h-[28px]">
                 Forgot password?
               </button>
             </div>
@@ -83,7 +83,7 @@ export default function LoginPage() {
                 onChange={e => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                className="w-full pl-9 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-sm text-slate-700 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all duration-150"
+                className="w-full pl-9 pr-4 py-3 sm:py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-base sm:text-sm text-slate-700 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all duration-150"
               />
             </div>
           </div>
@@ -92,7 +92,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-4 py-3 bg-teal-500 hover:bg-teal-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-teal-500/10 hover:shadow-teal-600/20 active:scale-[0.99] transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full mt-4 py-3.5 sm:py-3 bg-teal-500 hover:bg-teal-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-teal-500/10 hover:shadow-teal-600/20 active:scale-[0.99] transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {loading && <Loader2 size={16} className="animate-spin" />}
             {loading ? 'Signing in...' : 'Sign In to Dashboard'}
@@ -126,7 +126,7 @@ export default function LoginPage() {
         <div className="text-center mt-6">
           <Link
             href="/"
-            className="text-xs text-slate-400 hover:text-slate-600 font-medium transition-colors inline-flex items-center gap-1"
+            className="text-xs text-slate-400 hover:text-slate-600 font-medium transition-colors inline-flex items-center gap-1 py-2"
           >
             ← Return to corporate homepage
           </Link>

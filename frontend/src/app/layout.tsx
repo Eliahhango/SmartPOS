@@ -1,10 +1,16 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import AppLayout from '@/components/layout/AppLayout';
 
 export const metadata: Metadata = {
   title: 'SmartPOS - Supermarket POS & Inventory System',
   description: 'The Simple, Secure, and Scalable Way to Run Your Business',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  // Not setting maximumScale=1 — allows pinch-to-zoom for accessibility
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

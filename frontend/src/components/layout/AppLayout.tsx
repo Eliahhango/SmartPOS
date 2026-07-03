@@ -10,7 +10,7 @@ import { useState } from 'react';
 function Footer() {
   return (
     <footer className="bg-white border-t border-slate-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 font-semibold tracking-wide uppercase">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-xs text-slate-400 font-semibold tracking-wide uppercase">
         <p className="text-center sm:text-left leading-relaxed">
           &copy; {new Date().getFullYear()} SmartPOS Technologies Inc. All rights reserved.
         </p>
@@ -69,10 +69,10 @@ function AppContent({ children }: { children: React.ReactNode }) {
         <div className="sticky top-0 z-30 md:hidden bg-white border-b border-slate-200 px-4 h-14 flex items-center gap-3">
           <button
             onClick={() => setMobileSidebarOpen(true)}
-            className="p-2 -ml-2 hover:bg-slate-100 rounded-lg transition-colors"
+            className="p-2.5 -ml-2 hover:bg-slate-100 rounded-lg transition-colors"
             aria-label="Open navigation menu"
           >
-            <Menu size={20} className="text-slate-600" />
+            <Menu size={22} className="text-slate-600" />
           </button>
           <Link href="/dashboard" className="text-lg font-bold bg-gradient-to-r from-teal-500 to-emerald-500 bg-clip-text text-transparent">
             SmartPOS

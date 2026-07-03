@@ -49,10 +49,10 @@ export default function HomePage() {
             <a href="mailto:support@smartpos.com" className="hover:text-slate-900 transition-colors">Enterprise Contact</a>
           </nav>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <a 
               href="/login" 
-              className="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-900 border border-slate-200 rounded-xl bg-white hover:bg-slate-50 shadow-sm transition-all duration-150"
+              className="px-5 py-3 text-xs font-bold text-slate-600 hover:text-slate-900 border border-slate-200 rounded-xl bg-white hover:bg-slate-50 shadow-sm transition-all duration-150"
             >
               Sign In to Dashboard
             </a>
@@ -61,7 +61,7 @@ export default function HomePage() {
       </header>
 
       {/* 2. Asymmetric Conversion Hero Area */}
-      <section className="relative overflow-hidden pt-20 pb-16 lg:pt-32 lg:pb-24 border-b border-slate-100 bg-white">
+      <section className="relative overflow-hidden pt-14 pb-12 sm:pt-20 sm:pb-16 lg:pt-32 lg:pb-24 border-b border-slate-100 bg-white">
         {/* Subtle Brand Background Glow Gradients — hidden on mobile to avoid overflow */}
         <div className="absolute top-0 right-1/4 w-[300px] sm:w-[600px] h-[300px] sm:h-[600px] rounded-full bg-teal-500/5 blur-[100px] sm:blur-[140px] pointer-events-none" />
         <div className="absolute bottom-0 left-1/3 w-[250px] sm:w-[500px] h-[250px] sm:h-[500px] rounded-full bg-slate-200 blur-[80px] sm:blur-[120px] pointer-events-none" />
@@ -79,16 +79,16 @@ export default function HomePage() {
             A modern point-of-sale platform designed to optimize retail checkouts, automate warehouse inventory auditing, and deliver high-fidelity management reporting from any device.
           </p>
 
-          <div className="mt-10 flex flex-wrap justify-center gap-4">
+          <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
             <a 
               href="/login" 
-              className="px-6 py-3.5 bg-teal-500 hover:bg-teal-600 text-white font-bold rounded-xl shadow-lg shadow-teal-500/10 hover:shadow-teal-600/20 active:scale-[0.99] transition-all text-sm"
+              className="w-full sm:w-auto px-6 py-3.5 bg-teal-500 hover:bg-teal-600 text-white font-bold rounded-xl shadow-lg shadow-teal-500/10 hover:shadow-teal-600/20 active:scale-[0.99] transition-all text-sm text-center"
             >
               Launch Live Application Demo
             </a>
             <a 
               href="#features" 
-              className="px-6 py-3.5 bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-600 font-bold rounded-xl transition-all text-sm"
+              className="w-full sm:w-auto px-6 py-3.5 bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-600 font-bold rounded-xl transition-all text-sm text-center"
             >
               Explore Platform Modules
             </a>
@@ -127,7 +127,7 @@ export default function HomePage() {
           <p className="text-xs sm:text-sm text-slate-400 mt-2 font-medium px-4">Everything you need to handle high-frequency checkout operations smoothly and safely.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
           {corporateFeatures.map((feat, index) => (
             <div 
               key={index} 
