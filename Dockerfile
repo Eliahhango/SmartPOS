@@ -19,4 +19,4 @@ EXPOSE 5000
 ENV PRISMA_CLIENT_ENGINE_TYPE="binary"
 ENV PRISMA_CLI_QUERY_ENGINE_TYPE="binary"
 
-CMD npx prisma db push --accept-data-loss && node prisma/seed.js && node src/index.js
+CMD npx prisma db push --accept-data-loss && (node prisma/seed.js || true) && node src/index.js
