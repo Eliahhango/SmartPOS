@@ -2,9 +2,33 @@
 
 export default function HomePage() {
   const corporateFeatures = [
-    { icon: '📦', title: 'Real-Time Inventory tracking', text: 'Automate stock count updates, receive low inventory triggers, and sync multi-location warehouse sheets effortlessly.' },
-    { icon: '📊', title: 'Advanced Sales Analytics', text: 'Generate revenue graphs, customer growth indicators, and tax calculation matrix summaries in one click.' },
-    { icon: '💳', title: 'Multi-Mode Split Payments', text: 'Securely handle credit ledger transactions, local mobile money assets, and physical cash accounting pipelines.' },
+    {
+      icon: (
+        <svg className="w-5 h-5 text-slate-700 group-hover:text-teal-600 transition-colors" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        </svg>
+      ),
+      title: 'Real-Time Inventory Tracking',
+      text: 'Automate stock count updates, receive low inventory triggers, and sync multi-location warehouse sheets effortlessly.'
+    },
+    {
+      icon: (
+        <svg className="w-5 h-5 text-slate-700 group-hover:text-teal-600 transition-colors" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z" />
+        </svg>
+      ),
+      title: 'Advanced Sales Analytics',
+      text: 'Generate revenue graphs, customer growth indicators, and tax calculation matrix summaries in one click.'
+    },
+    {
+      icon: (
+        <svg className="w-5 h-5 text-slate-700 group-hover:text-teal-600 transition-colors" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+        </svg>
+      ),
+      title: 'Multi-Mode Split Payments',
+      text: 'Securely handle credit ledger transactions, local mobile money assets, and physical cash accounting pipelines.'
+    },
   ];
 
   return (
@@ -44,7 +68,7 @@ export default function HomePage() {
 
         <div className="max-w-7xl mx-auto px-6 relative z-10 text-center">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-teal-50 text-teal-700 border border-teal-200/40 mb-6 uppercase tracking-wider">
-            ✨ Next-Gen Point of Sale Ecosystem
+            Next-Gen Point of Sale Ecosystem
           </div>
           
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight max-w-3xl mx-auto leading-[1.1]">
@@ -110,7 +134,7 @@ export default function HomePage() {
               className="bg-white border border-slate-200/60 rounded-2xl p-6 shadow-sm hover:shadow-xl hover:border-teal-500/10 transition-all duration-300 group flex flex-col justify-between"
             >
               <div>
-                <div className="w-10 h-10 rounded-xl bg-slate-50 text-slate-700 text-base flex items-center justify-center border border-slate-100 group-hover:bg-teal-50 group-hover:text-teal-600 group-hover:border-teal-100 transition-colors mb-5 shadow-sm">
+                <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-100 group-hover:bg-teal-50 group-hover:border-teal-100 transition-colors mb-5 shadow-sm">
                   {feat.icon}
                 </div>
                 <h3 className="text-base font-bold text-slate-800 tracking-tight group-hover:text-teal-600 transition-colors">
