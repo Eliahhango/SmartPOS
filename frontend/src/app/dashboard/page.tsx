@@ -81,23 +81,23 @@ export default function DashboardPage() {
   return (
     <div className="w-full min-h-screen space-y-6 p-4 sm:p-6 lg:p-8 bg-slate-50/50">
       {/* ── Welcome Banner ──────────────────────────────── */}
-      <div className="w-full relative overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 p-4 sm:p-6 lg:p-8 text-white">
+      <div className="w-full max-w-full overflow-hidden rounded-2xl p-4 sm:p-6 bg-gradient-to-br from-slate-900 to-slate-800 text-white relative">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(20,184,166,0.12),transparent_50%)]" />
         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-teal-500/8 to-emerald-500/8 rounded-full blur-3xl" />
         <div className="relative z-10 flex items-center justify-between">
           <div>
             <p className="text-zinc-400 text-sm font-medium mb-1">{greeting}</p>
             <h1 className="text-3xl font-bold mb-2 text-white">Dashboard Overview</h1>
-            <p className="text-zinc-200 text-sm max-w-lg">
+            <p className="text-xs sm:text-sm md:text-base text-slate-300 max-w-prose whitespace-normal break-words block">
               Track your store performance, monitor inventory levels, and stay on top of sales in real time.
             </p>
-            <div className="flex gap-3 mt-4">
+            <div className="flex flex-col xs:flex-row gap-3 mt-5 w-full xs:w-auto items-stretch xs:items-center">
               <button onClick={() => window.location.href = '/pos'}
-                className="px-4 py-2 bg-teal-500 hover:bg-teal-600 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all text-white shadow-lg shadow-teal-500/25">
+                className="w-full xs:w-auto justify-center text-center px-4 py-2.5 bg-teal-500 hover:bg-teal-600 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all text-white shadow-lg shadow-teal-500/25">
                 <Plus size={16} /> New Sale
               </button>
               <button onClick={() => window.location.href = '/reports'}
-                className="px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-all border border-zinc-600 text-zinc-200 hover:bg-zinc-800 hover:border-zinc-500">
+                className="w-full xs:w-auto justify-center text-center px-4 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2 transition-all border border-zinc-600 text-zinc-200 hover:bg-zinc-800 hover:border-zinc-500">
                 <BarChart3 size={16} /> View Reports
               </button>
             </div>
