@@ -58,6 +58,11 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// 404 catch-all — return JSON for any unmatched API route
+app.use('/api/*', (req, res) => {
+  res.status(404).json({ error: 'Route not found' });
+});
+
 // Error handler — never leak stack traces or internal details in production
 app.use((err, req, res, next) => {
   console.error(err.stack || err.message || err);
