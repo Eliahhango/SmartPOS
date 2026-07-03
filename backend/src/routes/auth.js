@@ -16,14 +16,16 @@ setInterval(() => {
 // POST /api/auth/login
 router.post('/login', async (req, res) => {
   try {
+    const { email, password } = req.body;
     const ip = req.ip || req.connection.remoteAddress || 'unknown';
+    const rateKey = `${ip}:${email || 'unknown'}`;
     const now = Date.now();
 
-    // Rate limiting
-    if (!loginAttempts.has(ip)) {
-      loginAttempts.set(ip, { count: 0, resetAt: now + 60_000 });
+    // Rate limiting (per IP+email combo — 5 attempts/min)
+    if (!loginAttempts.has(rateKey)) {
+      loginAttempts.set(rateKey, { count: 0, resetAt: now + 60_000 });
     }
-    const entry = loginAttempts.get(ip);
+    const entry = loginAttempts.get(rateKey);
     if (now > entry.resetAt) {
       entry.count = 0;
       entry.resetAt = now + 60_000;
@@ -32,8 +34,6 @@ router.post('/login', async (req, res) => {
     if (entry.count > 5) {
       return res.status(429).json({ error: 'Too many login attempts. Try again in 1 minute.' });
     }
-
-    const { email, password } = req.body;
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password required' });
     }
