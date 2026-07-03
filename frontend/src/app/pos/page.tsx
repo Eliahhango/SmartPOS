@@ -135,36 +135,41 @@ export default function POSPage() {
   </div>
 </body></html>`;
 
-    // Create hidden iframe, write content, print, then remove
-    const iframe = document.createElement('iframe');
-    iframe.style.position = 'fixed';
-    iframe.style.right = '-9999px';
-    iframe.style.bottom = '-9999px';
-    iframe.style.width = '80mm';
-    iframe.style.height = '1px';
-    iframe.style.border = 'none';
-    iframe.title = 'Receipt Print';
-    document.body.appendChild(iframe);
-
-    const iframeDoc = iframe.contentWindow?.document;
-    if (!iframeDoc) { document.body.removeChild(iframe); return; }
-
-    iframeDoc.open();
-    iframeDoc.write(printHTML);
-    iframeDoc.close();
-
-    // Wait for rendering, then print
-    setTimeout(() => {
-      try {
-        iframe.contentWindow?.focus();
-        iframe.contentWindow?.print();
-      } catch (e) {
-        // Fallback: try window.print if iframe print fails
-        window.print();
+    // Blob URL approach — opens clean standalone receipt window.
+    // window.open() during a click handler bypasses popup blockers.
+    // The new window contains ONLY the receipt (no page chrome).
+    const blob = new Blob([printHTML], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const win = window.open(url, 'receipt', 'width=400,height=600');
+    if (win) {
+      win.onload = () => {
+        win.focus();
+        win.print();
+        URL.revokeObjectURL(url);
+      };
+    } else {
+      // window.open blocked — fallback: hidden iframe (no window.print!)
+      const iframe = document.createElement('iframe');
+      iframe.style.position = 'fixed';
+      iframe.style.right = '-9999px';
+      iframe.style.bottom = '-9999px';
+      iframe.style.width = '80mm';
+      iframe.style.height = '1px';
+      iframe.style.border = 'none';
+      iframe.title = 'Receipt Print';
+      document.body.appendChild(iframe);
+      const iframeDoc = iframe.contentWindow?.document;
+      if (iframeDoc) {
+        iframeDoc.open();
+        iframeDoc.write(printHTML);
+        iframeDoc.close();
+        setTimeout(() => {
+          iframe.contentWindow?.focus();
+          iframe.contentWindow?.print();
+          setTimeout(() => { if (document.body.contains(iframe)) document.body.removeChild(iframe); }, 500);
+        }, 400);
       }
-      // Remove iframe after print dialog closes
-      setTimeout(() => { if (document.body.contains(iframe)) document.body.removeChild(iframe); }, 500);
-    }, 400);
+    }
   };
 
   const fetchProducts = useCallback(async (query: string) => {
