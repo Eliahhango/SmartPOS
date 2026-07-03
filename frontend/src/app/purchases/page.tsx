@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import { formatCurrency, formatDate } from '@/lib/utils';
-import { Plus, Search, Check, Truck, Eye, X, ChevronRight } from 'lucide-react';
+import { Plus, Search, Check, Truck, Eye, X, ChevronRight, Package } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function PurchasesPage() {
@@ -154,8 +154,8 @@ export default function PurchasesPage() {
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-slate-100 shadow-sm h-[400px] flex flex-col items-center justify-center">
-          <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4 text-2xl border border-slate-100">
-            📦
+          <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4 border border-slate-100 text-slate-300">
+            <Package size={28} />
           </div>
           <h3 className="text-slate-800 font-semibold">No Purchase Orders</h3>
           <p className="text-slate-400 text-sm mt-1">Create your first purchase order to track inventory.</p>
