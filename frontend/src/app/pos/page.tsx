@@ -153,7 +153,7 @@ export default function POSPage() {
       setDiscount(0);
       setShowPayment(false);
       toast.success('Sale completed!');
-      setTimeout(() => handlePrint(), 300);
+      // Print triggered manually via the receipt confirmation overlay below
     } catch (err: any) {
       toast.error(err.response?.data?.error || 'Failed to complete sale');
     }
@@ -363,6 +363,32 @@ export default function POSPage() {
               className="w-full py-3 bg-teal-500 hover:bg-teal-600 text-white font-bold rounded-xl transition-all shadow-md shadow-teal-500/10">
               Complete Sale
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Receipt Confirmation Overlay ── */}
+      {lastSale && !showPayment && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-sm p-6 animate-zoom-in text-center">
+            <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-3 border border-emerald-100/40">
+              <svg className="w-8 h-8 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+            </div>
+            <h3 className="text-lg font-bold text-slate-800 mb-1">Sale Completed</h3>
+            <p className="text-xs text-slate-400 mb-1">{lastSale.invoiceNo}</p>
+            <p className="text-2xl font-extrabold text-teal-600 mb-5">{formatCurrency(lastSale.grandTotal)}</p>
+            <div className="flex flex-col gap-2.5">
+              <button onClick={() => { handlePrint(); }}
+                className="w-full py-3 bg-teal-500 hover:bg-teal-600 text-white font-bold rounded-xl text-sm transition-all shadow-md shadow-teal-500/10 flex items-center justify-center gap-2">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                Print Receipt
+              </button>
+              <button onClick={() => setLastSale(null)}
+                className="w-full py-3 border border-slate-200 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
+                New Sale
+              </button>
+            </div>
           </div>
         </div>
       )}
