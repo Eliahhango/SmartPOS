@@ -152,16 +152,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 5. Clean Monochromatic Footer */}
-      <footer className="bg-white border-t border-slate-200/60 py-12 text-center text-xs font-semibold text-slate-400 tracking-wide uppercase">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div>
-            &copy; {new Date().getFullYear()} SmartPOS Technologies Inc. All rights reserved.
-          </div>
-          <div className="flex gap-6 text-[11px]">
-            <a href="#" className="hover:text-slate-600 transition-colors">Security Center</a>
-            <a href="#" className="hover:text-slate-600 transition-colors">Terms of Service</a>
-          </div>
+      {/* 5. Refactored Homepage Footer (Links Only — Copyright Removed) */}
+      <footer className="bg-white border-t border-slate-200/60 py-8 text-xs font-semibold text-slate-400 tracking-wide uppercase">
+        <div className="max-w-7xl mx-auto px-6 flex justify-end gap-6 text-[11px]">
+          <a href="#" className="hover:text-slate-600 transition-colors">Security Center</a>
+          <a href="#" className="hover:text-slate-600 transition-colors">Terms of Service</a>
         </div>
       </footer>
     </div>
