@@ -177,7 +177,7 @@ export default function POSPage() {
   ];
 
   return (
-    <div className="p-6 bg-slate-50/50 min-h-screen w-full -m-6">
+    <div className="p-4 sm:p-6 bg-slate-50/50 min-h-screen w-full -m-4 sm:-m-6">
       {/* Top Header Row */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-slate-800">Point of Sale</h1>

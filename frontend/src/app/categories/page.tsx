@@ -33,9 +33,9 @@ export default function CategoriesPage() {
   };
 
   return (
-    <div className="p-6 bg-slate-50/50 min-h-screen w-full -m-6">
+    <div className="p-4 sm:p-6 bg-slate-50/50 min-h-screen w-full -m-4 sm:-m-6">
       {/* Top Header Row */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-slate-800">Categories</h1>
           <p className="text-xs text-slate-400 mt-1">Manage store inventory categories</p>

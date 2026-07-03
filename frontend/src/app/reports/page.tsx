@@ -40,7 +40,7 @@ export default function ReportsPage() {
   const CHART_COLORS = ['#14b8a6', '#10b981', '#34d399', '#6ee7b7', '#a7f3d0'];
 
   return (
-    <div className="p-6 bg-slate-50/50 min-h-screen w-full -m-6">
+    <div className="p-4 sm:p-6 bg-slate-50/50 min-h-screen w-full -m-4 sm:-m-6">
       {/* Page Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-slate-800">Reports</h1>

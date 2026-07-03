@@ -81,9 +81,9 @@ export default function ProductsPage() {
   };
 
   return (
-    <div className="p-6 bg-slate-50/50 min-h-screen w-full -m-6">
+    <div className="p-4 sm:p-6 bg-slate-50/50 min-h-screen w-full -m-4 sm:-m-6">
       {/* Header Row */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-slate-800">Products</h1>
           <p className="text-xs text-slate-400 mt-1">{total} products total</p>

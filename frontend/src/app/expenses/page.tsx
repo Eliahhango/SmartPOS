@@ -36,9 +36,9 @@ export default function ExpensesPage() {
   const total = expenses.reduce((s, e) => s + parseFloat(e.amount), 0);
 
   return (
-    <div className="p-6 bg-slate-50/50 min-h-screen w-full -m-6">
+    <div className="p-4 sm:p-6 bg-slate-50/50 min-h-screen w-full -m-4 sm:-m-6">
       {/* Page Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-slate-800">Expenses</h1>
           <p className="text-xs font-bold text-teal-600 mt-1 bg-teal-50 border border-teal-100/50 rounded-md px-2.5 py-0.5 inline-block">

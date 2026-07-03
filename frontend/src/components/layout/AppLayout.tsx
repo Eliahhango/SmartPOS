@@ -60,7 +60,7 @@ function AppContent({ children }: { children: React.ReactNode }) {
   const sideBarWidth = sidebarCollapsed ? 'w-16' : 'w-64';
 
   return (
-    <div className="flex bg-gray-50 min-h-screen">
+    <div className="flex flex-col bg-gray-50 min-h-screen w-full overflow-x-hidden">
       {/* ─── Desktop sidebar (fixed, pinned left, visible lg+) ─── */}
       <aside className={`hidden lg:flex flex-col fixed inset-y-0 left-0 ${sideBarWidth} bg-zinc-900 text-white z-30 transition-all duration-300`}>
         <Sidebar

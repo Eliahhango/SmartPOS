@@ -64,11 +64,11 @@ export default function DashboardPage() {
     return (
       <div className="space-y-6 animate-pulse">
         <div className="h-40 bg-zinc-100 rounded-2xl" />
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => <div key={i} className="h-32 bg-zinc-100 rounded-2xl" />)}
         </div>
-        <div className="grid grid-cols-3 gap-6">
-          <div className="col-span-2 h-80 bg-zinc-100 rounded-2xl" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 h-80 bg-zinc-100 rounded-2xl" />
           <div className="h-80 bg-zinc-100 rounded-2xl" />
         </div>
       </div>
@@ -81,7 +81,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6 pb-8">
       {/* ── Welcome Banner ──────────────────────────────── */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 p-8 text-white">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 p-4 sm:p-6 lg:p-8 text-white">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(20,184,166,0.12),transparent_50%)]" />
         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-teal-500/8 to-emerald-500/8 rounded-full blur-3xl" />
         <div className="relative z-10 flex items-center justify-between">
