@@ -5,9 +5,9 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, ShoppingCart, Package, Tags, Truck, Users,
   ClipboardList, DollarSign, BarChart3, Settings, LogOut,
-  ChevronLeft, ChevronRight, Store, Receipt, Shield, X, Menu
+  ChevronLeft, ChevronRight, Store, Receipt, Shield, X
 } from 'lucide-react';
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['admin', 'manager', 'cashier', 'stock_officer'] },
@@ -26,45 +26,57 @@ const navItems = [
 ];
 
 interface SidebarProps {
-  mobileOpen?: boolean;
-  onMobileToggle?: () => void;
+  collapsed?: boolean;
+  onToggleCollapse?: () => void;
+  /** Called when a nav link is clicked — used by mobile drawer to auto-close */
+  onNavClick?: () => void;
+  /** When true, renders the close (X) button in the header instead of the collapse chevron */
+  isMobileDrawer?: boolean;
 }
 
-export default function Sidebar({ mobileOpen = false, onMobileToggle }: SidebarProps) {
+export default function Sidebar({ collapsed = false, onToggleCollapse, onNavClick, isMobileDrawer = false }: SidebarProps) {
   const { user, logout } = useAuth();
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
 
   const filteredNav = navItems.filter(item => user && item.roles.includes(user.role));
 
-  // Close mobile sidebar on route change
-  useEffect(() => {
-    if (mobileOpen && onMobileToggle) onMobileToggle();
-  }, [pathname]);
-
   const handleNavClick = useCallback(() => {
-    if (mobileOpen && onMobileToggle) onMobileToggle();
-  }, [mobileOpen, onMobileToggle]);
+    if (onNavClick) onNavClick();
+  }, [onNavClick]);
 
-  const sidebarContent = (
+  return (
     <div className="flex flex-col h-full">
-      <div className="p-4 flex items-center justify-between border-b border-white/10">
+      {/* Header — brand + collapse/close button */}
+      <div className="p-4 flex items-center justify-between border-b border-white/10 shrink-0">
         {!collapsed && (
-          <Link href="/dashboard" onClick={handleNavClick} className="text-xl font-bold bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent">
+          <Link
+            href="/dashboard"
+            onClick={handleNavClick}
+            className="text-xl font-bold bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent"
+          >
             SmartPOS
           </Link>
         )}
-        <button onClick={() => setCollapsed(!collapsed)} className="p-1 hover:bg-white/10 rounded hidden md:block">
-          {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
-        </button>
-        {/* Close button for mobile overlay */}
-        {mobileOpen && (
-          <button onClick={onMobileToggle} className="p-2.5 hover:bg-white/10 rounded md:hidden" aria-label="Close navigation menu">
+        {isMobileDrawer ? (
+          <button
+            onClick={onNavClick}
+            className="p-2.5 hover:bg-white/10 rounded"
+            aria-label="Close navigation menu"
+          >
             <X size={22} />
+          </button>
+        ) : (
+          <button
+            onClick={onToggleCollapse}
+            className="p-1 hover:bg-white/10 rounded"
+            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
           </button>
         )}
       </div>
 
+      {/* Navigation items */}
       <nav className="flex-1 py-4 overflow-y-auto">
         {filteredNav.map((item) => {
           const Icon = item.icon;
@@ -87,7 +99,8 @@ export default function Sidebar({ mobileOpen = false, onMobileToggle }: SidebarP
         })}
       </nav>
 
-      <div className="p-4 border-t border-white/10">
+      {/* User info + logout */}
+      <div className="p-4 border-t border-white/10 shrink-0">
         {!collapsed && user && (
           <div className="mb-3 text-sm">
             <p className="text-white/90 font-medium truncate">{user.name}</p>
@@ -103,26 +116,5 @@ export default function Sidebar({ mobileOpen = false, onMobileToggle }: SidebarP
         </button>
       </div>
     </div>
-  );
-
-  return (
-    <>
-      {/* Desktop sidebar */}
-      <aside className={`hidden md:flex ${collapsed ? 'w-16' : 'w-64'} bg-zinc-900 text-white flex-col transition-all duration-300 h-full shrink-0`}>
-        {sidebarContent}
-      </aside>
-
-      {/* Mobile overlay */}
-      {mobileOpen && (
-        <div className="fixed inset-0 z-50 md:hidden">
-          {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onMobileToggle} />
-          {/* Drawer */}
-          <aside className="relative w-72 max-w-[85vw] h-full bg-zinc-900 text-white flex flex-col shadow-2xl">
-            {sidebarContent}
-          </aside>
-        </div>
-      )}
-    </>
   );
 }

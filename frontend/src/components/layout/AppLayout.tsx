@@ -5,7 +5,7 @@ import Sidebar from './Sidebar';
 import { usePathname } from 'next/navigation';
 import { Toaster } from 'react-hot-toast';
 import { Menu } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function Footer() {
   return (
@@ -27,7 +27,13 @@ function AppContent({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const pathname = usePathname();
   const isAuthPage = pathname === '/login' || pathname === '/';
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  // Close mobile drawer on route change (e.g. browser back)
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
 
   if (loading) {
     return (
@@ -51,24 +57,42 @@ function AppContent({ children }: { children: React.ReactNode }) {
     return null;
   }
 
+  const sideBarWidth = sidebarCollapsed ? 'w-16' : 'w-64';
+
   return (
     <div className="flex bg-gray-50 min-h-screen">
-      {/* Mobile sidebar overlay */}
-      <Sidebar
-        mobileOpen={mobileSidebarOpen}
-        onMobileToggle={() => setMobileSidebarOpen(false)}
-      />
+      {/* ─── Desktop sidebar (fixed, pinned left, visible lg+) ─── */}
+      <aside className={`hidden lg:flex flex-col fixed inset-y-0 left-0 ${sideBarWidth} bg-zinc-900 text-white z-30 transition-all duration-300`}>
+        <Sidebar
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={() => setSidebarCollapsed(prev => !prev)}
+        />
+      </aside>
 
-      {/* Desktop sidebar */}
-      <div className="hidden md:block sticky top-0 h-screen shrink-0">
-        <Sidebar />
-      </div>
+      {/* ─── Mobile drawer overlay (hidden lg+) ─── */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          {/* Drawer */}
+          <aside className="relative w-72 max-w-[85vw] h-full bg-zinc-900 text-white flex flex-col shadow-2xl">
+            <Sidebar
+              isMobileDrawer
+              onNavClick={() => setMobileMenuOpen(false)}
+            />
+          </aside>
+        </div>
+      )}
 
-      <main className="flex-1 min-w-0 flex flex-col">
+      {/* ─── Main content area ─── */}
+      <main className={`flex-1 flex flex-col min-h-screen w-full transition-all duration-300 ${sidebarCollapsed ? 'lg:pl-16' : 'lg:pl-64'}`}>
         {/* Mobile top bar with hamburger */}
-        <div className="sticky top-0 z-30 md:hidden bg-white border-b border-slate-200 px-4 h-14 flex items-center gap-3">
+        <div className="sticky top-0 z-20 lg:hidden bg-white border-b border-slate-200 px-4 h-14 flex items-center gap-3">
           <button
-            onClick={() => setMobileSidebarOpen(true)}
+            onClick={() => setMobileMenuOpen(true)}
             className="p-2.5 -ml-2 hover:bg-slate-100 rounded-lg transition-colors"
             aria-label="Open navigation menu"
           >
@@ -78,11 +102,12 @@ function AppContent({ children }: { children: React.ReactNode }) {
             SmartPOS
           </Link>
         </div>
-        {/* Spacer for fixed top bar on mobile */}
-        <div className="md:hidden h-0" />
+
+        {/* Page content */}
         <div className="flex-1 p-4 sm:p-6 max-w-[1600px] mx-auto w-full">
           {children}
         </div>
+
         <Footer />
       </main>
     </div>
