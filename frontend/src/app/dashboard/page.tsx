@@ -91,13 +91,13 @@ export default function DashboardPage() {
             <p className="text-xs sm:text-sm md:text-base text-slate-300 max-w-prose whitespace-normal break-words block">
               Track your store performance, monitor inventory levels, and stay on top of sales in real time.
             </p>
-            <div className="flex flex-col xs:flex-row gap-3 mt-5 w-full xs:w-auto items-stretch xs:items-center">
+            <div className="flex flex-row items-center justify-between gap-3 mt-5 w-full">
               <button onClick={() => window.location.href = '/pos'}
-                className="w-full xs:w-auto justify-center text-center px-4 py-2.5 bg-teal-500 hover:bg-teal-600 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all text-white shadow-lg shadow-teal-500/25">
+                className="flex-1 sm:flex-initial w-1/2 sm:w-auto text-center justify-center py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-teal-500 hover:bg-teal-600 flex items-center gap-2 text-white shadow-lg shadow-teal-500/25 whitespace-nowrap">
                 <Plus size={16} /> New Sale
               </button>
               <button onClick={() => window.location.href = '/reports'}
-                className="w-full xs:w-auto justify-center text-center px-4 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2 transition-all border border-zinc-600 text-zinc-200 hover:bg-zinc-800 hover:border-zinc-500">
+                className="flex-1 sm:flex-initial w-1/2 sm:w-auto text-center justify-center py-2.5 px-4 rounded-xl text-xs sm:text-sm font-medium transition-all border border-zinc-600 text-zinc-200 hover:bg-zinc-800 hover:border-zinc-500 flex items-center gap-2 whitespace-nowrap">
                 <BarChart3 size={16} /> View Reports
               </button>
             </div>
