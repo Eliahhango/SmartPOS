@@ -4,6 +4,18 @@ import Sidebar from './Sidebar';
 import { usePathname } from 'next/navigation';
 import { Toaster } from 'react-hot-toast';
 
+function Footer() {
+  return (
+    <footer className="bg-white border-t border-slate-100 py-6 px-6">
+      <div className="max-w-7xl mx-auto text-center">
+        <p className="text-xs text-slate-400 leading-relaxed">
+          &copy; {new Date().getFullYear()} SmartPOS Technologies Inc. All rights reserved.
+        </p>
+      </div>
+    </footer>
+  );
+}
+
 function AppContent({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const pathname = usePathname();
@@ -18,7 +30,12 @@ function AppContent({ children }: { children: React.ReactNode }) {
   }
 
   if (isAuthPage) {
-    return <>{children}</>;
+    return (
+      <div className="min-h-screen flex flex-col">
+        <div className="flex-1">{children}</div>
+        <Footer />
+      </div>
+    );
   }
 
   if (!user) {
@@ -27,14 +44,15 @@ function AppContent({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="flex bg-gray-50">
+    <div className="flex bg-gray-50 min-h-screen">
       <div className="sticky top-0 h-screen shrink-0">
         <Sidebar />
       </div>
-      <main className="flex-1 min-w-0">
-        <div className="p-6 max-w-[1600px] mx-auto">
+      <main className="flex-1 min-w-0 flex flex-col">
+        <div className="flex-1 p-6 max-w-[1600px] mx-auto w-full">
           {children}
         </div>
+        <Footer />
       </main>
     </div>
   );
