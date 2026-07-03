@@ -63,18 +63,55 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// Validate product numeric fields against negative values
+function validateProductFields(data, isUpdate = false) {
+  const errors = [];
+  if (data.costPrice !== undefined) {
+    const val = parseFloat(data.costPrice);
+    if (isNaN(val) || val < 0) errors.push('costPrice must be a non-negative number');
+    data.costPrice = val;
+  }
+  if (data.sellingPrice !== undefined) {
+    const val = parseFloat(data.sellingPrice);
+    if (isNaN(val) || val < 0) errors.push('sellingPrice must be a non-negative number');
+    data.sellingPrice = val;
+  }
+  if (data.stockQuantity !== undefined) {
+    const val = parseInt(data.stockQuantity);
+    if (isNaN(val) || val < 0) errors.push('stockQuantity must be a non-negative integer');
+    data.stockQuantity = val;
+  }
+  if (data.minimumStock !== undefined) {
+    const val = parseInt(data.minimumStock);
+    if (isNaN(val) || val < 0) errors.push('minimumStock must be a non-negative integer');
+    data.minimumStock = val;
+  }
+  if (data.name !== undefined && (typeof data.name !== 'string' || data.name.trim().length < 1)) {
+    errors.push('name is required');
+  }
+  return errors;
+}
+
 // POST /api/products
 router.post('/', authorize('admin', 'manager', 'stock_officer'), upload.single('image'), async (req, res) => {
   try {
     const data = { ...req.body };
+
+    // Input validation
+    if (!data.name || typeof data.name !== 'string' || data.name.trim().length < 1) {
+      return res.status(400).json({ error: 'Product name is required' });
+    }
+    data.name = data.name.trim();
+
+    const numericErrors = validateProductFields(data);
+    if (numericErrors.length > 0) {
+      return res.status(400).json({ error: numericErrors.join('; ') });
+    }
+
     if (req.file) data.image = '/uploads/' + req.file.filename;
     if (data.categoryId) data.categoryId = parseInt(data.categoryId);
     if (data.supplierId) data.supplierId = parseInt(data.supplierId);
     if (data.taxClassId) data.taxClassId = parseInt(data.taxClassId);
-    if (data.costPrice) data.costPrice = parseFloat(data.costPrice);
-    if (data.sellingPrice) data.sellingPrice = parseFloat(data.sellingPrice);
-    if (data.stockQuantity) data.stockQuantity = parseInt(data.stockQuantity);
-    if (data.minimumStock) data.minimumStock = parseInt(data.minimumStock);
     if (data.expiryDate) data.expiryDate = new Date(data.expiryDate);
 
     const product = await prisma.product.create({
@@ -92,6 +129,13 @@ router.post('/', authorize('admin', 'manager', 'stock_officer'), upload.single('
 router.put('/:id', authorize('admin', 'manager', 'stock_officer'), upload.single('image'), async (req, res) => {
   try {
     const data = { ...req.body };
+
+    // Validate numeric fields
+    const numericErrors = validateProductFields(data, true);
+    if (numericErrors.length > 0) {
+      return res.status(400).json({ error: numericErrors.join('; ') });
+    }
+
     if (req.file) data.image = '/uploads/' + req.file.filename;
     if (data.categoryId) data.categoryId = parseInt(data.categoryId);
     if (data.supplierId) data.supplierId = parseInt(data.supplierId);

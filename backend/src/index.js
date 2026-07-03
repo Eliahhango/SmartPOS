@@ -52,12 +52,12 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Error handler
+// Error handler — never leak stack traces or internal details in production
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error(err.stack || err.message || err);
+  const isDev = process.env.NODE_ENV === 'development';
   res.status(err.status || 500).json({
-    error: err.message || 'Internal Server Error',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+    error: isDev ? err.message : 'Internal Server Error'
   });
 });
 

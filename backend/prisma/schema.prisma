@@ -9,7 +9,7 @@ datasource db {
 
 model Branch {
   id            Int       @id @default(autoincrement())
-  name          String
+  name          String    @unique
   address       String?
   phone         String?
   isMainBranch  Boolean   @default(true) @map("is_main_branch")

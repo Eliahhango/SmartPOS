@@ -25,18 +25,54 @@ router.get('/', authorize('admin'), async (req, res) => {
 // PUT /api/users/:id
 router.put('/:id', authorize('admin'), async (req, res) => {
   try {
+    const targetId = parseInt(req.params.id);
+
+    // Prevent self-demotion or self-role changes
+    if (targetId === req.user.id) {
+      return res.status(403).json({ error: 'Cannot modify your own account via this endpoint' });
+    }
+
     const { name, email, phone, role, status, branchId, password } = req.body;
     const data = {};
-    if (name) data.name = name;
-    if (email) data.email = email;
-    if (phone !== undefined) data.phone = phone;
-    if (role) data.role = role;
-    if (status) data.status = status;
+
+    // Validate fields with sanitization
+    if (name) {
+      if (typeof name !== 'string' || name.trim().length < 1) {
+        return res.status(400).json({ error: 'Invalid name' });
+      }
+      data.name = name.trim();
+    }
+    if (email) {
+      if (typeof email !== 'string' || !email.includes('@')) {
+        return res.status(400).json({ error: 'Invalid email' });
+      }
+      data.email = email.trim();
+    }
+    if (phone !== undefined) data.phone = String(phone).trim();
+    if (role) {
+      const validRoles = ['admin', 'manager', 'cashier', 'stock_officer'];
+      if (!validRoles.includes(role)) {
+        return res.status(400).json({ error: 'Invalid role' });
+      }
+      data.role = role;
+    }
+    if (status) {
+      const validStatuses = ['active', 'suspended'];
+      if (!validStatuses.includes(status)) {
+        return res.status(400).json({ error: 'Invalid status' });
+      }
+      data.status = status;
+    }
     if (branchId !== undefined) data.branchId = parseInt(branchId);
-    if (password) data.password = await bcrypt.hash(password, 10);
+    if (password) {
+      if (password.length < 6) {
+        return res.status(400).json({ error: 'Password must be at least 6 characters' });
+      }
+      data.password = await bcrypt.hash(password, 10);
+    }
 
     const user = await prisma.user.update({
-      where: { id: parseInt(req.params.id) },
+      where: { id: targetId },
       data,
       select: {
         id: true, name: true, email: true, phone: true, role: true,

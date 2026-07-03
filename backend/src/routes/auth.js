@@ -1,12 +1,38 @@
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const prisma = require('../utils/prisma');
 const { authenticate } = require('../middleware/auth');
+
+// In-memory rate limiter for login (IP-based, 5 attempts per minute)
+const loginAttempts = new Map();
+setInterval(() => {
+  for (const [key, entry] of loginAttempts) {
+    if (Date.now() - entry.resetAt > 60_000) loginAttempts.delete(key);
+  }
+}, 60_000);
 
 // POST /api/auth/login
 router.post('/login', async (req, res) => {
   try {
+    const ip = req.ip || req.connection.remoteAddress || 'unknown';
+    const now = Date.now();
+
+    // Rate limiting
+    if (!loginAttempts.has(ip)) {
+      loginAttempts.set(ip, { count: 0, resetAt: now + 60_000 });
+    }
+    const entry = loginAttempts.get(ip);
+    if (now > entry.resetAt) {
+      entry.count = 0;
+      entry.resetAt = now + 60_000;
+    }
+    entry.count++;
+    if (entry.count > 5) {
+      return res.status(429).json({ error: 'Too many login attempts. Try again in 1 minute.' });
+    }
+
     const { email, password } = req.body;
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password required' });
@@ -26,10 +52,12 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
+    // Generate jti for token uniqueness / revocation
+    const jti = crypto.randomBytes(16).toString('hex');
     const token = jwt.sign(
-      { id: user.id, role: user.role },
+      { id: user.id, role: user.role, jti },
       process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+      { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
     );
 
     const { password: _, ...userData } = user;

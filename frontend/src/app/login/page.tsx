@@ -99,24 +99,24 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Clean, Divided Demo Account Helper Matrix */}
+        {/* Demo Account Helper — emails only, passwords not exposed */}
         <div className="mt-8 pt-6 border-t border-slate-100">
           <div className="bg-slate-50/80 border border-slate-200/50 rounded-xl p-4 text-[11px]">
             <span className="block font-bold text-slate-500 uppercase tracking-wide mb-2.5 text-[10px]">
-              Available Demo Profiles:
+              Demo Accounts:
             </span>
             <div className="space-y-1.5 text-slate-500">
               <div className="flex justify-between items-center">
-                <div><span className="font-semibold text-slate-700">Administrator:</span> admin@smartpos.com</div>
-                <span className="font-mono bg-white border border-slate-200 px-1.5 py-0.5 rounded text-slate-400">admin123</span>
+                <span className="font-semibold text-slate-700">Administrator:</span>
+                <span className="font-mono text-slate-400">admin@smartpos.com</span>
               </div>
               <div className="flex justify-between items-center">
-                <div><span className="font-semibold text-slate-700">Store Manager:</span> manager@smartpos.com</div>
-                <span className="font-mono bg-white border border-slate-200 px-1.5 py-0.5 rounded text-slate-400">manager123</span>
+                <span className="font-semibold text-slate-700">Store Manager:</span>
+                <span className="font-mono text-slate-400">manager@smartpos.com</span>
               </div>
               <div className="flex justify-between items-center">
-                <div><span className="font-semibold text-slate-700">Store Cashier:</span> cashier@smartpos.com</div>
-                <span className="font-mono bg-white border border-slate-200 px-1.5 py-0.5 rounded text-slate-400">cashier123</span>
+                <span className="font-semibold text-slate-700">Store Cashier:</span>
+                <span className="font-mono text-slate-400">cashier@smartpos.com</span>
               </div>
             </div>
           </div>
