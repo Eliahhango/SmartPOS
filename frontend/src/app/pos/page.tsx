@@ -94,11 +94,13 @@ export default function POSPage() {
     setCart(prev => {
       const existing = prev.find(i => i.productId === product.id);
       if (existing) {
+        toast.success(`${product.name} × ${existing.quantity + 1}`, { icon: '🛒', duration: 1500 });
         return prev.map(i => i.productId === product.id
           ? { ...i, quantity: i.quantity + 1, total: (i.quantity + 1) * i.price }
           : i
         );
       }
+      toast.success(`${product.name} added`, { icon: '🛒', duration: 1500 });
       return [...prev, {
         productId: product.id,
         name: product.name,
