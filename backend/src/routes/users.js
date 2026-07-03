@@ -32,7 +32,9 @@ router.put('/:id', authorize('admin'), async (req, res) => {
       return res.status(403).json({ error: 'Cannot modify your own account via this endpoint' });
     }
 
-    const { name, email, phone, role, status, branchId, password } = req.body;
+    // ⛔ Email cannot be changed via this endpoint — that would allow account takeover
+    // Users can only change their email via PUT /api/auth/profile (self-service)
+    const { name, phone, role, status, branchId, password } = req.body;
     const data = {};
 
     // Validate fields with sanitization
@@ -41,12 +43,6 @@ router.put('/:id', authorize('admin'), async (req, res) => {
         return res.status(400).json({ error: 'Invalid name' });
       }
       data.name = name.trim();
-    }
-    if (email) {
-      if (typeof email !== 'string' || !email.includes('@')) {
-        return res.status(400).json({ error: 'Invalid email' });
-      }
-      data.email = email.trim();
     }
     if (phone !== undefined) data.phone = String(phone).trim();
     if (role) {

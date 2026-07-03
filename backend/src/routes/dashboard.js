@@ -1,8 +1,9 @@
 const router = require('express').Router();
 const prisma = require('../utils/prisma');
-const { authenticate } = require('../middleware/auth');
+const { authenticate, authorize } = require('../middleware/auth');
 
 router.use(authenticate);
+router.use(authorize('admin', 'manager'));
 
 router.get('/', async (req, res) => {
   try {

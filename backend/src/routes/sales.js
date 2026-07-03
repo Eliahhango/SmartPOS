@@ -12,6 +12,14 @@ router.post('/', async (req, res) => {
     if (!items || !items.length) return res.status(400).json({ error: 'At least one item required' });
     if (!payments || !payments.length) return res.status(400).json({ error: 'At least one payment required' });
 
+    // Validate payment methods against allowed enum
+    const VALID_METHODS = ['cash', 'mobile_money', 'card', 'bank'];
+    for (const p of payments) {
+      if (!VALID_METHODS.includes(p.method)) {
+        return res.status(400).json({ error: `Invalid payment method '${p.method}'. Must be one of: ${VALID_METHODS.join(', ')}` });
+      }
+    }
+
     // Calculate totals
     let subtotal = 0;
     let taxTotal = 0;

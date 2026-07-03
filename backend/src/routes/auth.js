@@ -5,31 +5,45 @@ const crypto = require('crypto');
 const prisma = require('../utils/prisma');
 const { authenticate } = require('../middleware/auth');
 
-// Rate limiter — dual key: per-socket-IP + per-account (email).
+// Rate limiter — dual sliding window (per-socket-IP + per-account).
 // Uses req.socket.remoteAddress (not X-Forwarded-For) to prevent spoofing.
-const ipLimiter = new Map();    // key: realIP → count
-const emailLimiter = new Map(); // key: normalized-email → count
+// Tries to use per-IP counters but if the IP key is shared across many users (NAT),
+// the per-account limiter kicks in after 5 attempts regardless.
+//
+// Sliding window tracks an array of timestamps per key. This eliminates the
+// race-condition window present in fixed-window counters — concurrent requests
+// all push their own timestamp into the array atomically.
+const ipTimestamps = new Map();    // key: realIP → [timestamp, ...]
+const emailTimestamps = new Map(); // key: normalized-email → [timestamp, ...]
 const WINDOW_MS = 60_000;
 const MAX_ATTEMPTS = 5;
 
+// Periodic cleanup to prevent memory leaks
 setInterval(() => {
-  const now = Date.now();
-  for (const [k, v] of ipLimiter)    { if (now > v.resetAt) ipLimiter.delete(k); }
-  for (const [k, v] of emailLimiter)  { if (now > v.resetAt) emailLimiter.delete(k); }
+  const cutoff = Date.now() - WINDOW_MS;
+  for (const [k, stamps] of ipTimestamps) {
+    ipTimestamps.set(k, stamps.filter(t => t > cutoff));
+    if (ipTimestamps.get(k).length === 0) ipTimestamps.delete(k);
+  }
+  for (const [k, stamps] of emailTimestamps) {
+    emailTimestamps.set(k, stamps.filter(t => t > cutoff));
+    if (emailTimestamps.get(k).length === 0) emailTimestamps.delete(k);
+  }
 }, WINDOW_MS);
 
 /** Always returns the same generic message to prevent user enumeration */
 const GENERIC_LOGIN_ERROR = 'Invalid email or password';
 
-function checkRateLimit(map, key) {
+/** Sliding-window rate check: pushes current timestamp and returns true if over limit */
+function checkRateLimitStamp(map, key) {
   const now = Date.now();
-  let entry = map.get(key);
-  if (!entry || now > entry.resetAt) {
-    entry = { count: 0, resetAt: now + WINDOW_MS };
-    map.set(key, entry);
-  }
-  entry.count++;
-  return entry.count > MAX_ATTEMPTS;
+  const cutoff = now - WINDOW_MS;
+  let stamps = map.get(key) || [];
+  // Remove expired timestamps
+  stamps = stamps.filter(t => t > cutoff);
+  stamps.push(now);
+  map.set(key, stamps);
+  return stamps.length > MAX_ATTEMPTS;
 }
 
 // POST /api/auth/login
@@ -46,11 +60,13 @@ router.post('/login', async (req, res) => {
     const realIP = req.socket.remoteAddress || 'unknown';
     const normalizedEmail = email.toLowerCase().trim();
 
-    // Dual rate limiting: per-IP AND per-account (harder to bypass)
-    if (checkRateLimit(ipLimiter, realIP)) {
+    // Dual sliding-window rate limiting: per-IP AND per-account
+    // Each concurrent request pushes its own timestamp atomically,
+    // eliminating the race window present in fixed-window counters.
+    if (checkRateLimitStamp(ipTimestamps, realIP)) {
       return res.status(429).json({ error: GENERIC_LOGIN_ERROR });
     }
-    if (checkRateLimit(emailLimiter, normalizedEmail)) {
+    if (checkRateLimitStamp(emailTimestamps, normalizedEmail)) {
       return res.status(429).json({ error: GENERIC_LOGIN_ERROR });
     }
 
