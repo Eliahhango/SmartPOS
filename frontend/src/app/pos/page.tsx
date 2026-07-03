@@ -177,9 +177,9 @@ export default function POSPage() {
   ];
 
   return (
-    <div className="p-4 sm:p-6 bg-slate-50/50 min-h-screen w-full -m-4 sm:-m-6">
+    <div className="w-full flex flex-col gap-4 px-4 sm:px-6 py-6 bg-slate-50/50 min-h-screen">
       {/* Top Header Row */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-bold text-slate-800">Point of Sale</h1>
         <button onClick={() => setShowSuspended(true)}
           className="inline-flex items-center bg-amber-50 text-amber-700 border border-amber-200/50 text-xs font-semibold px-3 py-1 rounded-full shadow-sm hover:bg-amber-100 transition-colors">
@@ -191,9 +191,9 @@ export default function POSPage() {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
 
         {/* Left Side: Product Search & Grid Panel */}
-        <div className="xl:col-span-2 space-y-6">
-          <div className="flex flex-col sm:flex-row gap-3 bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
-            <div className="relative flex-1">
+        <div className="xl:col-span-2 space-y-4">
+          <div className="flex flex-col sm:flex-row gap-3 bg-white p-4 rounded-xl border border-slate-100 shadow-sm w-full">
+            <div className="relative w-full">
               <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="text" value={search} onChange={e => setSearch(e.target.value)}
@@ -204,61 +204,61 @@ export default function POSPage() {
             <input
               type="text" value={barcodeInput} onChange={e => setBarcodeInput(e.target.value)} onKeyDown={handleBarcode}
               placeholder="Scan barcode..."
-              className="sm:w-1/3 px-4 py-2.5 bg-slate-50/70 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 font-mono focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-all"
+              className="w-full sm:w-1/3 px-4 py-2.5 bg-slate-50/70 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 font-mono focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-all"
             />
           </div>
 
           {/* Product Grid */}
           {products.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-[500px] overflow-y-auto">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-[450px] xl:max-h-[500px] overflow-y-auto">
               {products.map(p => (
                 <button key={p.id} onClick={() => addToCart(p)}
-                  className="text-left p-3 bg-white border border-slate-100 rounded-xl hover:border-teal-300 hover:shadow-sm transition-all">
+                  className="text-left p-3 bg-white border border-slate-100 rounded-xl hover:border-teal-300 hover:shadow-sm transition-all w-full">
                   <p className="text-sm font-medium text-slate-800 truncate">{p.name}</p>
-                  <p className="text-xs text-slate-400">{p.barcode || p.sku}</p>
+                  <p className="text-xs text-slate-400 truncate">{p.barcode || p.sku}</p>
                   <p className="text-sm font-bold text-teal-600 mt-1">{formatCurrency(p.sellingPrice)}</p>
                   <p className="text-xs text-slate-400">Stock: {p.stockQuantity}</p>
                 </button>
               ))}
             </div>
           ) : (
-            <div className="border-2 border-dashed border-slate-200 rounded-xl h-[500px] flex flex-col items-center justify-center p-6 bg-slate-50/50">
-              <ShoppingCart size={32} className="text-slate-300 mb-3" />
-              <p className="text-sm font-medium text-slate-400">Search for products to display them here.</p>
+            <div className="border-2 border-dashed border-slate-200 rounded-xl min-h-[300px] sm:min-h-[500px] flex flex-col items-center justify-center p-6 bg-slate-50/50">
+              <ShoppingCart size={32} className="text-slate-300 mb-3 shrink-0" />
+              <p className="text-sm font-medium text-slate-400 text-center">Search for products to display them here.</p>
             </div>
           )}
         </div>
 
         {/* Right Side: Current Sale Cart Panel */}
-        <div className="bg-white rounded-xl border border-slate-100 p-5 shadow-sm flex flex-col min-h-[580px] justify-between">
+        <div className="bg-white rounded-xl border border-slate-100 p-5 shadow-sm flex flex-col min-h-[300px] xl:min-h-[580px] justify-between">
           <div>
             <div className="flex justify-between items-center border-b border-slate-100 pb-3 mb-4">
               <div className="flex items-center gap-2">
-                <ShoppingCart size={20} className="text-teal-500" />
+                <ShoppingCart size={20} className="text-teal-500 shrink-0" />
                 <h3 className="font-bold text-slate-800">Current Sale</h3>
               </div>
-              <span className="text-xs bg-slate-100 font-semibold text-slate-500 px-2 py-0.5 rounded-md">{cart.length} items</span>
+              <span className="text-xs bg-slate-100 font-semibold text-slate-500 px-2 py-0.5 rounded-md shrink-0">{cart.length} items</span>
             </div>
 
             {/* Cart Items */}
-            <div className="space-y-2 mb-4 max-h-[320px] overflow-y-auto">
+            <div className="space-y-2 mb-4 max-h-[240px] sm:max-h-[320px] overflow-y-auto">
               {cart.map(item => (
-                <div key={item.productId} className="flex items-center gap-2 p-2.5 bg-slate-50 rounded-lg text-sm">
+                <div key={item.productId} className="flex items-center gap-1.5 sm:gap-2 p-2.5 bg-slate-50 rounded-lg text-sm">
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-slate-700 truncate">{item.name}</p>
-                    <p className="text-xs text-slate-400">{formatCurrency(item.price)} × {item.quantity}</p>
+                    <p className="font-medium text-slate-700 truncate text-xs sm:text-sm">{item.name}</p>
+                    <p className="text-[11px] sm:text-xs text-slate-400">{formatCurrency(item.price)} × {item.quantity}</p>
                   </div>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
                     <button onClick={() => updateQty(item.productId, -1)} className="p-1 hover:bg-slate-200 rounded transition-colors"><Minus size={14} className="text-slate-500" /></button>
-                    <span className="w-6 text-center font-mono text-xs text-slate-700">{item.quantity}</span>
+                    <span className="w-5 sm:w-6 text-center font-mono text-xs text-slate-700">{item.quantity}</span>
                     <button onClick={() => updateQty(item.productId, 1)} className="p-1 hover:bg-slate-200 rounded transition-colors"><Plus size={14} className="text-slate-500" /></button>
                   </div>
-                  <span className="font-semibold text-slate-800 w-20 text-right text-xs">{formatCurrency(item.total)}</span>
-                  <button onClick={() => removeItem(item.productId)} className="p-1 text-slate-400 hover:text-red-500 transition-colors"><Trash2 size={14} /></button>
+                  <span className="font-semibold text-slate-800 w-16 sm:w-20 text-right text-[11px] sm:text-xs shrink-0">{formatCurrency(item.total)}</span>
+                  <button onClick={() => removeItem(item.productId)} className="p-1 text-slate-400 hover:text-red-500 transition-colors shrink-0"><Trash2 size={14} /></button>
                 </div>
               ))}
               {cart.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-20 text-center">
+                <div className="flex flex-col items-center justify-center py-12 sm:py-20 text-center">
                   <p className="text-sm font-medium text-slate-400">Cart is empty. Search and add products.</p>
                 </div>
               )}
@@ -266,7 +266,7 @@ export default function POSPage() {
           </div>
 
           {/* Checkout Calculations Panel */}
-          <div className="border-t border-slate-100 pt-4 space-y-3.5">
+          <div className="border-t border-slate-100 pt-4 space-y-3">
             <div className="flex justify-between text-sm text-slate-500">
               <span>Subtotal</span>
               <span className="font-medium text-slate-700">{formatCurrency(subtotal)}</span>
@@ -277,7 +277,7 @@ export default function POSPage() {
             </div>
             <div className="flex items-center justify-between text-sm text-slate-500">
               <span>Discount</span>
-              <div className="relative w-24">
+              <div className="relative w-20 sm:w-24">
                 <input
                   type="number" value={discount} onChange={e => setDiscount(parseFloat(e.target.value) || 0)}
                   className="w-full text-right pr-2 py-1 bg-slate-50 border border-slate-200 rounded text-sm font-medium text-slate-700 focus:outline-none focus:border-teal-500"
@@ -285,19 +285,19 @@ export default function POSPage() {
               </div>
             </div>
 
-            <div className="flex justify-between items-baseline border-t border-slate-100 pt-3.5 pb-1">
+            <div className="flex justify-between items-baseline border-t border-slate-100 pt-3 pb-1">
               <span className="text-base font-bold text-slate-800">Total</span>
               <span className="text-xl font-extrabold text-teal-600">{formatCurrency(grandTotal)}</span>
             </div>
 
             {/* Action Buttons */}
-            <div className="grid grid-cols-3 gap-2.5 mt-4 pt-2">
+            <div className="flex gap-2.5 pt-2">
               <button onClick={suspendSale} disabled={cart.length === 0}
-                className="col-span-1 py-3 border border-slate-200 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all flex items-center justify-center gap-1 disabled:opacity-50">
+                className="flex-1 py-3 border border-slate-200 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all flex items-center justify-center gap-1 disabled:opacity-50">
                 <Pause size={16} /> Hold
               </button>
               <button onClick={() => setShowPayment(true)} disabled={cart.length === 0}
-                className="col-span-2 py-3 bg-teal-500 hover:bg-teal-600 text-white font-bold rounded-lg text-sm transition-all shadow-md shadow-teal-500/10 flex items-center justify-center gap-2 disabled:opacity-50">
+                className="flex-[2] py-3 bg-teal-500 hover:bg-teal-600 text-white font-bold rounded-lg text-sm transition-all shadow-md shadow-teal-500/10 flex items-center justify-center gap-2 disabled:opacity-50">
                 <CreditCard size={16} /> Pay {formatCurrency(grandTotal)}
               </button>
             </div>
@@ -340,8 +340,8 @@ export default function POSPage() {
                 const Icon = pm.icon;
                 return (
                   <button key={pm.method} onClick={() => addPayment(pm.method)}
-                    className="flex items-center gap-2 p-3 border border-slate-200 rounded-xl hover:border-teal-300 hover:bg-teal-50 transition-all text-sm">
-                    <Icon size={18} className={pm.color} /> <span className="text-slate-700 font-medium">{pm.label}</span>
+                    className="flex items-center justify-center sm:justify-start gap-2 p-3 border border-slate-200 rounded-xl hover:border-teal-300 hover:bg-teal-50 transition-all text-sm w-full">
+                    <Icon size={18} className={pm.color} /> <span className="text-slate-700 font-medium truncate">{pm.label}</span>
                   </button>
                 );
               })}
