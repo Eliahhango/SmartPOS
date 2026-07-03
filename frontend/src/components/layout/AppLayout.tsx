@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { AuthProvider, useAuth } from '@/lib/auth';
 import Sidebar from './Sidebar';
 import { usePathname } from 'next/navigation';
@@ -12,8 +13,8 @@ function Footer() {
           &copy; {new Date().getFullYear()} SmartPOS Technologies Inc. All rights reserved.
         </p>
         <div className="flex gap-6 justify-end text-[11px]">
-          <a href="#" className="hover:text-slate-600 transition-colors">Security Center</a>
-          <a href="#" className="hover:text-slate-600 transition-colors">Terms of Service</a>
+          <Link href="/security" className="hover:text-slate-600 transition-colors">Security Center</Link>
+          <Link href="/terms" className="hover:text-slate-600 transition-colors">Terms of Service</Link>
         </div>
       </div>
     </footer>
