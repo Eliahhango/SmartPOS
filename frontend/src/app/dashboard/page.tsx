@@ -62,14 +62,14 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="space-y-6 animate-pulse">
-        <div className="h-40 bg-zinc-100 rounded-2xl" />
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {[...Array(4)].map((_, i) => <div key={i} className="h-32 bg-zinc-100 rounded-2xl" />)}
+      <div className="w-full min-h-screen space-y-6 p-4 sm:p-6 lg:p-8 animate-pulse">
+        <div className="h-40 bg-zinc-100 rounded-2xl w-full" />
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full">
+          {[...Array(4)].map((_, i) => <div key={i} className="h-32 bg-zinc-100 rounded-2xl w-full" />)}
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 h-80 bg-zinc-100 rounded-2xl" />
-          <div className="h-80 bg-zinc-100 rounded-2xl" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
+          <div className="lg:col-span-2 h-80 bg-zinc-100 rounded-2xl w-full" />
+          <div className="h-80 bg-zinc-100 rounded-2xl w-full" />
         </div>
       </div>
     );
@@ -79,16 +79,16 @@ export default function DashboardPage() {
   const totalPaymentAmount = data.paymentBreakdown.reduce((s, p) => s + p.amount, 0);
 
   return (
-    <div className="space-y-6 pb-8">
+    <div className="w-full min-h-screen space-y-6 p-4 sm:p-6 lg:p-8 bg-slate-50/50">
       {/* ── Welcome Banner ──────────────────────────────── */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 p-4 sm:p-6 lg:p-8 text-white">
+      <div className="w-full relative overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 p-4 sm:p-6 lg:p-8 text-white">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(20,184,166,0.12),transparent_50%)]" />
         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-teal-500/8 to-emerald-500/8 rounded-full blur-3xl" />
         <div className="relative z-10 flex items-center justify-between">
           <div>
             <p className="text-zinc-400 text-sm font-medium mb-1">{greeting}</p>
             <h1 className="text-3xl font-bold mb-2 text-white">Dashboard Overview</h1>
-            <p className="text-zinc-200 text-sm max-w-md">
+            <p className="text-zinc-200 text-sm max-w-lg">
               Track your store performance, monitor inventory levels, and stay on top of sales in real time.
             </p>
             <div className="flex gap-3 mt-4">
@@ -117,7 +117,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── KPI Cards ────────────────────────────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 justify-items-center items-center w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
         {[
           {
             label: "Today's Revenue",
@@ -172,7 +172,7 @@ export default function DashboardPage() {
 
           return (
             <div key={i}
-              className="group bg-white rounded-2xl p-5 shadow-sm border border-zinc-100 hover:shadow-lg hover:border-teal-100 transition-all duration-300">
+              className="group bg-white rounded-2xl p-5 shadow-sm border border-zinc-100 hover:shadow-lg hover:border-teal-100 transition-all duration-300 w-full h-full">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-sm font-medium text-zinc-500">{card.label}</span>
                 <div className={`p-2.5 rounded-xl ${card.iconBg} group-hover:scale-110 transition-transform`}>
@@ -194,9 +194,9 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Charts Row ───────────────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 justify-items-center items-center w-full">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
         {/* Revenue Trend */}
-        <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-zinc-100">
+        <div className="lg:col-span-2 w-full bg-white rounded-2xl p-6 shadow-sm border border-zinc-100">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="font-semibold text-zinc-900">Revenue Trend</h3>
@@ -234,7 +234,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Payment Breakdown */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-zinc-100">
+        <div className="lg:col-span-1 w-full bg-white rounded-2xl p-6 shadow-sm border border-zinc-100">
           <h3 className="font-semibold text-zinc-900 mb-2">Payment Methods</h3>
           <p className="text-xs text-zinc-500 mb-4">Last 30 days</p>
           {totalPaymentAmount > 0 ? (
@@ -272,9 +272,9 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Bottom Row ───────────────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch justify-items-center w-full mt-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
         {/* Top Products Card */}
-        <div className="bg-white rounded-xl border border-slate-100 p-6 flex flex-col justify-between">
+        <div className="w-full bg-white rounded-xl border border-slate-100 p-6 flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-center mb-6">
               <h3 className="font-bold text-slate-800 text-lg">Top Products</h3>
@@ -313,7 +313,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Recent Transactions Card */}
-        <div className="bg-white rounded-xl border border-slate-100 p-6 lg:col-span-2 flex flex-col justify-between">
+        <div className="w-full bg-white rounded-xl border border-slate-100 p-6 lg:col-span-2 flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-center mb-6">
               <div>
