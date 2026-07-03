@@ -3,28 +3,45 @@ import Link from 'next/link';
 const sections = [
   {
     title: 'Data Encryption',
-    icon: '🔐',
+    icon: (
+      <svg className="w-5 h-5 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+        <path d="M7 11V7a5 5 0 0110 0v4" />
+      </svg>
+    ),
     description:
       'All sensitive data stored within the SmartPOS platform is encrypted at rest using AES-256 encryption. Data transmitted between your devices and our servers is protected by TLS 1.3, ensuring every transaction, customer record, and inventory log remains private and tamper-proof.',
     highlights: ['AES-256 encryption at rest', 'TLS 1.3 in transit', 'PCI-compliant data handling'],
   },
   {
     title: 'Network Security & Cloud Isolation',
-    icon: '☁️',
+    icon: (
+      <svg className="w-5 h-5 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+        <path d="M17.5 19H9a7 7 0 116.71-9h1.79a4.5 4.5 0 110 9z" />
+      </svg>
+    ),
     description:
       'SmartPOS operates on fully isolated, multi-tenant cloud infrastructure. Each customer deployment is containerized with strict network segmentation, granular firewall rules, and real-time intrusion detection. Access to production systems requires multi-factor authentication and is logged audibly.',
     highlights: ['Multi-tenant isolation', 'Real-time threat detection', 'MFA-protected infrastructure access'],
   },
   {
     title: 'Infrastructure Reliability',
-    icon: '⚡',
+    icon: (
+      <svg className="w-5 h-5 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+      </svg>
+    ),
     description:
       'Our platform is built on a globally distributed cloud architecture with automated failover, redundant power supplies, and continuous monitoring. We deliver a 99.98% uptime SLA for enterprise customers, with proactive incident response and transparent post-mortem reporting.',
     highlights: ['99.98% uptime SLA', 'Automated failover', '24/7 proactive monitoring'],
   },
   {
     title: 'Vulnerability Disclosure',
-    icon: '🛡️',
+    icon: (
+      <svg className="w-5 h-5 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      </svg>
+    ),
     description:
       'We welcome responsible disclosure from the security research community. If you discover a potential vulnerability, please report it privately to security@smartpos.com. Our team commits to acknowledging receipt within 48 hours and delivering a verified fix within 14 calendar days of confirmation.',
     highlights: ['48-hour acknowledgment', '14-day fix timeline', 'Safe harbor for researchers'],
@@ -69,7 +86,7 @@ export default function SecurityPage() {
               className="bg-white border border-slate-200/60 rounded-2xl p-6 sm:p-8 shadow-sm"
             >
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center text-lg shrink-0 border border-teal-100">
+                <div className="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center shrink-0 border border-teal-100">
                   {section.icon}
                 </div>
                 <div className="flex-1 min-w-0">
