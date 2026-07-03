@@ -6,11 +6,15 @@ import { Toaster } from 'react-hot-toast';
 
 function Footer() {
   return (
-    <footer className="bg-white border-t border-slate-100 py-6 px-6">
-      <div className="max-w-7xl mx-auto text-center">
-        <p className="text-xs text-slate-400 leading-relaxed">
+    <footer className="bg-white border-t border-slate-100">
+      <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 font-semibold tracking-wide uppercase">
+        <p className="text-center sm:text-left leading-relaxed">
           &copy; {new Date().getFullYear()} SmartPOS Technologies Inc. All rights reserved.
         </p>
+        <div className="flex gap-6 justify-end text-[11px]">
+          <a href="#" className="hover:text-slate-600 transition-colors">Security Center</a>
+          <a href="#" className="hover:text-slate-600 transition-colors">Terms of Service</a>
+        </div>
       </div>
     </footer>
   );

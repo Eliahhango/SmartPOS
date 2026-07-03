@@ -151,14 +151,6 @@ export default function HomePage() {
           ))}
         </div>
       </section>
-
-      {/* 5. Refactored Homepage Footer (Links Only — Copyright Removed) */}
-      <footer className="bg-white border-t border-slate-200/60 py-8 text-xs font-semibold text-slate-400 tracking-wide uppercase">
-        <div className="max-w-7xl mx-auto px-6 flex justify-end gap-6 text-[11px]">
-          <a href="#" className="hover:text-slate-600 transition-colors">Security Center</a>
-          <a href="#" className="hover:text-slate-600 transition-colors">Terms of Service</a>
-        </div>
-      </footer>
     </div>
   );
 }
