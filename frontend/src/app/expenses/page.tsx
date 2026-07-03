@@ -53,8 +53,8 @@ export default function ExpensesPage() {
 
       {/* Expenses Ledger Sheet */}
       <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
-        <div className="w-full overflow-x-auto">
-          <table className="w-full text-left border-collapse table-auto">
+        <div className="w-full overflow-x-auto scrollbar-thin">
+          <table className="w-full min-w-[600px] text-left border-collapse table-auto">
             <thead>
               <tr className="border-b border-slate-100 bg-slate-50/70">
                 <th className="py-3.5 px-6 text-xs font-semibold tracking-wider text-slate-400 uppercase">Date</th>

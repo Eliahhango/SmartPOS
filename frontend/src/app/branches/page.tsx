@@ -23,11 +23,11 @@ export default function BranchesPage() {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Branches</h1>
+    <div className="px-4 sm:px-6 md:px-8 py-6 space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h1 className="text-2xl font-bold text-slate-800">Branches</h1>
         <button onClick={() => { setEditing(null); setForm({ name: '', address: '', phone: '', isMainBranch: false }); setShowForm(true); }}
-          className="px-4 py-2 bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-xl text-sm font-medium flex items-center gap-2">
+          className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-xl text-sm font-medium flex items-center justify-center gap-2">
           <Plus size={16} /> Add Branch
         </button>
       </div>
