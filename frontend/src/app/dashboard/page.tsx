@@ -117,7 +117,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── KPI Cards ────────────────────────────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 justify-items-center items-center w-full">
         {[
           {
             label: "Today's Revenue",
@@ -194,7 +194,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Charts Row ───────────────────────────────────── */}
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 justify-items-center items-center w-full">
         {/* Revenue Trend */}
         <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-zinc-100">
           <div className="flex items-center justify-between mb-6">
@@ -272,7 +272,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Bottom Row ───────────────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch w-full mt-6 px-1">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch justify-items-center w-full mt-6">
         {/* Top Products Card */}
         <div className="bg-white rounded-xl border border-slate-100 p-6 flex flex-col justify-between">
           <div>

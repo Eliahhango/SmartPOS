@@ -31,9 +31,9 @@ export default function BranchesPage() {
           <Plus size={16} /> Add Branch
         </button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-center items-center w-full">
         {branches.map(b => (
-          <div key={b.id} className="bg-white rounded-xl p-5 shadow-sm border border-slate-100">
+          <div key={b.id} className="bg-white rounded-xl p-5 shadow-sm border border-slate-100 w-full">
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-2">
                 <div className="w-10 h-10 bg-gradient-to-br from-teal-100 to-emerald-100 rounded-xl flex items-center justify-center">

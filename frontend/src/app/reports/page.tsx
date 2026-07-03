@@ -79,7 +79,7 @@ export default function ReportsPage() {
           </div>
 
           {/* Modern Stats Matrix Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 justify-items-center items-center w-full">
             {[
               { label: 'Total Sales', value: formatCurrency(salesData.totalSales), icon: DollarSign },
               { label: 'Transactions', value: salesData.totalTransactions, icon: ShoppingCart },
@@ -88,7 +88,7 @@ export default function ReportsPage() {
             ].map((s, i) => {
               const Icon = s.icon;
               return (
-                <div key={i} className="bg-white border border-slate-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-all flex justify-between items-start">
+                <div key={i} className="bg-white border border-slate-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-all flex justify-between items-start w-full">
                   <div>
                     <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase block">{s.label}</span>
                     <span className="text-2xl font-extrabold text-slate-800 mt-1.5 block tracking-tight">{s.value}</span>
@@ -134,7 +134,7 @@ export default function ReportsPage() {
       {/* Inventory Tab */}
       {tab === 'inventory' && inventoryData && (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 justify-items-center items-center w-full">
             {[
               { label: 'Total Products', value: inventoryData.totalProducts, icon: Package },
               { label: 'Low Stock', value: inventoryData.lowStock, icon: AlertTriangle, warn: true },
@@ -146,7 +146,7 @@ export default function ReportsPage() {
                              s.warn ? 'bg-amber-50 text-amber-600 border-amber-100/30' :
                              'bg-teal-50 text-teal-600 border-teal-100/30';
               return (
-                <div key={i} className="bg-white border border-slate-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-all flex justify-between items-start">
+                <div key={i} className="bg-white border border-slate-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-all flex justify-between items-start w-full">
                   <div>
                     <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase block">{s.label}</span>
                     <span className="text-2xl font-extrabold text-slate-800 mt-1.5 block tracking-tight">{s.value}</span>
@@ -179,7 +179,7 @@ export default function ReportsPage() {
       {/* Financial Tab */}
       {tab === 'financial' && financialData && (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 justify-items-center items-center w-full">
             {[
               { label: 'Revenue', value: formatCurrency(financialData.revenue), icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50 border-emerald-100/30' },
               { label: 'Expenses', value: formatCurrency(financialData.expenses), icon: TrendingUp, color: 'text-red-600', bg: 'bg-red-50 border-red-100/30' },
@@ -188,7 +188,7 @@ export default function ReportsPage() {
             ].map((s, i) => {
               const Icon = s.icon;
               return (
-                <div key={i} className="bg-white border border-slate-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-all flex justify-between items-start">
+                <div key={i} className="bg-white border border-slate-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-all flex justify-between items-start w-full">
                   <div>
                     <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase block">{s.label}</span>
                     <span className={`text-2xl font-extrabold mt-1.5 block tracking-tight ${s.color}`}>{s.value}</span>

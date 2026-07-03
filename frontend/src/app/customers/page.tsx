@@ -56,7 +56,7 @@ export default function CustomersPage() {
       </div>
 
       {/* Modern Search Filter Bar */}
-      <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm mb-6 max-w-xl">
+      <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm mb-6 max-w-xl mx-auto">
         <div className="relative w-full">
           <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
@@ -68,11 +68,11 @@ export default function CustomersPage() {
       </div>
 
       {/* Customers Grid Workspace */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 justify-items-center items-center w-full">
         {customers.map(c => (
           <div
             key={c.id}
-            className="bg-white border border-slate-100 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-teal-500/20 transition-all duration-200 flex flex-col justify-between group cursor-pointer"
+            className="bg-white border border-slate-100 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-teal-500/20 transition-all duration-200 flex flex-col justify-between group cursor-pointer w-full"
             onClick={() => viewDetails(c.id)}
           >
             <div>

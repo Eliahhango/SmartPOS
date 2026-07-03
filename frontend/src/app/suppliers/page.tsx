@@ -42,16 +42,16 @@ export default function SuppliersPage() {
       </div>
 
       {/* Suppliers Grid Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 justify-items-center items-center w-full">
         {suppliers.map(s => (
           <div
             key={s.id}
-            className="bg-white border border-slate-100 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-teal-500/20 transition-all duration-200 flex flex-col justify-between group"
+            className="bg-white border border-slate-100 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-teal-500/20 transition-all duration-200 flex flex-col justify-between group w-full"
           >
             <div>
               {/* Card Title & Header Actions */}
               <div className="flex justify-between items-start">
-                <h3 className="font-bold text-slate-800 text-base tracking-tight group-hover:text-teal-600 transition-colors truncate max-w-[75%]">
+                <h3 className="font-bold text-slate-800 text-base tracking-tight group-hover:text-teal-600 transition-colors truncate min-w-0">
                   {s.name}
                 </h3>
                 <div className="flex items-center gap-2.5 opacity-80 group-hover:opacity-100 transition-opacity">

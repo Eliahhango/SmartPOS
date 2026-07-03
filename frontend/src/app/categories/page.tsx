@@ -47,19 +47,19 @@ export default function CategoriesPage() {
       </div>
 
       {/* Categories Grid Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 justify-items-center items-center w-full">
         {categories.map(c => (
           <div
             key={c.id}
-            className="bg-white border border-slate-100 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-teal-500/20 transition-all duration-200 flex flex-col justify-between group"
+            className="bg-white border border-slate-100 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-teal-500/20 transition-all duration-200 flex flex-col justify-between group w-full"
           >
             <div>
               {/* Card Title & Actions Header */}
               <div className="flex justify-between items-start">
-                <h3 className="font-bold text-slate-800 text-base tracking-tight group-hover:text-teal-600 transition-colors">
+                <h3 className="font-bold text-slate-800 text-base tracking-tight group-hover:text-teal-600 transition-colors min-w-0">
                   {c.name}
                 </h3>
-                <div className="flex items-center gap-2.5 opacity-80 group-hover:opacity-100 transition-opacity">
+                <div className="flex items-center gap-2.5 shrink-0 opacity-80 group-hover:opacity-100 transition-opacity">
                   <button onClick={() => { setEditing(c); setForm({ name: c.name, description: c.description || '' }); setShowForm(true); }}
                     className="text-slate-400 hover:text-teal-600 transition-colors p-0.5" title="Edit">
                     <Edit size={15} />
@@ -72,7 +72,7 @@ export default function CategoriesPage() {
               </div>
 
               {/* Description */}
-              <p className="text-xs text-slate-400 mt-1.5 leading-relaxed max-w-[90%]">
+              <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
                 {c.description || 'No description'}
               </p>
             </div>

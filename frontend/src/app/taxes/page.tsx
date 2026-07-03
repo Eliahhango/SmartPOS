@@ -31,9 +31,9 @@ export default function TaxesPage() {
           <Plus size={16} /> Add Tax Rate
         </button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 justify-items-center items-center w-full">
         {taxes.map(t => (
-          <div key={t.id} className="bg-white rounded-xl p-5 shadow-sm border border-slate-100">
+          <div key={t.id} className="bg-white rounded-xl p-5 shadow-sm border border-slate-100 w-full">
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="font-semibold">{t.name}</h3>
