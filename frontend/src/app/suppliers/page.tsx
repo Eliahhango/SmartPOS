@@ -28,9 +28,9 @@ export default function SuppliersPage() {
   };
 
   return (
-    <div className="p-4 sm:p-6 bg-slate-50/50 min-h-screen w-full -m-4 sm:-m-6">
+    <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8 flex flex-col gap-6 mx-auto bg-slate-50/50">
       {/* Top Header Row */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-8">
+      <div className="w-full flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-800">Suppliers</h1>
           <p className="text-xs text-slate-400 mt-1">Manage wholesale vendors and supply partners</p>
@@ -42,7 +42,7 @@ export default function SuppliersPage() {
       </div>
 
       {/* Suppliers Grid Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 justify-items-center items-center w-full">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-center items-center w-full">
         {suppliers.map(s => (
           <div
             key={s.id}

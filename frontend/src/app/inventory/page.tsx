@@ -41,9 +41,9 @@ export default function InventoryPage() {
   };
 
   return (
-    <div className="p-4 sm:p-6 bg-slate-50/50 min-h-screen w-full -m-4 sm:-m-6">
+    <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8 flex flex-col gap-6 mx-auto bg-slate-50/50">
       {/* Top Header Row */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
+      <div className="w-full flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-800">Inventory Management</h1>
           <p className="text-xs text-slate-400 mt-1">Track product counts, minimum values, and expiry alerts</p>
@@ -76,7 +76,7 @@ export default function InventoryPage() {
 
       {/* Search Input Container Box */}
       {tab === 'stock' && (
-        <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm mb-6 flex flex-col sm:flex-row gap-3">
+        <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
             <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
@@ -99,7 +99,7 @@ export default function InventoryPage() {
       {tab === 'stock' && (
         <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
           <div className="w-full overflow-x-auto scrollbar-thin">
-            <table className="w-full min-w-[600px] text-left border-collapse table-auto">
+            <table className="w-full min-w-[600px] md:min-w-full text-left border-collapse table-auto">
               <thead>
                 <tr className="border-b border-slate-100 bg-slate-50/70">
                   <th className="py-3.5 px-6 text-xs font-semibold tracking-wider text-slate-400 uppercase">Product</th>
@@ -150,7 +150,7 @@ export default function InventoryPage() {
       {tab === 'movements' && (
         <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
           <div className="w-full overflow-x-auto scrollbar-thin">
-            <table className="w-full min-w-[600px] text-left border-collapse table-auto">
+            <table className="w-full min-w-[600px] md:min-w-full text-left border-collapse table-auto">
               <thead>
                 <tr className="border-b border-slate-100 bg-slate-50/70">
                   <th className="py-3.5 px-6 text-xs font-semibold tracking-wider text-slate-400 uppercase">Date</th>

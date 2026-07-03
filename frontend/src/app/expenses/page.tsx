@@ -36,9 +36,9 @@ export default function ExpensesPage() {
   const total = expenses.reduce((s, e) => s + parseFloat(e.amount), 0);
 
   return (
-    <div className="p-4 sm:p-6 bg-slate-50/50 min-h-screen w-full -m-4 sm:-m-6">
+    <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8 flex flex-col gap-6 mx-auto bg-slate-50/50">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
+      <div className="w-full flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-800">Expenses</h1>
           <p className="text-xs font-bold text-teal-600 mt-1 bg-teal-50 border border-teal-100/50 rounded-md px-2.5 py-0.5 inline-block">
@@ -54,7 +54,7 @@ export default function ExpensesPage() {
       {/* Expenses Ledger Sheet */}
       <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="w-full overflow-x-auto scrollbar-thin">
-          <table className="w-full min-w-[600px] text-left border-collapse table-auto">
+          <table className="w-full min-w-[600px] md:min-w-full text-left border-collapse table-auto">
             <thead>
               <tr className="border-b border-slate-100 bg-slate-50/70">
                 <th className="py-3.5 px-6 text-xs font-semibold tracking-wider text-slate-400 uppercase">Date</th>

@@ -43,8 +43,8 @@ export default function UsersPage() {
   };
 
   return (
-    <div className="px-4 sm:px-6 md:px-8 py-6 space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8 flex flex-col gap-6 mx-auto bg-slate-50/50">
+      <div className="w-full flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <h1 className="text-2xl font-bold text-slate-800">Users</h1>
         <button onClick={() => { setEditing(null); setForm({ name: '', email: '', phone: '', password: '', role: 'cashier', branchId: '' }); setShowForm(true); }}
           className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-xl text-sm font-medium flex items-center justify-center gap-2">
@@ -53,7 +53,7 @@ export default function UsersPage() {
       </div>
       <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="w-full overflow-x-auto scrollbar-thin">
-          <table className="w-full min-w-[600px] text-sm">
+          <table className="w-full min-w-[600px] md:min-w-full text-sm">
           <thead><tr className="text-left text-slate-500 bg-slate-50"><th className="p-4">Name</th><th className="p-4">Email</th><th className="p-4">Role</th><th className="p-4">Branch</th><th className="p-4">Status</th><th className="p-4"></th></tr></thead>
           <tbody>
             {users.map(u => (

@@ -42,9 +42,9 @@ export default function CustomersPage() {
   };
 
   return (
-    <div className="p-4 sm:p-6 bg-slate-50/50 min-h-screen w-full -m-4 sm:-m-6">
+    <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8 flex flex-col gap-6 mx-auto bg-slate-50/50">
       {/* Top Header Row */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-8">
+      <div className="w-full flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-800">Customers</h1>
           <p className="text-xs text-slate-400 mt-1">{total} customers total</p>
@@ -56,7 +56,7 @@ export default function CustomersPage() {
       </div>
 
       {/* Modern Search Filter Bar */}
-      <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm mb-6 max-w-xl mx-auto">
+      <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
         <div className="relative w-full">
           <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
@@ -68,7 +68,7 @@ export default function CustomersPage() {
       </div>
 
       {/* Customers Grid Workspace */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 justify-items-center items-center w-full">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-center items-center w-full">
         {customers.map(c => (
           <div
             key={c.id}

@@ -23,8 +23,8 @@ export default function TaxesPage() {
   };
 
   return (
-    <div className="px-4 sm:px-6 md:px-8 py-6 space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8 flex flex-col gap-6 mx-auto bg-slate-50/50">
+      <div className="w-full flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <h1 className="text-2xl font-bold text-slate-800">Tax Rates</h1>
         <button onClick={() => { setEditing(null); setForm({ name: '', ratePercent: '', isActive: true }); setShowForm(true); }}
           className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-xl text-sm font-medium flex items-center justify-center gap-2">

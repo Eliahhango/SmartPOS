@@ -40,15 +40,17 @@ export default function ReportsPage() {
   const CHART_COLORS = ['#14b8a6', '#10b981', '#34d399', '#6ee7b7', '#a7f3d0'];
 
   return (
-    <div className="p-4 sm:p-6 bg-slate-50/50 min-h-screen w-full -m-4 sm:-m-6">
+    <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8 flex flex-col gap-6 mx-auto bg-slate-50/50">
       {/* Page Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-800">Reports</h1>
-        <p className="text-xs text-slate-400 mt-1">Analyze store revenue metrics and business growth charts</p>
+      <div className="w-full flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-800">Reports</h1>
+          <p className="text-xs text-slate-400 mt-1">Analyze store revenue metrics and business growth charts</p>
+        </div>
       </div>
 
       {/* Primary Module Navigation Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-100 pb-4 mb-6">
+      <div className="flex items-center gap-2 border-b border-slate-100 pb-4">
         {(['sales', 'inventory', 'financial', 'cashier'] as const).map(t => (
           <button key={t} onClick={() => setTab(t)}
             className={`px-4 py-2 rounded-lg text-xs font-bold transition-all capitalize ${
@@ -79,7 +81,7 @@ export default function ReportsPage() {
           </div>
 
           {/* Modern Stats Matrix Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 justify-items-center items-center w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
             {[
               { label: 'Total Sales', value: formatCurrency(salesData.totalSales), icon: DollarSign },
               { label: 'Transactions', value: salesData.totalTransactions, icon: ShoppingCart },
@@ -134,7 +136,7 @@ export default function ReportsPage() {
       {/* Inventory Tab */}
       {tab === 'inventory' && inventoryData && (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 justify-items-center items-center w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
             {[
               { label: 'Total Products', value: inventoryData.totalProducts, icon: Package },
               { label: 'Low Stock', value: inventoryData.lowStock, icon: AlertTriangle, warn: true },
@@ -179,7 +181,7 @@ export default function ReportsPage() {
       {/* Financial Tab */}
       {tab === 'financial' && financialData && (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 justify-items-center items-center w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
             {[
               { label: 'Revenue', value: formatCurrency(financialData.revenue), icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50 border-emerald-100/30' },
               { label: 'Expenses', value: formatCurrency(financialData.expenses), icon: TrendingUp, color: 'text-red-600', bg: 'bg-red-50 border-red-100/30' },

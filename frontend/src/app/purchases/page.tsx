@@ -75,9 +75,9 @@ export default function PurchasesPage() {
   };
 
   return (
-    <div className="p-4 sm:p-6 bg-slate-50/50 min-h-screen w-full -m-4 sm:-m-6">
+    <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8 flex flex-col gap-6 mx-auto bg-slate-50/50">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
+      <div className="w-full flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-800">Purchase Orders</h1>
           <p className="text-xs text-slate-400 mt-1">Track and manage incoming inventory orders</p>
@@ -89,7 +89,7 @@ export default function PurchasesPage() {
       </div>
 
       {/* Utility Filter Bar */}
-      <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm mb-6 flex flex-wrap gap-3">
+      <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-[200px]">
           <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
