@@ -91,7 +91,7 @@ export default function DashboardPage() {
             <p className="text-xs sm:text-sm md:text-base text-slate-300 max-w-prose whitespace-normal break-words block">
               Track your store performance, monitor inventory levels, and stay on top of sales in real time.
             </p>
-            <div className="flex flex-row items-center justify-between gap-4 mt-5 w-full">
+            <div className="flex flex-row items-center justify-between sm:justify-start gap-4 mt-5 w-full">
               <button onClick={() => window.location.href = '/pos'}
                 className="w-auto inline-flex items-center justify-center px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-teal-500 hover:bg-teal-600 gap-2 text-white shadow-lg shadow-teal-500/25 whitespace-nowrap">
                 <Plus size={16} /> New Sale
