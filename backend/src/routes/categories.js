@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const prisma = require('../utils/prisma');
 const { authenticate, authorize } = require('../middleware/auth');
+const validate = require('../middleware/validate');
 
 router.use(authenticate);
 
@@ -18,10 +19,9 @@ router.get('/', async (req, res) => {
 });
 
 // POST /api/categories
-router.post('/', authorize('admin', 'manager'), async (req, res) => {
+router.post('/', authorize('admin', 'manager'), validate.createCategory, async (req, res) => {
   try {
     const { name, description } = req.body;
-    if (!name) return res.status(400).json({ error: 'Category name required' });
 
     const category = await prisma.category.create({ data: { name, description } });
     res.status(201).json(category);
@@ -31,7 +31,7 @@ router.post('/', authorize('admin', 'manager'), async (req, res) => {
 });
 
 // PUT /api/categories/:id
-router.put('/:id', authorize('admin', 'manager'), async (req, res) => {
+router.put('/:id', authorize('admin', 'manager'), validate.updateCategory, async (req, res) => {
   try {
     const { name, description } = req.body;
     const category = await prisma.category.update({
@@ -45,7 +45,7 @@ router.put('/:id', authorize('admin', 'manager'), async (req, res) => {
 });
 
 // DELETE /api/categories/:id
-router.delete('/:id', authorize('admin'), async (req, res) => {
+router.delete('/:id', authorize('admin'), validate.deleteCategory, async (req, res) => {
   try {
     await prisma.category.delete({ where: { id: parseInt(req.params.id) } });
     res.json({ message: 'Category deleted' });

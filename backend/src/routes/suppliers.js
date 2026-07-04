@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const prisma = require('../utils/prisma');
 const { authenticate, authorize } = require('../middleware/auth');
+const validate = require('../middleware/validate');
 
 router.use(authenticate);
 
@@ -32,10 +33,9 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /api/suppliers
-router.post('/', authorize('admin', 'manager'), async (req, res) => {
+router.post('/', authorize('admin', 'manager'), validate.createSupplier, async (req, res) => {
   try {
     const { name, phone, email, address, tinNumber } = req.body;
-    if (!name) return res.status(400).json({ error: 'Supplier name required' });
 
     const supplier = await prisma.supplier.create({
       data: { name, phone, email, address, tinNumber }
@@ -47,7 +47,7 @@ router.post('/', authorize('admin', 'manager'), async (req, res) => {
 });
 
 // PUT /api/suppliers/:id
-router.put('/:id', authorize('admin', 'manager'), async (req, res) => {
+router.put('/:id', authorize('admin', 'manager'), validate.updateSupplier, async (req, res) => {
   try {
     const { name, phone, email, address, tinNumber } = req.body;
     const supplier = await prisma.supplier.update({
@@ -61,7 +61,7 @@ router.put('/:id', authorize('admin', 'manager'), async (req, res) => {
 });
 
 // DELETE /api/suppliers/:id
-router.delete('/:id', authorize('admin'), async (req, res) => {
+router.delete('/:id', authorize('admin'), validate.deleteSupplier, async (req, res) => {
   try {
     await prisma.supplier.delete({ where: { id: parseInt(req.params.id) } });
     res.json({ message: 'Supplier deleted' });

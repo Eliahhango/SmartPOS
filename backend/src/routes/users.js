@@ -2,6 +2,7 @@ const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const prisma = require('../utils/prisma');
 const { authenticate, authorize } = require('../middleware/auth');
+const validate = require('../middleware/validate');
 
 router.use(authenticate);
 
@@ -23,7 +24,7 @@ router.get('/', authorize('admin'), async (req, res) => {
 });
 
 // PUT /api/users/:id
-router.put('/:id', authorize('admin'), async (req, res) => {
+router.put('/:id', authorize('admin'), validate.updateUser, async (req, res) => {
   try {
     const targetId = parseInt(req.params.id);
 
@@ -37,35 +38,12 @@ router.put('/:id', authorize('admin'), async (req, res) => {
     const { name, phone, role, status, branchId, password } = req.body;
     const data = {};
 
-    // Validate fields with sanitization
-    if (name) {
-      if (typeof name !== 'string' || name.trim().length < 1) {
-        return res.status(400).json({ error: 'Invalid name' });
-      }
-      data.name = name.trim();
-    }
+    if (name) data.name = name.trim();
     if (phone !== undefined) data.phone = String(phone).trim();
-    if (role) {
-      const validRoles = ['admin', 'manager', 'cashier', 'stock_officer'];
-      if (!validRoles.includes(role)) {
-        return res.status(400).json({ error: 'Invalid role' });
-      }
-      data.role = role;
-    }
-    if (status) {
-      const validStatuses = ['active', 'suspended'];
-      if (!validStatuses.includes(status)) {
-        return res.status(400).json({ error: 'Invalid status' });
-      }
-      data.status = status;
-    }
+    if (role) data.role = role;
+    if (status) data.status = status;
     if (branchId !== undefined) data.branchId = parseInt(branchId);
-    if (password) {
-      if (password.length < 6) {
-        return res.status(400).json({ error: 'Password must be at least 6 characters' });
-      }
-      data.password = await bcrypt.hash(password, 10);
-    }
+    if (password) data.password = await bcrypt.hash(password, 10);
 
     const user = await prisma.user.update({
       where: { id: targetId },
@@ -83,7 +61,7 @@ router.put('/:id', authorize('admin'), async (req, res) => {
 });
 
 // PUT /api/users/:id/suspend
-router.put('/:id/suspend', authorize('admin'), async (req, res) => {
+router.put('/:id/suspend', authorize('admin'), validate.suspendUser, async (req, res) => {
   try {
     const user = await prisma.user.update({
       where: { id: parseInt(req.params.id) },
@@ -96,7 +74,7 @@ router.put('/:id/suspend', authorize('admin'), async (req, res) => {
 });
 
 // PUT /api/users/:id/activate
-router.put('/:id/activate', authorize('admin'), async (req, res) => {
+router.put('/:id/activate', authorize('admin'), validate.activateUser, async (req, res) => {
   try {
     const user = await prisma.user.update({
       where: { id: parseInt(req.params.id) },

@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const prisma = require('../utils/prisma');
 const { authenticate, authorize } = require('../middleware/auth');
+const validate = require('../middleware/validate');
 
 router.use(authenticate);
 
@@ -49,10 +50,9 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /api/customers
-router.post('/', async (req, res) => {
+router.post('/', validate.createCustomer, async (req, res) => {
   try {
     const { name, phone, email, address } = req.body;
-    if (!name) return res.status(400).json({ error: 'Customer name required' });
 
     const customer = await prisma.customer.create({
       data: { name, phone, email, address, points: 0 }
@@ -64,7 +64,7 @@ router.post('/', async (req, res) => {
 });
 
 // PUT /api/customers/:id
-router.put('/:id', async (req, res) => {
+router.put('/:id', validate.updateCustomer, async (req, res) => {
   try {
     const { name, phone, email, address, points } = req.body;
     const data = {};

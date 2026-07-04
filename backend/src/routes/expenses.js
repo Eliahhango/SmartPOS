@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const prisma = require('../utils/prisma');
 const { authenticate, authorize } = require('../middleware/auth');
+const validate = require('../middleware/validate');
 
 router.use(authenticate);
 
@@ -34,10 +35,9 @@ router.get('/', async (req, res) => {
 });
 
 // POST /api/expenses
-router.post('/', authorize('admin', 'manager'), async (req, res) => {
+router.post('/', authorize('admin', 'manager'), validate.createExpense, async (req, res) => {
   try {
     const { expenseType, amount, description, date } = req.body;
-    if (!expenseType || !amount) return res.status(400).json({ error: 'Expense type and amount required' });
 
     const expense = await prisma.expense.create({
       data: {
@@ -55,7 +55,7 @@ router.post('/', authorize('admin', 'manager'), async (req, res) => {
 });
 
 // PUT /api/expenses/:id
-router.put('/:id', authorize('admin', 'manager'), async (req, res) => {
+router.put('/:id', authorize('admin', 'manager'), validate.updateExpense, async (req, res) => {
   try {
     const { expenseType, amount, description, date } = req.body;
     const data = {};
@@ -75,7 +75,7 @@ router.put('/:id', authorize('admin', 'manager'), async (req, res) => {
 });
 
 // DELETE /api/expenses/:id
-router.delete('/:id', authorize('admin'), async (req, res) => {
+router.delete('/:id', authorize('admin'), validate.deleteExpense, async (req, res) => {
   try {
     await prisma.expense.delete({ where: { id: parseInt(req.params.id) } });
     res.json({ message: 'Expense deleted' });

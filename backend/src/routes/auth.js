@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const prisma = require('../utils/prisma');
 const { authenticate } = require('../middleware/auth');
+const { createAuditLog } = require('../middleware/auditLog');
+const validate = require('../middleware/validate');
 
 // Rate limiter — dual sliding window (per-socket-IP + per-account).
 // Uses req.socket.remoteAddress (not X-Forwarded-For) to prevent spoofing.
@@ -18,7 +20,7 @@ const emailTimestamps = new Map(); // key: normalized-email → [timestamp, ...]
 const WINDOW_MS = 60_000;
 const MAX_ATTEMPTS = 3;
 
-// Periodic cleanup to prevent memory leaks
+// Periodic cleanup to prevent memory leaks (unref so it doesn't block test exit)
 setInterval(() => {
   const cutoff = Date.now() - WINDOW_MS;
   for (const [k, stamps] of ipTimestamps) {
@@ -29,7 +31,7 @@ setInterval(() => {
     emailTimestamps.set(k, stamps.filter(t => t > cutoff));
     if (emailTimestamps.get(k).length === 0) emailTimestamps.delete(k);
   }
-}, WINDOW_MS);
+}, WINDOW_MS).unref();
 
 /** Always returns the same generic message to prevent user enumeration */
 const GENERIC_LOGIN_ERROR = 'Invalid email or password';
@@ -47,14 +49,9 @@ function checkRateLimitStamp(map, key) {
 }
 
 // POST /api/auth/login
-router.post('/login', async (req, res) => {
+router.post('/login', validate.login, async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    // Basic field validation (same generic response for all failures)
-    if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
-      return res.status(401).json({ error: GENERIC_LOGIN_ERROR });
-    }
 
     // Real connection IP — NOT from headers (prevents X-Forwarded-For spoofing)
     const realIP = req.socket.remoteAddress || 'unknown';
@@ -105,6 +102,8 @@ router.post('/login', async (req, res) => {
       branch: user.branch ? { id: user.branch.id, name: user.branch.name } : null,
       createdAt: user.createdAt
     };
+    // Audit: login
+    createAuditLog({ userId: user.id, action: 'login', entity: 'user', entityId: user.id, description: `${user.name} (${user.role}) logged in`, ip: req.ip });
     res.json({ token, user: userData });
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
@@ -112,16 +111,13 @@ router.post('/login', async (req, res) => {
 });
 
 // POST /api/auth/register
-router.post('/register', authenticate, async (req, res) => {
+router.post('/register', authenticate, validate.register, async (req, res) => {
   try {
     if (req.user.role !== 'admin') {
       return res.status(403).json({ error: 'Only admins can create users' });
     }
 
     const { name, email, phone, password, role, branchId } = req.body;
-    if (!name || !email || !password) {
-      return res.status(400).json({ error: 'Name, email, and password required' });
-    }
 
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
@@ -141,6 +137,7 @@ router.post('/register', authenticate, async (req, res) => {
     });
 
     const { password: _, ...userData } = user;
+    req.audit({ action: 'create', entity: 'user', entityId: user.id, description: `Registered user ${user.name} as ${user.role}` });
     res.status(201).json(userData);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -149,6 +146,7 @@ router.post('/register', authenticate, async (req, res) => {
 
 // POST /api/auth/logout
 router.post('/logout', authenticate, (req, res) => {
+  req.audit({ action: 'logout', entity: 'user', entityId: req.user.id, description: `${req.user.name} logged out` });
   res.json({ message: 'Logged out successfully' });
 });
 
@@ -168,7 +166,7 @@ router.get('/me', authenticate, async (req, res) => {
 });
 
 // PUT /api/auth/profile
-router.put('/profile', authenticate, async (req, res) => {
+router.put('/profile', authenticate, validate.updateProfile, async (req, res) => {
   try {
     const { name, phone, password } = req.body;
     const data = {};

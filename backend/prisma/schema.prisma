@@ -37,6 +37,7 @@ model User {
   sales     Sale[]
   stockMovements StockMovement[]
   salesReturns SalesReturn[]
+  auditLogs AuditLog[]
 
   @@map("users")
 }
@@ -57,6 +58,8 @@ model Product {
   unit          String    @default("pcs")
   stockQuantity Int       @default(0) @map("stock_quantity")
   minimumStock  Int       @default(0) @map("minimum_stock")
+  reorderQuantity Int    @default(0) @map("reorder_quantity")
+  batchNumber   String?   @map("batch_number")
   expiryDate    DateTime? @map("expiry_date")
   image         String?
   status        String    @default("active")
@@ -158,6 +161,7 @@ model StockMovement {
   product       Product   @relation(fields: [productId], references: [id])
   branchId      Int?      @map("branch_id")
   branch        Branch?   @relation(fields: [branchId], references: [id])
+  batchNumber   String?   @map("batch_number")
   changeQty     Int       @map("change_qty")
   reason        String
   referenceType String?   @map("reference_type")
@@ -244,4 +248,19 @@ model Expense {
   date        DateTime @default(now())
 
   @@map("expenses")
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int?     @map("user_id")
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String   // "create", "update", "delete", "login", "logout", "refund", "restore"
+  entity    String   // "product", "sale", "purchase", "user", "customer", "supplier", "expense", "inventory"
+  entityId  Int?     @map("entity_id")
+  description String?
+  metadata  String?  // JSON blob for before/after snapshots, price deltas, etc.
+  ip        String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("audit_logs")
 }

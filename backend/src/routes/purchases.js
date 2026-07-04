@@ -1,16 +1,23 @@
 const router = require('express').Router();
 const prisma = require('../utils/prisma');
 const { authenticate, authorize } = require('../middleware/auth');
+const validate = require('../middleware/validate');
 
 router.use(authenticate);
 
 // GET /api/purchases
 router.get('/', async (req, res) => {
   try {
-    const { page = 1, limit = 50, status, supplierId } = req.query;
+    const { page = 1, limit = 50, status, supplierId, search } = req.query;
     const where = {};
     if (status) where.status = status;
     if (supplierId) where.supplierId = parseInt(supplierId);
+    if (search) {
+      where.OR = [
+        { invoiceNo: { contains: search } },
+        { supplier: { name: { contains: search } } }
+      ];
+    }
 
     const [purchases, total] = await Promise.all([
       prisma.purchase.findMany({
@@ -48,12 +55,9 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /api/purchases
-router.post('/', authorize('admin', 'manager', 'stock_officer'), async (req, res) => {
+router.post('/', authorize('admin', 'manager', 'stock_officer'), validate.createPurchase, async (req, res) => {
   try {
     const { supplierId, invoiceNo, items, date } = req.body;
-    if (!supplierId || !items || !items.length) {
-      return res.status(400).json({ error: 'Supplier and items required' });
-    }
 
     let totalAmount = 0;
     const purchaseItems = items.map(item => {
@@ -86,7 +90,7 @@ router.post('/', authorize('admin', 'manager', 'stock_officer'), async (req, res
 });
 
 // POST /api/purchases/:id/approve
-router.post('/:id/approve', authorize('admin', 'manager'), async (req, res) => {
+router.post('/:id/approve', authorize('admin', 'manager'), validate.approvePurchase, async (req, res) => {
   try {
     const purchase = await prisma.purchase.update({
       where: { id: parseInt(req.params.id) },
@@ -99,7 +103,7 @@ router.post('/:id/approve', authorize('admin', 'manager'), async (req, res) => {
 });
 
 // POST /api/purchases/:id/receive
-router.post('/:id/receive', authorize('admin', 'manager', 'stock_officer'), async (req, res) => {
+router.post('/:id/receive', authorize('admin', 'manager', 'stock_officer'), validate.receivePurchase, async (req, res) => {
   try {
     const purchase = await prisma.purchase.findUnique({
       where: { id: parseInt(req.params.id) },

@@ -2,7 +2,9 @@
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import { formatCurrency } from '@/lib/utils';
-import { Plus, Search, Edit, Trash2, Upload } from 'lucide-react';
+import { generateBarcode } from '@/lib/barcodeGen';
+import { Plus, Search, Edit, Trash2, Upload, Barcode } from 'lucide-react';
+import { printBarcodeLabels } from '@/lib/barcodePrint';
 import toast from 'react-hot-toast';
 
 export default function ProductsPage() {
@@ -16,7 +18,7 @@ export default function ProductsPage() {
   const [categories, setCategories] = useState<any[]>([]);
   const [suppliers, setSuppliers] = useState<any[]>([]);
   const [taxRates, setTaxRates] = useState<any[]>([]);
-  const [form, setForm] = useState<any>({ name: '', barcode: '', sku: '', categoryId: '', supplierId: '', costPrice: '', sellingPrice: '', taxClassId: '', unit: 'pcs', stockQuantity: 0, minimumStock: 0, expiryDate: '' });
+  const [form, setForm] = useState<any>({ name: '', barcode: '', sku: '', categoryId: '', supplierId: '', costPrice: '', sellingPrice: '', taxClassId: '', unit: 'pcs', stockQuantity: 0, minimumStock: 0, reorderQuantity: 0, batchNumber: '', expiryDate: '' });
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -50,14 +52,14 @@ export default function ProductsPage() {
         toast.success('Product created');
       }
       setShowForm(false); setEditing(null);
-      setForm({ name: '', barcode: '', sku: '', categoryId: '', supplierId: '', costPrice: '', sellingPrice: '', taxClassId: '', unit: 'pcs', stockQuantity: 0, minimumStock: 0, expiryDate: '' });
+      setForm({ name: '', barcode: '', sku: '', categoryId: '', supplierId: '', costPrice: '', sellingPrice: '', taxClassId: '', unit: 'pcs', stockQuantity: 0, minimumStock: 0, reorderQuantity: 0, batchNumber: '', expiryDate: '' });
       fetchProducts();
     } catch (err: any) { toast.error(err.response?.data?.error || 'Failed'); }
   };
 
   const handleEdit = (p: any) => {
     setEditing(p);
-    setForm({ name: p.name, barcode: p.barcode || '', sku: p.sku || '', categoryId: p.categoryId || '', supplierId: p.supplierId || '', costPrice: p.costPrice, sellingPrice: p.sellingPrice, taxClassId: p.taxClassId || '', unit: p.unit, stockQuantity: p.stockQuantity, minimumStock: p.minimumStock, expiryDate: p.expiryDate ? p.expiryDate.slice(0, 10) : '' });
+    setForm({ name: p.name, barcode: p.barcode || '', sku: p.sku || '', categoryId: p.categoryId || '', supplierId: p.supplierId || '', costPrice: p.costPrice, sellingPrice: p.sellingPrice, taxClassId: p.taxClassId || '', unit: p.unit, stockQuantity: p.stockQuantity, minimumStock: p.minimumStock, reorderQuantity: p.reorderQuantity || 0, batchNumber: p.batchNumber || '', expiryDate: p.expiryDate ? p.expiryDate.slice(0, 10) : '' });
     setShowForm(true);
   };
 
@@ -93,7 +95,7 @@ export default function ProductsPage() {
             <Upload size={16} /> Import
             <input type="file" accept=".xlsx,.xls" onChange={handleImport} className="hidden" />
           </label>
-          <button onClick={() => { setEditing(null); setForm({ name: '', barcode: '', sku: '', categoryId: '', supplierId: '', costPrice: '', sellingPrice: '', taxClassId: '', unit: 'pcs', stockQuantity: 0, minimumStock: 0, expiryDate: '' }); setShowForm(true); }}
+            <button onClick={() => { setEditing(null); setForm({ name: '', barcode: '', sku: '', categoryId: '', supplierId: '', costPrice: '', sellingPrice: '', taxClassId: '', unit: 'pcs', stockQuantity: 0, minimumStock: 0, reorderQuantity: 0, batchNumber: '', expiryDate: '' }); setShowForm(true); }}
             className="inline-flex items-center gap-1.5 px-4 py-2 bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold rounded-lg shadow-sm shadow-teal-500/10 transition-colors">
             <Plus size={16} /> Add Product
           </button>
@@ -129,62 +131,113 @@ export default function ProductsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {products.map(p => (
-                <tr key={p.id} className="hover:bg-slate-50/40 transition-colors">
-                  <td className="py-4 px-6">
-                    <span className="text-sm font-semibold text-slate-800">{p.name}</span>
-                  </td>
-                  <td className="py-4 px-4 text-xs font-mono text-slate-500">{p.barcode || '-'} / {p.sku || '-'}</td>
-                  <td className="py-4 px-4 text-sm text-slate-600">{p.category?.name || '-'}</td>
-                  <td className="py-4 px-4 text-sm text-slate-600 font-medium">{formatCurrency(p.costPrice)}</td>
-                  <td className="py-4 px-4 text-sm font-bold text-slate-800">{formatCurrency(p.sellingPrice)}</td>
-                  <td className="py-4 px-4">
-                    <span className={`text-sm font-medium ${
-                      p.stockQuantity === 0 ? 'text-red-600' :
-                      p.stockQuantity <= p.minimumStock ? 'text-amber-600' :
-                      'text-slate-700'
-                    }`}>{p.stockQuantity}</span>
-                  </td>
-                  <td className="py-4 px-4">
-                    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border ${
-                      p.status === 'active' ? 'bg-emerald-50 text-emerald-700 border-emerald-100/30' :
-                      'bg-slate-100 text-slate-500 border-slate-200'
-                    }`}>
-                      <span className={`w-1 h-1 rounded-full mr-0.5 ${p.status === 'active' ? 'bg-emerald-500' : 'bg-slate-400'}`} />
-                      {p.status}
-                    </span>
-                  </td>
-                  <td className="py-4 px-6 text-right">
-                    <div className="flex items-center justify-end gap-1">
-                      <button onClick={() => handleEdit(p)} className="p-1.5 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors">
-                        <Edit size={16} />
-                      </button>
-                      <button onClick={() => handleDelete(p.id)} className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
+              {loading ? (
+                [...Array(5)].map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    {[...Array(8)].map((_, j) => (
+                      <td key={j} className="py-4 px-6"><div className="h-4 bg-slate-200 rounded w-3/4" /></td>
+                    ))}
+                  </tr>
+                ))
+              ) : products.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="py-12 text-center">
+                    <p className="text-sm text-slate-400 font-medium">No products found</p>
+                    <p className="text-xs text-slate-300 mt-1">Add a product or adjust your search</p>
                   </td>
                 </tr>
-              ))}
+              ) : (
+                products.map(p => (
+                  <tr key={p.id} className="hover:bg-slate-50/40 transition-colors">
+                    <td className="py-4 px-6">
+                      <span className="text-sm font-semibold text-slate-800">{p.name}</span>
+                    </td>
+                    <td className="py-4 px-4 text-xs font-mono text-slate-500">{p.barcode || '-'} / {p.sku || '-'}</td>
+                    <td className="py-4 px-4 text-sm text-slate-600">{p.category?.name || '-'}</td>
+                    <td className="py-4 px-4 text-sm text-slate-600 font-medium">{formatCurrency(p.costPrice)}</td>
+                    <td className="py-4 px-4 text-sm font-bold text-slate-800">{formatCurrency(p.sellingPrice)}</td>
+                    <td className="py-4 px-4">
+                      <span className={`text-sm font-medium ${
+                        p.stockQuantity === 0 ? 'text-red-600' :
+                        p.stockQuantity <= p.minimumStock ? 'text-amber-600' :
+                        'text-slate-700'
+                      }`}>{p.stockQuantity}</span>
+                    </td>
+                    <td className="py-4 px-4">
+                      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border ${
+                        p.status === 'active' ? 'bg-emerald-50 text-emerald-700 border-emerald-100/30' :
+                        'bg-slate-100 text-slate-500 border-slate-200'
+                      }`}>
+                        <span className={`w-1 h-1 rounded-full mr-0.5 ${p.status === 'active' ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+                        {p.status}
+                      </span>
+                    </td>
+                      <td className="py-4 px-6 text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <button onClick={() => printBarcodeLabels([{
+                          name: p.name,
+                          barcode: p.barcode || p.sku || 'N/A',
+                          price: p.sellingPrice,
+                          sku: p.sku
+                        }])} title="Print barcode label"
+                          className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                          <Barcode size={16} />
+                        </button>
+                        <button onClick={() => handleEdit(p)} className="p-1.5 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors">
+                          <Edit size={16} />
+                        </button>
+                        <button onClick={() => handleDelete(p.id)} className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
       </div>
 
       {/* Pagination */}
+      {total > 20 && (
       <div className="flex justify-between items-center mt-4">
-        <span className="text-sm text-slate-500">Page {page} of {Math.max(1, Math.ceil(total / 20))}</span>
-        <div className="flex gap-2">
+        <span className="text-sm text-slate-500">Page {page} of {Math.max(1, Math.ceil(total / 20))} ({total} total)</span>
+        <div className="flex gap-1 items-center">
+          <button onClick={() => setPage(1)} disabled={page === 1}
+            className="px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-30 transition-colors">
+            First
+          </button>
           <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
             className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-40 transition-colors">
-            Previous
+            ‹ Prev
           </button>
+          {Array.from({ length: Math.min(5, Math.ceil(total / 20)) }, (_, i) => {
+            const totalPages = Math.ceil(total / 20);
+            let start = Math.max(1, page - 2);
+            if (start + 4 > totalPages) start = Math.max(1, totalPages - 4);
+            const p = start + i;
+            if (p > totalPages) return null;
+            return (
+              <button key={p} onClick={() => setPage(p)}
+                className={`w-9 h-9 rounded-lg text-xs font-bold transition-colors ${
+                  p === page ? 'bg-teal-500 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                }`}>
+                {p}
+              </button>
+            );
+          })}
           <button onClick={() => setPage(p => p + 1)} disabled={page >= Math.ceil(total / 20)}
             className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-40 transition-colors">
-            Next
+            Next ›
+          </button>
+          <button onClick={() => setPage(Math.ceil(total / 20))} disabled={page >= Math.ceil(total / 20)}
+            className="px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-30 transition-colors">
+            Last
           </button>
         </div>
       </div>
+      )}
 
       {/* Form Modal */}
       {showForm && (
@@ -195,8 +248,17 @@ export default function ProductsPage() {
               <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Product Name"
                 className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500" required />
               <div className="grid grid-cols-2 gap-3">
-                <input value={form.barcode} onChange={e => setForm({ ...form, barcode: e.target.value })} placeholder="Barcode"
-                  className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-teal-500" />
+                <div className="relative">
+                  <input value={form.barcode} onChange={e => setForm({ ...form, barcode: e.target.value })} placeholder="Barcode"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-teal-500" />
+                  <button type="button" onClick={() => {
+                    const { barcode } = generateBarcode(form.name || Date.now());
+                    setForm({ ...form, barcode });
+                  }}
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-teal-600 hover:text-teal-700 bg-teal-50 px-2 py-0.5 rounded border border-teal-200/60 transition-colors">
+                    Generate
+                  </button>
+                </div>
                 <input value={form.sku} onChange={e => setForm({ ...form, sku: e.target.value })} placeholder="SKU"
                   className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-teal-500" />
               </div>
@@ -230,9 +292,16 @@ export default function ProductsPage() {
                   className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-teal-500" />
                 <input type="number" value={form.minimumStock} onChange={e => setForm({ ...form, minimumStock: e.target.value })} placeholder="Min Stock"
                   className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-teal-500" />
+                <input type="number" value={form.reorderQuantity} onChange={e => setForm({ ...form, reorderQuantity: e.target.value })} placeholder="Reorder Qty"
+                  className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-teal-500" />
               </div>
               <input type="date" value={form.expiryDate} onChange={e => setForm({ ...form, expiryDate: e.target.value })}
                 className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-teal-500" />
+              <div className="grid grid-cols-2 gap-3">
+                <input value={form.batchNumber} onChange={e => setForm({ ...form, batchNumber: e.target.value })} placeholder="Batch / Lot Number"
+                  className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-teal-500" />
+                <div></div>
+              </div>
               <div className="flex gap-2 pt-2">
                 <button type="button" onClick={() => setShowForm(false)}
                   className="flex-1 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">

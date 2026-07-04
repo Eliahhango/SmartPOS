@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const prisma = require('../utils/prisma');
+const { createAuditLog } = require('./auditLog');
 
 const authenticate = async (req, res, next) => {
   try {
@@ -21,6 +22,14 @@ const authenticate = async (req, res, next) => {
     }
 
     req.user = user;
+
+    // Attach audit log helper to every authenticated request
+    req.audit = (opts) => createAuditLog({
+      ...opts,
+      userId: req.user.id,
+      ip: req.ip || req.connection?.remoteAddress,
+    });
+
     next();
   } catch (error) {
     return res.status(401).json({ error: 'Invalid token' });

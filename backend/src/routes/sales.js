@@ -1,24 +1,14 @@
 const router = require('express').Router();
 const prisma = require('../utils/prisma');
 const { authenticate } = require('../middleware/auth');
+const validate = require('../middleware/validate');
 
 router.use(authenticate);
 
 // POST /api/sales - Create a sale with split payments
-router.post('/', async (req, res) => {
+router.post('/', validate.createSale, async (req, res) => {
   try {
     const { customerId, items, payments, discount = 0, status = 'completed' } = req.body;
-
-    if (!items || !items.length) return res.status(400).json({ error: 'At least one item required' });
-    if (!payments || !payments.length) return res.status(400).json({ error: 'At least one payment required' });
-
-    // Validate payment methods against allowed enum
-    const VALID_METHODS = ['cash', 'mobile_money', 'card', 'bank'];
-    for (const p of payments) {
-      if (!VALID_METHODS.includes(p.method)) {
-        return res.status(400).json({ error: `Invalid payment method '${p.method}'. Must be one of: ${VALID_METHODS.join(', ')}` });
-      }
-    }
 
     // Calculate totals
     let subtotal = 0;
@@ -132,7 +122,29 @@ router.post('/', async (req, res) => {
       return s;
     });
 
-    res.status(201).json(sale);
+    // Check for newly low-stock products and attach warnings
+    const lowStockProducts = await prisma.product.findMany({
+      where: {
+        status: 'active',
+        stockQuantity: { lte: prisma.product.fields.minimumStock }
+      },
+      select: { id: true, name: true, stockQuantity: true, minimumStock: true }
+    });
+
+    const itemCount = saleItems.length;
+    const firstItem = saleItems[0]?.product?.name || '';
+    const itemSuffix = firstItem ? ' (' + firstItem + (itemCount > 1 ? '...' : '') + ')' : '';
+    req.audit({ action: 'create', entity: 'sale', entityId: sale.id, description: 'Sale #' + sale.id + ' — ' + itemCount + ' item(s), $' + grandTotal.toFixed(2) + itemSuffix, metadata: { total: grandTotal, itemCount, customerId: customerId || null, paymentMethods: req.body.payments ? req.body.payments.map(function(p) { return p.method; }) : [] } });
+    res.status(201).json({
+      ...sale,
+      warnings: lowStockProducts.length > 0 ? lowStockProducts.map(p => ({
+        productId: p.id,
+        name: p.name,
+        stock: p.stockQuantity,
+        minStock: p.minimumStock,
+        message: `"${p.name}" is running low (${p.stockQuantity}/${p.minimumStock})`
+      })) : []
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -195,7 +207,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // PUT /api/sales/:id/suspend
-router.put('/:id/suspend', async (req, res) => {
+router.put('/:id/suspend', validate.suspendSale, async (req, res) => {
   try {
     const sale = await prisma.sale.update({
       where: { id: parseInt(req.params.id) },
@@ -208,7 +220,7 @@ router.put('/:id/suspend', async (req, res) => {
 });
 
 // PUT /api/sales/:id/resume
-router.put('/:id/resume', async (req, res) => {
+router.put('/:id/resume', validate.resumeSale, async (req, res) => {
   try {
     const sale = await prisma.sale.update({
       where: { id: parseInt(req.params.id) },
@@ -221,7 +233,7 @@ router.put('/:id/resume', async (req, res) => {
 });
 
 // POST /api/sales/:id/returns
-router.post('/:id/returns', async (req, res) => {
+router.post('/:id/returns', validate.createReturn, async (req, res) => {
   try {
     const { items, refundMethod, reason } = req.body;
     if (!items || !items.length) return res.status(400).json({ error: 'Return items required' });

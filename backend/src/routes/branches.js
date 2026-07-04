@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const prisma = require('../utils/prisma');
 const { authenticate, authorize } = require('../middleware/auth');
+const validate = require('../middleware/validate');
 
 router.use(authenticate);
 
@@ -17,10 +18,9 @@ router.get('/', async (req, res) => {
 });
 
 // POST /api/branches
-router.post('/', authorize('admin'), async (req, res) => {
+router.post('/', authorize('admin'), validate.createBranch, async (req, res) => {
   try {
     const { name, address, phone, isMainBranch } = req.body;
-    if (!name) return res.status(400).json({ error: 'Branch name required' });
 
     const branch = await prisma.branch.create({
       data: { name, address, phone, isMainBranch: isMainBranch || false }
@@ -32,7 +32,7 @@ router.post('/', authorize('admin'), async (req, res) => {
 });
 
 // PUT /api/branches/:id
-router.put('/:id', authorize('admin'), async (req, res) => {
+router.put('/:id', authorize('admin'), validate.updateBranch, async (req, res) => {
   try {
     const { name, address, phone, isMainBranch } = req.body;
     const data = {};

@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const prisma = require('../utils/prisma');
 const { authenticate, authorize } = require('../middleware/auth');
+const validate = require('../middleware/validate');
 
 router.use(authenticate);
 
@@ -15,10 +16,9 @@ router.get('/', async (req, res) => {
 });
 
 // POST /api/taxes
-router.post('/', authorize('admin'), async (req, res) => {
+router.post('/', authorize('admin'), validate.createTax, async (req, res) => {
   try {
     const { name, ratePercent, isActive } = req.body;
-    if (!name) return res.status(400).json({ error: 'Tax name required' });
 
     const tax = await prisma.taxRate.create({
       data: { name, ratePercent: parseFloat(ratePercent) || 0, isActive: isActive !== false }
@@ -30,7 +30,7 @@ router.post('/', authorize('admin'), async (req, res) => {
 });
 
 // PUT /api/taxes/:id
-router.put('/:id', authorize('admin'), async (req, res) => {
+router.put('/:id', authorize('admin'), validate.updateTax, async (req, res) => {
   try {
     const { name, ratePercent, isActive } = req.body;
     const data = {};
@@ -49,7 +49,7 @@ router.put('/:id', authorize('admin'), async (req, res) => {
 });
 
 // DELETE /api/taxes/:id
-router.delete('/:id', authorize('admin'), async (req, res) => {
+router.delete('/:id', authorize('admin'), validate.deleteTax, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
 

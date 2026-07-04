@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import api from '@/lib/api';
 import { formatCurrency } from '@/lib/utils';
-import { Search, Plus, Minus, Trash2, ShoppingCart, Pause, X, CreditCard, Smartphone, Banknote, Building } from 'lucide-react';
+import { Search, Plus, Minus, Trash2, ShoppingCart, Pause, X, CreditCard, Smartphone, Banknote, Building, AlertTriangle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 
@@ -35,6 +35,7 @@ export default function POSPage() {
   const [suspendedSales, setSuspendedSales] = useState<any[]>([]);
   const [showSuspended, setShowSuspended] = useState(false);
   const [lastSale, setLastSale] = useState<any>(null);
+  const [saleWarnings, setSaleWarnings] = useState<any[]>([]);
   const printReceipt = () => {
     if (!lastSale) return;
 
@@ -283,6 +284,10 @@ export default function POSPage() {
         discount
       });
       setLastSale(data);
+      setSaleWarnings(data.warnings || []);
+      if (data.warnings?.length > 0) {
+        data.warnings.forEach((w: any) => toast(w.message, { icon: '⚠️', duration: 5000 }));
+      }
       setCart([]);
       setPayments([]);
       setDiscount(0);
@@ -512,6 +517,16 @@ export default function POSPage() {
             <h3 className="text-lg font-bold text-slate-800 mb-1">Sale Completed</h3>
             <p className="text-xs text-slate-400 mb-1">{lastSale.invoiceNo}</p>
             <p className="text-2xl font-extrabold text-teal-600 mb-5">{formatCurrency(lastSale.grandTotal)}</p>
+            {saleWarnings.length > 0 && (
+              <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-left">
+                <p className="text-xs font-bold text-amber-800 mb-1.5 flex items-center gap-1.5">
+                  <AlertTriangle size={14} /> Stock Alerts
+                </p>
+                {saleWarnings.map((w: any, i: number) => (
+                  <p key={i} className="text-[11px] text-amber-700 leading-relaxed">{w.message}</p>
+                ))}
+              </div>
+            )}
             <div className="flex flex-col gap-2.5">
               <button onClick={() => { printReceipt(); }}
                 className="w-full py-3 bg-teal-500 hover:bg-teal-600 text-white font-bold rounded-xl text-sm transition-all shadow-md shadow-teal-500/10 flex items-center justify-center gap-2">

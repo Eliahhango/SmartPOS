@@ -60,6 +60,9 @@ export default function DashboardPage() {
     api.get('/dashboard').then(res => setData(res.data)).finally(() => setLoading(false));
   }, []);
 
+  // ── Low Stock Alert Banner ──
+  const showStockAlert = data && (data.lowStockCount > 0 || data.outOfStockCount > 0);
+
   if (loading) {
     return (
       <div className="w-full min-h-screen space-y-6 p-4 sm:p-6 lg:p-8 animate-pulse">
@@ -80,6 +83,29 @@ export default function DashboardPage() {
 
   return (
     <div className="w-full min-h-screen space-y-6 p-4 sm:p-6 lg:p-8 bg-slate-50/50">
+      {/* ── Low Stock Alert ── */}
+      {showStockAlert && (
+        <div className="bg-amber-50 border border-amber-200/60 rounded-xl p-4 flex items-start gap-3 shadow-sm">
+          <AlertTriangle size={20} className="text-amber-600 shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-sm font-bold text-amber-800">
+              {data!.outOfStockCount > 0
+                ? `${data!.outOfStockCount} product(s) out of stock`
+                : `${data!.lowStockCount} product(s) running low`}
+            </p>
+            <p className="text-xs text-amber-700 mt-0.5">
+              {data!.outOfStockCount > 0 && <span className="font-semibold">{data!.outOfStockCount} out of stock</span>}
+              {data!.outOfStockCount > 0 && data!.lowStockCount > 0 && <span> &middot; </span>}
+              {data!.lowStockCount > 0 && <span>{data!.lowStockCount} below minimum stock</span>}
+            </p>
+          </div>
+          <a href="/inventory"
+            className="text-xs font-bold text-amber-700 hover:text-amber-800 bg-amber-100/50 px-3 py-1.5 rounded-lg transition-colors shrink-0">
+            View Inventory
+          </a>
+        </div>
+      )}
+
       {/* ── Welcome Banner ──────────────────────────────── */}
       <div className="w-full max-w-full overflow-hidden rounded-2xl p-4 sm:p-6 bg-gradient-to-br from-slate-900 to-slate-800 text-white relative">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(20,184,166,0.12),transparent_50%)]" />

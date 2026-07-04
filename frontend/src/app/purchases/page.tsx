@@ -13,26 +13,30 @@ export default function PurchasesPage() {
   const [selected, setSelected] = useState<any>(null);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
   const [form, setForm] = useState({ supplierId: '', invoiceNo: '', date: '', items: [{ productId: '', quantity: 1, costPrice: '' }] });
+  const LIMIT = 20;
 
   const fetch = async () => {
-    const params: any = { limit: 50 };
-    if (statusFilter) params.status = statusFilter;
-    const { data } = await api.get('/purchases', { params });
-    setPurchases(data.purchases);
+    setLoading(true);
+    try {
+      const params: any = { page, limit: LIMIT, search };
+      if (statusFilter) params.status = statusFilter;
+      const { data } = await api.get('/purchases', { params });
+      setPurchases(data.purchases);
+      setTotal(data.total);
+    } catch {} finally { setLoading(false); }
   };
   const fetchMeta = async () => {
     const [sRes, pRes] = await Promise.all([api.get('/suppliers'), api.get('/products', { params: { limit: 200 } })]);
     setSuppliers(sRes.data); setProducts(pRes.data.products);
   };
-  useEffect(() => { fetch(); fetchMeta(); }, [statusFilter]);
+  useEffect(() => { setPage(1); }, [statusFilter, search]);
+  useEffect(() => { fetch(); fetchMeta(); }, [statusFilter, search, page]);
 
-  const filteredPurchases = search
-    ? purchases.filter(p =>
-        p.supplier?.name?.toLowerCase().includes(search.toLowerCase()) ||
-        p.invoiceNo?.toLowerCase().includes(search.toLowerCase())
-      )
-    : purchases;
+  const filteredPurchases = purchases;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,65 +111,109 @@ export default function PurchasesPage() {
         </select>
       </div>
 
-      {/* Purchase Orders List or Empty State */}
-      {filteredPurchases.length > 0 ? (
+      {/* Purchase Orders List with Loading / Empty / Pagination */}
+      {loading ? (
         <div className="space-y-4">
-          {filteredPurchases.map(p => (
-            <div key={p.id} className="bg-white rounded-xl border border-slate-100 p-5 shadow-sm hover:shadow-md hover:border-teal-500/20 transition-all duration-200">
-              <div className="flex items-center justify-between mb-3">
-                <div>
-                  <div className="flex items-center gap-2.5">
-                    <span className="font-bold text-slate-800">{p.supplier?.name}</span>
-                    {statusBadge(p.status)}
-                  </div>
-                  <p className="text-xs text-slate-400 mt-1.5">
-                    Invoice: {p.invoiceNo || 'N/A'} • {formatDate(p.date)}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-lg font-bold text-teal-600">{formatCurrency(p.totalAmount)}</span>
-                  <button onClick={() => setSelected(p)}
-                    className="p-1.5 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors" title="View Details">
-                    <Eye size={16} />
-                  </button>
-                  {p.status === 'draft' && (
-                    <button onClick={() => handleApprove(p.id)}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-teal-50 text-teal-700 rounded-lg text-xs font-semibold hover:bg-teal-100 transition-colors border border-teal-100/50">
-                      <Check size={14} /> Approve
-                    </button>
-                  )}
-                  {p.status === 'approved' && (
-                    <button onClick={() => handleReceive(p.id)}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-lg text-xs font-semibold hover:bg-emerald-100 transition-colors border border-emerald-100/50">
-                      <Truck size={14} /> Receive
-                    </button>
-                  )}
-                </div>
-              </div>
-              <div className="flex gap-2 flex-wrap">
-                {p.items?.map((item: any) => (
-                  <span key={item.id} className="text-xs bg-slate-50 text-slate-600 px-2.5 py-1 rounded-md border border-slate-100 font-medium">
-                    {item.product?.name} × {item.quantity}
-                  </span>
-                ))}
-              </div>
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="bg-white rounded-xl border border-slate-100 p-5 shadow-sm animate-pulse">
+              <div className="h-5 bg-slate-200 rounded w-1/3 mb-3" />
+              <div className="h-4 bg-slate-200 rounded w-1/4 mb-2" />
+              <div className="h-3 bg-slate-200 rounded w-1/2" />
             </div>
           ))}
         </div>
-      ) : (
+      ) : purchases.length === 0 ? (
         <div className="flex flex-col items-center justify-center text-center p-6 sm:p-8 w-full min-h-[300px] bg-white rounded-xl border border-slate-100 shadow-sm">
           <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 text-slate-300">
             <Package size={28} />
           </div>
           <h3 className="text-slate-800 font-semibold mt-4">No Purchase Orders</h3>
           <p className="text-xs sm:text-sm text-slate-400 max-w-sm mt-2 mb-6 block whitespace-normal break-words">
-            Create your first purchase order to track inventory.
+            {search || statusFilter ? 'No orders match your filters.' : 'Create your first purchase order to track inventory.'}
           </p>
-          <button onClick={() => setShowForm(true)}
-            className="px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white text-sm font-medium rounded-lg transition-colors">
-            Create Order
-          </button>
+          {!search && !statusFilter && (
+            <button onClick={() => setShowForm(true)}
+              className="px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white text-sm font-medium rounded-lg transition-colors">
+              Create Order
+            </button>
+          )}
         </div>
+      ) : (
+        <>
+          <div className="space-y-4">
+            {purchases.map(p => (
+              <div key={p.id} className="bg-white rounded-xl border border-slate-100 p-5 shadow-sm hover:shadow-md hover:border-teal-500/20 transition-all duration-200">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <div className="flex items-center gap-2.5">
+                      <span className="font-bold text-slate-800">{p.supplier?.name}</span>
+                      {statusBadge(p.status)}
+                    </div>
+                    <p className="text-xs text-slate-400 mt-1.5">
+                      Invoice: {p.invoiceNo || 'N/A'} • {formatDate(p.date)}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg font-bold text-teal-600">{formatCurrency(p.totalAmount)}</span>
+                    <button onClick={() => setSelected(p)}
+                      className="p-1.5 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors" title="View Details">
+                      <Eye size={16} />
+                    </button>
+                    {p.status === 'draft' && (
+                      <button onClick={() => handleApprove(p.id)}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 bg-teal-50 text-teal-700 rounded-lg text-xs font-semibold hover:bg-teal-100 transition-colors border border-teal-100/50">
+                        <Check size={14} /> Approve
+                      </button>
+                    )}
+                    {p.status === 'approved' && (
+                      <button onClick={() => handleReceive(p.id)}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-lg text-xs font-semibold hover:bg-emerald-100 transition-colors border border-emerald-100/50">
+                        <Truck size={14} /> Receive
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <div className="flex gap-2 flex-wrap">
+                  {p.items?.map((item: any) => (
+                    <span key={item.id} className="text-xs bg-slate-50 text-slate-600 px-2.5 py-1 rounded-md border border-slate-100 font-medium">
+                      {item.product?.name} × {item.quantity}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {total > LIMIT && (
+            <div className="flex justify-between items-center mt-2">
+              <span className="text-sm text-slate-500">Page {page} of {Math.max(1, Math.ceil(total / LIMIT))} ({total} total)</span>
+              <div className="flex gap-1 items-center">
+                <button onClick={() => setPage(1)} disabled={page === 1}
+                  className="px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-30 transition-colors">First</button>
+                <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+                  className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-40 transition-colors">‹ Prev</button>
+                {Array.from({ length: Math.min(5, Math.ceil(total / LIMIT)) }, (_, i) => {
+                  const totalPages = Math.ceil(total / LIMIT);
+                  let start = Math.max(1, page - 2);
+                  if (start + 4 > totalPages) start = Math.max(1, totalPages - 4);
+                  const p = start + i;
+                  if (p > totalPages) return null;
+                  return (
+                    <button key={p} onClick={() => setPage(p)}
+                      className={`w-9 h-9 rounded-lg text-xs font-bold transition-colors ${
+                        p === page ? 'bg-teal-500 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                      }`}>{p}</button>
+                  );
+                })}
+                <button onClick={() => setPage(p => p + 1)} disabled={page >= Math.ceil(total / LIMIT)}
+                  className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-40 transition-colors">Next ›</button>
+                <button onClick={() => setPage(Math.ceil(total / LIMIT))} disabled={page >= Math.ceil(total / LIMIT)}
+                  className="px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-30 transition-colors">Last</button>
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       {/* Detail Modal */}

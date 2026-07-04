@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, ShoppingCart, Package, Tags, Truck, Users,
   ClipboardList, DollarSign, BarChart3, Settings, LogOut,
-  ChevronLeft, ChevronRight, Store, Receipt, Shield, X
+  ChevronLeft, ChevronRight, Store, Receipt, Shield, X, History
 } from 'lucide-react';
 import { useCallback } from 'react';
 
@@ -23,6 +23,7 @@ const navItems = [
   { href: '/users', label: 'Users', icon: Shield, roles: ['admin'] },
   { href: '/taxes', label: 'Tax Rates', icon: Settings, roles: ['admin'] },
   { href: '/branches', label: 'Branches', icon: Store, roles: ['admin'] },
+  { href: '/audit-log', label: 'Audit Log', icon: History, roles: ['admin'] },
 ];
 
 interface SidebarProps {
