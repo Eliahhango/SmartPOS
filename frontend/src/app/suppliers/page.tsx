@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
-import { Plus, Edit, Trash2, Phone, Mail, MapPin } from 'lucide-react';
+import { Plus, Edit, Trash2, Phone, Mail, MapPin, DollarSign } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function SuppliersPage() {
@@ -9,6 +9,8 @@ export default function SuppliersPage() {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<any>(null);
   const [form, setForm] = useState({ name: '', phone: '', email: '', address: '', tinNumber: '' });
+  const [payModal, setPayModal] = useState<{ supplierId: number; supplierName: string } | null>(null);
+  const [payForm, setPayForm] = useState({ amount: '', method: 'cash', referenceNo: '', notes: '' });
 
   const fetch = async () => { const { data } = await api.get('/suppliers'); setSuppliers(data); };
   useEffect(() => { fetch(); }, []);
@@ -25,6 +27,16 @@ export default function SuppliersPage() {
   const handleDelete = async (id: number) => {
     if (!confirm('Delete this supplier?')) return;
     await api.delete(`/suppliers/${id}`); toast.success('Deleted'); fetch();
+  };
+
+  const handlePayment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!payModal) return;
+    try {
+      await api.post(`/suppliers/${payModal.supplierId}/payments`, payForm);
+      toast.success('Payment recorded');
+      setPayModal(null); setPayForm({ amount: '', method: 'cash', referenceNo: '', notes: '' }); fetch();
+    } catch (err: any) { toast.error(err.response?.data?.error || 'Failed'); }
   };
 
   return (
@@ -98,18 +110,68 @@ export default function SuppliersPage() {
               )}
             </div>
 
-            {/* Inventory Metric Summary Footer */}
+            {/* Balance & Metrics Footer */}
             <div className="mt-4 pt-3 border-t border-slate-50 flex items-center gap-3 text-[11px] font-semibold text-slate-400">
+              {s.balance > 0 && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md border text-green-700 bg-green-50 border-green-200/50">
+                  <DollarSign size={11} /> ${s.balance.toFixed(2)} credit
+                </span>
+              )}
+              {s.balance < 0 && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md border text-red-700 bg-red-50 border-red-200/50">
+                  <DollarSign size={11} /> ${Math.abs(s.balance).toFixed(2)} owing
+                </span>
+              )}
+              {s.balance === 0 && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md border text-slate-400 bg-slate-50 border-slate-100">
+                  $0.00 balance
+                </span>
+              )}
               <span className="bg-slate-50/50 px-2.5 py-1 rounded-md border border-slate-100/60 text-slate-500">
                 {s._count?.products || 0} products
               </span>
               <span className="bg-slate-50/50 px-2.5 py-1 rounded-md border border-slate-100/60 text-slate-500">
                 {s._count?.purchases || 0} purchases
               </span>
+              <button onClick={() => setPayModal({ supplierId: s.id, supplierName: s.name })}
+                className="ml-auto text-teal-600 hover:text-teal-700 bg-teal-50 px-2.5 py-1 rounded-md border border-teal-100/50 text-[11px] font-bold transition-colors">
+                Pay
+              </button>
             </div>
           </div>
         ))}
       </div>
+
+      {/* Payment Modal */}
+      {payModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-sm p-6 animate-zoom-in">
+            <h3 className="text-lg font-bold text-slate-800 mb-1">Record Payment</h3>
+            <p className="text-xs text-slate-400 mb-4">{payModal.supplierName}</p>
+            <form onSubmit={handlePayment} className="space-y-3">
+              <input type="number" step="0.01" min="0.01" value={payForm.amount} onChange={e => setPayForm({ ...payForm, amount: e.target.value })} placeholder="Amount"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500" required />
+              <select value={payForm.method} onChange={e => setPayForm({ ...payForm, method: e.target.value })}
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-teal-500">
+                <option value="cash">Cash</option>
+                <option value="bank">Bank Transfer</option>
+                <option value="mobile_money">Mobile Money</option>
+                <option value="cheque">Cheque</option>
+              </select>
+              <input value={payForm.referenceNo} onChange={e => setPayForm({ ...payForm, referenceNo: e.target.value })} placeholder="Reference No. (optional)"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500" />
+              <input value={payForm.notes} onChange={e => setPayForm({ ...payForm, notes: e.target.value })} placeholder="Notes (optional)"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500" />
+              <div className="flex gap-2 pt-1">
+                <button type="button" onClick={() => setPayModal(null)}
+                  className="flex-1 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">Cancel</button>
+                <button type="submit"
+                  className="flex-1 py-2.5 bg-teal-500 hover:bg-teal-600 text-white rounded-xl text-sm font-semibold shadow-sm shadow-teal-500/10 transition-colors">Record Payment</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Form Modal */}
       {showForm && (

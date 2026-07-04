@@ -5,7 +5,7 @@ const { authenticate, authorize } = require('../middleware/auth');
 router.use(authenticate);
 
 // GET /api/reports/sales
-router.get('/sales', authorize('admin', 'manager'), async (req, res) => {
+router.get('/sales', authorize('admin', 'manager', 'accountant'), async (req, res) => {
   try {
     const { period = 'daily', startDate, endDate } = req.query;
 
@@ -61,7 +61,7 @@ router.get('/sales', authorize('admin', 'manager'), async (req, res) => {
 });
 
 // GET /api/reports/inventory
-router.get('/inventory', authorize('admin', 'manager'), async (req, res) => {
+router.get('/inventory', authorize('admin', 'manager', 'accountant'), async (req, res) => {
   try {
     const [totalProducts, lowStock, outOfStock, expiringSoon] = await Promise.all([
       prisma.product.count({ where: { status: 'active' } }),
@@ -97,7 +97,7 @@ router.get('/inventory', authorize('admin', 'manager'), async (req, res) => {
 });
 
 // GET /api/reports/financial
-router.get('/financial', authorize('admin', 'manager'), async (req, res) => {
+router.get('/financial', authorize('admin', 'manager', 'accountant'), async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
     const dateFilter = {};
@@ -132,7 +132,7 @@ router.get('/financial', authorize('admin', 'manager'), async (req, res) => {
 });
 
 // GET /api/reports/cashier
-router.get('/cashier', authorize('admin', 'manager'), async (req, res) => {
+router.get('/cashier', authorize('admin', 'manager', 'accountant'), async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
     const dateFilter = {};

@@ -118,8 +118,10 @@ model Supplier {
   email      String?
   address    String?
   tinNumber  String?   @map("tin_number")
+  balance    Float     @default(0)
   products   Product[]
   purchases  Purchase[]
+  payments   SupplierPayment[]
 
   @@map("suppliers")
 }
@@ -232,8 +234,24 @@ model Purchase {
   totalAmount Float    @default(0) @map("total_amount")
   date        DateTime @default(now())
   items       PurchaseItem[]
+  supplierPayments SupplierPayment[]
 
   @@map("purchases")
+}
+
+model SupplierPayment {
+  id          Int      @id @default(autoincrement())
+  supplierId  Int      @map("supplier_id")
+  supplier    Supplier @relation(fields: [supplierId], references: [id])
+  amount      Float
+  method      String   // "cash", "bank", "mobile_money", "cheque"
+  referenceNo String?  @map("reference_no")
+  notes       String?
+  purchaseId  Int?     @map("purchase_id")
+  purchase    Purchase? @relation(fields: [purchaseId], references: [id])
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("supplier_payments")
 }
 
 model PurchaseItem {

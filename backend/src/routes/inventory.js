@@ -6,7 +6,7 @@ const validate = require('../middleware/validate');
 router.use(authenticate);
 
 // GET /api/inventory/stock
-router.get('/stock', async (req, res) => {
+router.get('/stock', authorize('admin', 'manager', 'stock_officer', 'accountant'), async (req, res) => {
   try {
     const { lowStock, outOfStock, expiring, categoryId, page = 1, limit = 50 } = req.query;
     const where = {};
@@ -38,7 +38,7 @@ router.get('/stock', async (req, res) => {
 });
 
 // POST /api/inventory/stock-in — Dedicated Stock In (with batch support)
-router.post('/stock-in', authorize('admin', 'manager', 'stock_officer'), async (req, res) => {
+router.post('/stock-in', authorize('admin', 'manager', 'stock_officer', 'store_keeper'), async (req, res) => {
   try {
     const { productId, quantity, notes, referenceNo, batchNumber } = req.body;
     if (!productId || !quantity || quantity < 1) {
@@ -80,7 +80,7 @@ router.post('/stock-in', authorize('admin', 'manager', 'stock_officer'), async (
 });
 
 // POST /api/inventory/stock-out — Dedicated Stock Out
-router.post('/stock-out', authorize('admin', 'manager', 'stock_officer'), async (req, res) => {
+router.post('/stock-out', authorize('admin', 'manager', 'stock_officer', 'store_keeper'), async (req, res) => {
   try {
     const { productId, quantity, reason, notes } = req.body;
     if (!productId || !quantity || quantity < 1) {
@@ -131,7 +131,7 @@ router.post('/stock-out', authorize('admin', 'manager', 'stock_officer'), async 
 });
 
 // POST /api/inventory/adjustment
-router.post('/adjustment', authorize('admin', 'manager', 'stock_officer'), validate.createAdjustment, async (req, res) => {
+router.post('/adjustment', authorize('admin', 'manager', 'stock_officer', 'store_keeper'), validate.createAdjustment, async (req, res) => {
   try {
     const { productId, quantity, reason, notes } = req.body;
 
@@ -164,7 +164,7 @@ router.post('/adjustment', authorize('admin', 'manager', 'stock_officer'), valid
 });
 
 // GET /api/inventory/stock-movements
-router.get('/stock-movements', async (req, res) => {
+router.get('/stock-movements', authorize('admin', 'manager', 'stock_officer', 'accountant'), async (req, res) => {
   try {
     const { productId, reason, batchNumber, page = 1, limit = 50 } = req.query;
     const where = {};
@@ -190,7 +190,7 @@ router.get('/stock-movements', async (req, res) => {
 });
 
 // GET /api/inventory/reorder-suggestions — products that need reordering, grouped by supplier
-router.get('/reorder-suggestions', authorize('admin', 'manager'), async (req, res) => {
+router.get('/reorder-suggestions', authorize('admin', 'manager', 'accountant'), async (req, res) => {
   try {
     const lowProducts = await prisma.product.findMany({
       where: {
@@ -244,7 +244,7 @@ router.get('/reorder-suggestions', authorize('admin', 'manager'), async (req, re
 });
 
 // GET /api/inventory/low-stock-alerts — returns count + list of products below minimumStock
-router.get('/low-stock-alerts', async (req, res) => {
+router.get('/low-stock-alerts', authorize('admin', 'manager', 'stock_officer', 'accountant'), async (req, res) => {
   try {
     const where = {
       status: 'active',
@@ -273,7 +273,7 @@ router.get('/low-stock-alerts', async (req, res) => {
 });
 
 // GET /api/inventory/products/:id/stock-movements
-router.get('/products/:id/stock-movements', async (req, res) => {
+router.get('/products/:id/stock-movements', authorize('admin', 'manager', 'stock_officer', 'accountant'), async (req, res) => {
   try {
     const movements = await prisma.stockMovement.findMany({
       where: { productId: parseInt(req.params.id) },

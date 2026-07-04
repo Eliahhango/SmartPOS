@@ -1,8 +1,8 @@
 'use client';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import api from '@/lib/api';
 import { formatCurrency } from '@/lib/utils';
-import { Search, Plus, Minus, Trash2, ShoppingCart, Pause, X, CreditCard, Smartphone, Banknote, Building, AlertTriangle } from 'lucide-react';
+import { Search, Plus, Minus, Trash2, ShoppingCart, Pause, X, CreditCard, Smartphone, Banknote, Building, AlertTriangle, Keyboard } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 
@@ -17,7 +17,7 @@ interface CartItem {
 }
 
 interface PaymentMethod {
-  method: 'cash' | 'mobile_money' | 'card' | 'bank';
+  method: 'cash' | 'mobile_money' | 'card' | 'bank' | 'credit';
   amount: number;
   amountReceived?: number;
   changeGiven?: number;
@@ -34,6 +34,9 @@ export default function POSPage() {
   const [payments, setPayments] = useState<PaymentMethod[]>([]);
   const [suspendedSales, setSuspendedSales] = useState<any[]>([]);
   const [showSuspended, setShowSuspended] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
+  const searchRef = useRef<HTMLInputElement>(null);
+  const barcodeRef = useRef<HTMLInputElement>(null);
   const [lastSale, setLastSale] = useState<any>(null);
   const [saleWarnings, setSaleWarnings] = useState<any[]>([]);
   const [customers, setCustomers] = useState<any[]>([]);
@@ -42,6 +45,9 @@ export default function POSPage() {
   const [showCustomerSelect, setShowCustomerSelect] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   const [pointsToRedeem, setPointsToRedeem] = useState(0);
+  const [splitMode, setSplitMode] = useState(false);
+  const [splitBill, setSplitBill] = useState<{ items: CartItem[]; payments: PaymentMethod[]; discount: number } | null>(null);
+  const [checkedItems, setCheckedItems] = useState<number[]>([]);
   const printReceipt = () => {
     if (!lastSale) return;
 
@@ -249,6 +255,22 @@ export default function POSPage() {
     setCart(prev => prev.filter(i => i.productId !== productId));
   };
 
+  const toggleCheckItem = (productId: number) => {
+    setCheckedItems(prev =>
+      prev.includes(productId) ? prev.filter(id => id !== productId) : [...prev, productId]
+    );
+  };
+
+  const confirmSplit = () => {
+    const bill2Items = cart.filter(i => !checkedItems.includes(i.productId));
+    const bill1Items = cart.filter(i => checkedItems.includes(i.productId));
+    setSplitBill({ items: bill2Items, payments: [], discount: 0 });
+    setCart(bill1Items);
+    setSplitMode(false);
+    setCheckedItems([]);
+    setShowPayment(true);
+  };
+
   const subtotal = cart.reduce((s, i) => s + i.total, 0);
   const taxTotal = cart.reduce((s, i) => {
     const lineTax = (i.total * i.taxRate) / (100 + i.taxRate);
@@ -311,12 +333,19 @@ export default function POSPage() {
       if (data.rewards?.pointsRedeemed > 0) {
         toast('⭐ ' + data.rewards.pointsRedeemed + ' points redeemed ($' + data.rewards.pointsDiscount.toFixed(2) + ')', { duration: 4000 });
       }
-      setCart([]);
       setPayments([]);
       setDiscount(0);
       setPointsToRedeem(0);
       setShowPayment(false);
-      toast.success('Sale completed!');
+      if (splitBill) {
+        const bill2 = splitBill;
+        setSplitBill(null);
+        setCart(bill2.items);
+        toast.success('Bill 2 ready — process payment');
+      } else {
+        setCart([]);
+        toast.success('Sale completed!');
+      }
       // Print triggered manually via the receipt confirmation overlay below
     } catch (err: any) {
       toast.error(err.response?.data?.error || 'Failed to complete sale');
@@ -338,6 +367,95 @@ export default function POSPage() {
     setShowSuspended(false);
   };
 
+  // Refs for keyboard shortcut handler (reads latest values without re-subscribing effect)
+  const cartRef = useRef(cart);
+  const showPaymentRef = useRef(showPayment);
+  const lastSaleRef = useRef(lastSale);
+  const showSuspendedRef = useRef(showSuspended);
+  const showShortcutsRef = useRef(showShortcuts);
+  const totalPaidRef = useRef(totalPaid);
+  const grandTotalRef = useRef(grandTotal);
+  const suspendSaleRef = useRef(suspendSale);
+  const completeSaleRef = useRef(completeSale);
+  const updateQtyRef = useRef(updateQty);
+
+  cartRef.current = cart;
+  showPaymentRef.current = showPayment;
+  lastSaleRef.current = lastSale;
+  showSuspendedRef.current = showSuspended;
+  showShortcutsRef.current = showShortcuts;
+  totalPaidRef.current = totalPaid;
+  grandTotalRef.current = grandTotal;
+  suspendSaleRef.current = suspendSale;
+  completeSaleRef.current = completeSale;
+  updateQtyRef.current = updateQty;
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement).tagName;
+      const isInput = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+
+      if (e.key === 'F1' || e.key === 'F2') {
+        e.preventDefault();
+        searchRef.current?.focus();
+        return;
+      }
+      if (e.key === 'F3') {
+        e.preventDefault();
+        barcodeRef.current?.focus();
+        return;
+      }
+      if (e.key === 'F4') {
+        e.preventDefault();
+        if (cartRef.current.length > 0) setShowPayment(true);
+        return;
+      }
+      if (e.key === 'F5') {
+        e.preventDefault();
+        if (cartRef.current.length > 0) suspendSaleRef.current();
+        return;
+      }
+      if (e.key === 'F6') {
+        e.preventDefault();
+        setShowSuspended(true);
+        return;
+      }
+      if (e.key === 'F8' || (e.key === '+' && !isInput)) {
+        e.preventDefault();
+        const items = cartRef.current;
+        if (items.length > 0) updateQtyRef.current(items[items.length - 1].productId, 1);
+        return;
+      }
+      if (e.key === 'F9' || (e.key === '-' && !isInput)) {
+        e.preventDefault();
+        const items = cartRef.current;
+        if (items.length > 0) updateQtyRef.current(items[items.length - 1].productId, -1);
+        return;
+      }
+      if (e.key === 'Escape') {
+        if (showPaymentRef.current) {
+          setShowPayment(false);
+          setPayments([]);
+        } else if (lastSaleRef.current) {
+          setLastSale(null);
+        } else if (showSuspendedRef.current) {
+          setShowSuspended(false);
+        } else if (showShortcutsRef.current) {
+          setShowShortcuts(false);
+        }
+        return;
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        if (showPaymentRef.current && Math.abs(totalPaidRef.current - grandTotalRef.current) < 0.01) {
+          completeSaleRef.current();
+        }
+        return;
+      }
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, []);
+
   const paymentMethods = [
     { method: 'cash' as const, icon: Banknote, label: 'Cash', color: 'text-emerald-600' },
     { method: 'mobile_money' as const, icon: Smartphone, label: 'Mobile Money', color: 'text-teal-600' },
@@ -351,6 +469,10 @@ export default function POSPage() {
       {/* Top Header Row */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-bold text-slate-800">Point of Sale</h1>
+        <button onClick={() => setShowShortcuts(true)}
+          className="inline-flex items-center bg-slate-100 text-slate-600 border border-slate-200 text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm hover:bg-slate-200 transition-colors">
+          <Keyboard size={14} />
+        </button>
         <button onClick={() => setShowSuspended(true)}
           className="inline-flex items-center bg-amber-50 text-amber-700 border border-amber-200/50 text-xs font-semibold px-3 py-1 rounded-full shadow-sm hover:bg-amber-100 transition-colors">
           Suspended ({suspendedSales.length})
@@ -366,12 +488,14 @@ export default function POSPage() {
             <div className="relative w-full">
               <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
+                ref={searchRef}
                 type="text" value={search} onChange={e => setSearch(e.target.value)}
                 placeholder="Search products by name, barcode, or SKU..."
                 className="w-full pl-10 pr-4 py-2.5 bg-slate-50/70 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-all"
               />
             </div>
             <input
+              ref={barcodeRef}
               type="text" value={barcodeInput} onChange={e => setBarcodeInput(e.target.value)} onKeyDown={handleBarcode}
               placeholder="Scan barcode..."
               className="w-full sm:w-1/3 px-4 py-2.5 bg-slate-50/70 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 font-mono focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-all"
@@ -413,7 +537,12 @@ export default function POSPage() {
             {/* Cart Items */}
             <div className="space-y-2 mb-4 max-h-[240px] sm:max-h-[320px] overflow-y-auto">
               {cart.map(item => (
-                <div key={item.productId} className="flex items-center gap-1.5 sm:gap-2 p-2.5 bg-slate-50 rounded-lg text-sm">
+                <div key={item.productId} className={`flex items-center gap-1.5 sm:gap-2 p-2.5 bg-slate-50 rounded-lg text-sm ${splitMode && !checkedItems.includes(item.productId) ? 'opacity-50' : ''}`}>
+                  {splitMode && (
+                    <input type="checkbox" checked={checkedItems.includes(item.productId)}
+                      onChange={() => toggleCheckItem(item.productId)}
+                      className="shrink-0 accent-teal-500" />
+                  )}
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-slate-700 truncate text-xs sm:text-sm">{item.name}</p>
                     <p className="text-[11px] sm:text-xs text-slate-400">{formatCurrency(item.price)} × {item.quantity}</p>
@@ -501,17 +630,49 @@ export default function POSPage() {
               <span className="text-xl font-extrabold text-teal-600">{formatCurrency(grandTotal)}</span>
             </div>
 
+            {splitMode && (
+              <div className="flex justify-between text-xs text-amber-700 font-medium border-t border-amber-100 pt-3">
+                <span>Bill 1: {formatCurrency(cart.filter(i => checkedItems.includes(i.productId)).reduce((s, i) => s + i.total, 0))}</span>
+                <span>Bill 2: {formatCurrency(cart.filter(i => !checkedItems.includes(i.productId)).reduce((s, i) => s + i.total, 0))}</span>
+              </div>
+            )}
+
+            {splitBill && !splitMode && (
+              <div className="text-xs text-amber-600 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2 flex items-center justify-between">
+                <span>Bill 2 pending ({splitBill.items.length} item{splitBill.items.length !== 1 ? 's' : ''}, {formatCurrency(splitBill.items.reduce((s, i) => s + i.total, 0))})</span>
+                <button onClick={() => setSplitBill(null)} className="text-amber-500 hover:text-amber-700 font-medium ml-2">Cancel</button>
+              </div>
+            )}
+
             {/* Action Buttons */}
-            <div className="flex gap-2.5 pt-2">
-              <button onClick={suspendSale} disabled={cart.length === 0}
-                className="flex-1 py-3 border border-slate-200 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all flex items-center justify-center gap-1 disabled:opacity-50">
-                <Pause size={16} /> Hold
-              </button>
-              <button onClick={() => setShowPayment(true)} disabled={cart.length === 0}
-                className="flex-[2] py-3 bg-teal-500 hover:bg-teal-600 text-white font-bold rounded-lg text-sm transition-all shadow-md shadow-teal-500/10 flex items-center justify-center gap-2 disabled:opacity-50">
-                <CreditCard size={16} /> Pay {formatCurrency(grandTotal)}
-              </button>
-            </div>
+            {!splitMode ? (
+              <div className="flex gap-2.5 pt-2">
+                <button onClick={suspendSale} disabled={cart.length === 0}
+                  className="flex-1 py-3 border border-slate-200 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all flex items-center justify-center gap-1 disabled:opacity-50">
+                  <Pause size={16} /> Hold
+                </button>
+                <button onClick={() => { setCheckedItems(cart.map(i => i.productId)); setSplitMode(true); }} disabled={cart.length < 2}
+                  className="flex-1 py-3 border border-slate-200 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all flex items-center justify-center gap-1 disabled:opacity-50">
+                  Split
+                </button>
+                <button onClick={() => setShowPayment(true)} disabled={cart.length === 0}
+                  className="flex-[2] py-3 bg-teal-500 hover:bg-teal-600 text-white font-bold rounded-lg text-sm transition-all shadow-md shadow-teal-500/10 flex items-center justify-center gap-2 disabled:opacity-50">
+                  <CreditCard size={16} /> Pay {formatCurrency(grandTotal)}
+                </button>
+              </div>
+            ) : (
+              <div className="flex gap-2.5 pt-2">
+                <button onClick={() => { setSplitMode(false); setCheckedItems([]); }}
+                  className="flex-1 py-3 border border-slate-200 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-all">
+                  Cancel Split
+                </button>
+                <button onClick={confirmSplit}
+                  disabled={checkedItems.length === 0 || checkedItems.length === cart.length}
+                  className="flex-[2] py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg text-sm transition-all disabled:opacity-50">
+                  Confirm Split
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -622,6 +783,36 @@ export default function POSPage() {
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
                 New Sale
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Shortcuts Modal */}
+      {showShortcuts && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-lg p-6 animate-zoom-in">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-slate-800">Keyboard Shortcuts</h3>
+              <button onClick={() => setShowShortcuts(false)} className="text-slate-400 hover:text-slate-600"><X size={20} /></button>
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-sm">
+              {[
+                ['F1 / F2', 'Focus product search'],
+                ['F3', 'Focus barcode scanner'],
+                ['F4', 'Open payment'],
+                ['F5', 'Suspend sale'],
+                ['F6', 'Show suspended sales'],
+                ['F8 / +', 'Increase quantity'],
+                ['F9 / -', 'Decrease quantity'],
+                ['Esc', 'Close modal'],
+                ['Ctrl+Enter', 'Complete sale'],
+              ].map(([key, desc]) => (
+                <div key={key} className="flex items-center gap-2 p-2 rounded-lg bg-slate-50">
+                  <kbd className="px-2 py-0.5 bg-white border border-slate-200 rounded text-xs font-mono font-semibold text-slate-600 min-w-[5rem] text-center">{key}</kbd>
+                  <span className="text-slate-600">{desc}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>

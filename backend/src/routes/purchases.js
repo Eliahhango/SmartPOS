@@ -6,7 +6,7 @@ const validate = require('../middleware/validate');
 router.use(authenticate);
 
 // GET /api/purchases
-router.get('/', async (req, res) => {
+router.get('/', authorize('admin', 'manager', 'stock_officer', 'accountant'), async (req, res) => {
   try {
     const { page = 1, limit = 50, status, supplierId, search } = req.query;
     const where = {};
@@ -41,7 +41,7 @@ router.get('/', async (req, res) => {
 });
 
 // GET /api/purchases/:id
-router.get('/:id', async (req, res) => {
+router.get('/:id', authorize('admin', 'manager', 'stock_officer', 'accountant'), async (req, res) => {
   try {
     const purchase = await prisma.purchase.findUnique({
       where: { id: parseInt(req.params.id) },
@@ -55,7 +55,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /api/purchases
-router.post('/', authorize('admin', 'manager', 'stock_officer'), validate.createPurchase, async (req, res) => {
+router.post('/', authorize('admin', 'manager', 'stock_officer', 'store_keeper'), validate.createPurchase, async (req, res) => {
   try {
     const { supplierId, invoiceNo, items, date } = req.body;
 
@@ -103,7 +103,7 @@ router.post('/:id/approve', authorize('admin', 'manager'), validate.approvePurch
 });
 
 // POST /api/purchases/:id/receive
-router.post('/:id/receive', authorize('admin', 'manager', 'stock_officer'), validate.receivePurchase, async (req, res) => {
+router.post('/:id/receive', authorize('admin', 'manager', 'stock_officer', 'store_keeper'), validate.receivePurchase, async (req, res) => {
   try {
     const purchase = await prisma.purchase.findUnique({
       where: { id: parseInt(req.params.id) },

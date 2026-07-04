@@ -7,7 +7,7 @@ const validate = require('../middleware/validate');
 router.use(authenticate);
 
 // GET /api/users
-router.get('/', authorize('admin'), async (req, res) => {
+router.get('/', authorize('admin', 'accountant'), async (req, res) => {
   try {
     const users = await prisma.user.findMany({
       select: {

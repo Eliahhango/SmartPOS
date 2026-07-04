@@ -6,7 +6,7 @@ const validate = require('../middleware/validate');
 router.use(authenticate);
 
 // GET /api/expenses
-router.get('/', async (req, res) => {
+router.get('/', authorize('admin', 'manager', 'accountant'), async (req, res) => {
   try {
     const { startDate, endDate, type, page = 1, limit = 50 } = req.query;
     const where = {};

@@ -6,7 +6,7 @@ const validate = require('../middleware/validate');
 router.use(authenticate);
 
 // GET /api/branches
-router.get('/', async (req, res) => {
+router.get('/', authorize('admin', 'accountant'), async (req, res) => {
   try {
     const branches = await prisma.branch.findMany({
       include: { _count: { select: { users: true } } }

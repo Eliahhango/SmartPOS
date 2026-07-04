@@ -3,7 +3,7 @@ const prisma = require('../utils/prisma');
 const { authenticate, authorize } = require('../middleware/auth');
 
 router.use(authenticate);
-router.use(authorize('admin', 'manager'));
+router.use(authorize('admin', 'manager', 'accountant'));
 
 router.get('/', async (req, res) => {
   try {

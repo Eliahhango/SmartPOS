@@ -5,7 +5,7 @@ const { authenticate, authorize } = require('../middleware/auth');
 router.use(authenticate);
 
 // GET /api/audit-logs — paginated list (admin only)
-router.get('/', authorize('admin'), async (req, res) => {
+router.get('/', authorize('admin', 'accountant'), async (req, res) => {
   try {
     const { page = 1, limit = 50, entity, action, userId } = req.query;
     const where = {};
@@ -31,7 +31,7 @@ router.get('/', authorize('admin'), async (req, res) => {
 });
 
 // GET /api/audit-logs/entities — list all distinct entity types with counts
-router.get('/entities', authorize('admin'), async (req, res) => {
+router.get('/entities', authorize('admin', 'accountant'), async (req, res) => {
   try {
     const entities = await prisma.auditLog.groupBy({
       by: ['entity'],

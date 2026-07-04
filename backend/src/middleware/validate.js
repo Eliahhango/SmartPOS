@@ -137,6 +137,7 @@ const updateSupplier = [
   body('email').optional({ values: 'falsy' }).isEmail().withMessage('Invalid email').normalizeEmail(),
   body('address').optional({ values: 'falsy' }).isString().isLength({ max: 500 }).withMessage('Address too long (max 500)'),
   body('tinNumber').optional({ values: 'falsy' }).isString().isLength({ max: 50 }).withMessage('TIN too long (max 50)'),
+  body('balance').optional({ values: 'falsy' }).isFloat().withMessage('Balance must be a number'),
   handleErrors,
 ];
 

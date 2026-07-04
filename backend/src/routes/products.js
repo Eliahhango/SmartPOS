@@ -87,7 +87,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /api/products
-router.post('/', authorize('admin', 'manager', 'stock_officer'), validate.createProduct, uploadImage.single('image'), async (req, res) => {
+router.post('/', authorize('admin', 'manager', 'stock_officer', 'store_keeper'), validate.createProduct, uploadImage.single('image'), async (req, res) => {
   try {
     const data = { ...req.body };
 
@@ -110,7 +110,7 @@ router.post('/', authorize('admin', 'manager', 'stock_officer'), validate.create
 });
 
 // PUT /api/products/:id
-router.put('/:id', authorize('admin', 'manager', 'stock_officer'), validate.updateProduct, uploadImage.single('image'), async (req, res) => {
+router.put('/:id', authorize('admin', 'manager', 'stock_officer', 'store_keeper'), validate.updateProduct, uploadImage.single('image'), async (req, res) => {
   try {
     const data = { ...req.body };
 

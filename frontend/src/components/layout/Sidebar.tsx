@@ -10,20 +10,20 @@ import {
 import { useCallback } from 'react';
 
 const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['admin', 'manager', 'cashier', 'stock_officer'] },
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['admin', 'manager', 'cashier', 'stock_officer', 'accountant'] },
   { href: '/pos', label: 'Point of Sale', icon: ShoppingCart, roles: ['admin', 'manager', 'cashier'] },
-  { href: '/products', label: 'Products', icon: Package, roles: ['admin', 'manager', 'stock_officer'] },
-  { href: '/categories', label: 'Categories', icon: Tags, roles: ['admin', 'manager'] },
-  { href: '/suppliers', label: 'Suppliers', icon: Truck, roles: ['admin', 'manager'] },
-  { href: '/customers', label: 'Customers', icon: Users, roles: ['admin', 'manager', 'cashier'] },
-  { href: '/inventory', label: 'Inventory', icon: ClipboardList, roles: ['admin', 'manager', 'stock_officer'] },
-  { href: '/purchases', label: 'Purchases', icon: Receipt, roles: ['admin', 'manager', 'stock_officer'] },
-  { href: '/expenses', label: 'Expenses', icon: DollarSign, roles: ['admin', 'manager'] },
-  { href: '/reports', label: 'Reports', icon: BarChart3, roles: ['admin', 'manager'] },
+  { href: '/products', label: 'Products', icon: Package, roles: ['admin', 'manager', 'stock_officer', 'store_keeper', 'accountant'] },
+  { href: '/categories', label: 'Categories', icon: Tags, roles: ['admin', 'manager', 'accountant'] },
+  { href: '/suppliers', label: 'Suppliers', icon: Truck, roles: ['admin', 'manager', 'accountant'] },
+  { href: '/customers', label: 'Customers', icon: Users, roles: ['admin', 'manager', 'cashier', 'accountant'] },
+  { href: '/inventory', label: 'Inventory', icon: ClipboardList, roles: ['admin', 'manager', 'stock_officer', 'store_keeper', 'accountant'] },
+  { href: '/purchases', label: 'Purchases', icon: Receipt, roles: ['admin', 'manager', 'stock_officer', 'store_keeper', 'accountant'] },
+  { href: '/expenses', label: 'Expenses', icon: DollarSign, roles: ['admin', 'manager', 'accountant'] },
+  { href: '/reports', label: 'Reports', icon: BarChart3, roles: ['admin', 'manager', 'accountant'] },
   { href: '/users', label: 'Users', icon: Shield, roles: ['admin'] },
-  { href: '/taxes', label: 'Tax Rates', icon: Settings, roles: ['admin'] },
-  { href: '/branches', label: 'Branches', icon: Store, roles: ['admin'] },
-  { href: '/audit-log', label: 'Audit Log', icon: History, roles: ['admin'] },
+  { href: '/taxes', label: 'Tax Rates', icon: Settings, roles: ['admin', 'accountant'] },
+  { href: '/branches', label: 'Branches', icon: Store, roles: ['admin', 'accountant'] },
+  { href: '/audit-log', label: 'Audit Log', icon: History, roles: ['admin', 'accountant'] },
 ];
 
 interface SidebarProps {

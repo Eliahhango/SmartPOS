@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const prisma = require('../utils/prisma');
-const { authenticate } = require('../middleware/auth');
+const { authenticate, authorize } = require('../middleware/auth');
 const validate = require('../middleware/validate');
 
 router.use(authenticate);
@@ -213,7 +213,7 @@ router.post('/', validate.createSale, async (req, res) => {
 });
 
 // GET /api/sales
-router.get('/', async (req, res) => {
+router.get('/', authorize('admin', 'manager', 'cashier', 'accountant'), async (req, res) => {
   try {
     const { page = 1, limit = 50, status, startDate, endDate, cashierId } = req.query;
     const where = {};
@@ -249,7 +249,7 @@ router.get('/', async (req, res) => {
 });
 
 // GET /api/sales/:id
-router.get('/:id', async (req, res) => {
+router.get('/:id', authorize('admin', 'manager', 'cashier', 'accountant'), async (req, res) => {
   try {
     const sale = await prisma.sale.findUnique({
       where: { id: parseInt(req.params.id) },
@@ -380,7 +380,7 @@ router.post('/:id/returns', validate.createReturn, async (req, res) => {
 });
 
 // GET /api/sales-returns
-router.get('/returns/list', async (req, res) => {
+router.get('/returns/list', authorize('admin', 'manager', 'cashier', 'accountant'), async (req, res) => {
   try {
     const returns = await prisma.salesReturn.findMany({
       include: {
