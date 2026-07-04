@@ -39,6 +39,7 @@ export default function POSPage() {
   const barcodeRef = useRef<HTMLInputElement>(null);
   const [lastSale, setLastSale] = useState<any>(null);
   const [saleWarnings, setSaleWarnings] = useState<any[]>([]);
+  const [storeSettings, setStoreSettings] = useState<any>({});
   const [customers, setCustomers] = useState<any[]>([]);
   const [customerId, setCustomerId] = useState('');
   const [customerSearch, setCustomerSearch] = useState('');
@@ -54,11 +55,13 @@ export default function POSPage() {
     // Build receipt HTML with inline styles — no Tailwind dependency
     const s = (v: string | number | undefined | null) => v ?? '';
     const store = {
-      name: 'SMARTPOS',
+      name: storeSettings.company_name || 'SMARTPOS',
       branch: lastSale.branch?.name || 'Supermarket',
-      address: '123 Main Street, Dar es Salaam',
-      phone: '+255 123 456 789',
-      tin: '123-456-789'
+      address: storeSettings.company_address || '123 Main Street, Dar es Salaam',
+      phone: storeSettings.company_phone || '+255 123 456 789',
+      tin: '123-456-789',
+      logo: storeSettings.company_logo || null,
+      footer: storeSettings.receipt_footer || 'Thank you for shopping with us!'
     };
     const fmt = (v: number) => 'TSh ' + Number(v).toLocaleString('en-TZ', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
     const date = new Date(lastSale.createdAt);
@@ -100,7 +103,10 @@ export default function POSPage() {
   .w20 { width: 20%; }
   .w60 { width: 60%; }
   .cap { text-transform: capitalize; }
+  .logo { max-width: 30mm; max-height: 15mm; margin: 0 auto; }
+  .qr { width: 25mm; height: 25mm; margin: 0 auto; }
 </style></head><body>
+  ${store.logo ? '<div class="c mb2"><img src="' + store.logo + '" class="logo" /></div>' : ''}
   <div class="c mb2 dashb pb1">
     <div class="s16 b">${store.name}</div>
     <div class="s9 mt1">${store.branch}</div>
@@ -140,11 +146,14 @@ export default function POSPage() {
   </div>
   ${lastSale.customer ? `<div class="c s8 mb1">Points earned: <b>${Math.floor(lastSale.grandTotal / 1000)} pts</b></div>` : ''}
   <div class="c s8 pt1 dasht">
-    <div class="b s9 mt1 mb1">Thank you for shopping with us!</div>
+    <div class="b s9 mt1 mb1">${store.footer}</div>
     <div>Returns accepted within 7 days</div>
     <div class="mb1">with original receipt.</div>
     <div class="grey s7 mt1">${s(lastSale.invoiceNo)}</div>
     <div class="grey s7">Powered by SmartPOS</div>
+    <div class="c mt2">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${encodeURIComponent('INV:' + (lastSale.invoiceNo || ''))}" class="qr" alt="QR" />
+    </div>
   </div>
 </body></html>`;
 
@@ -197,9 +206,10 @@ export default function POSPage() {
   // Load initial products on mount; refine on search
   useEffect(() => { fetchProducts(''); }, [fetchProducts]);
 
-  // Load customers for credit sales
+  // Load customers for credit sales & store settings
   useEffect(() => {
     api.get('/customers', { params: { limit: 200 } }).then(({ data }) => setCustomers(data.customers)).catch(() => {});
+    api.get('/settings').then(({ data }) => setStoreSettings(data)).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -353,14 +363,55 @@ export default function POSPage() {
   };
 
   const suspendSale = async () => {
-    toast.success('Sale suspended (local only)');
-    setSuspendedSales(prev => [...prev, { cart, discount, date: new Date() }]);
-    setCart([]);
-    setDiscount(0);
+    if (cart.length === 0) return toast.error('Cart is empty');
+    try {
+      // Persist suspended sale to server
+      const { data } = await api.post('/sales', {
+        items: cart.map(i => ({ productId: i.productId, quantity: i.quantity, price: i.price })),
+        payments: [],
+        discount,
+        status: 'suspended'
+      });
+      toast.success('Sale suspended — #' + data.invoiceNo);
+      setSuspendedSales(prev => [...prev, { ...data, cart, discount, date: new Date() }]);
+      setCart([]);
+      setDiscount(0);
+    } catch (err: any) {
+      // Fallback to local-only if server is unavailable
+      toast.success('Sale suspended (local only)');
+      setSuspendedSales(prev => [...prev, { cart, discount, date: new Date(), invoiceNo: 'local-' + Date.now() }]);
+      setCart([]);
+      setDiscount(0);
+    }
   };
 
-  const resumeSale = (index: number) => {
+  const resumeSale = async (index: number) => {
     const s = suspendedSales[index];
+    // If it was persisted to server, fetch fresh data
+    if (s.id && s.status === 'suspended') {
+      try {
+        const { data } = await api.get('/sales/' + s.id);
+        if (data.status === 'suspended') {
+          // Map saved items back to cart format
+          const restoredCart = data.items.map((item: any) => ({
+            productId: item.productId,
+            name: item.product.name,
+            barcode: item.product.barcode || '',
+            price: item.price,
+            quantity: item.quantity,
+            taxRate: item.taxRateApplied || 0,
+            total: item.total
+          }));
+          setCart(restoredCart);
+          setDiscount(data.discount || 0);
+          setCustomerId(data.customerId ? String(data.customerId) : '');
+          setSuspendedSales(prev => prev.filter((_, i) => i !== index));
+          setShowSuspended(false);
+          return;
+        }
+      } catch {}
+    }
+    // Fallback: local-only resume
     setCart(s.cart);
     setDiscount(s.discount);
     setSuspendedSales(prev => prev.filter((_, i) => i !== index));

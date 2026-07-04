@@ -44,7 +44,11 @@ const dashboardRoutes = require('./routes/dashboard');
 const taxRoutes = require('./routes/taxes');
 const branchRoutes = require('./routes/branches');
 const userRoutes = require('./routes/users');
+const settingsRoutes = require('./routes/settings');
+const backupRoutes = require('./routes/backup');
 const auditLogRoutes = require('./routes/auditLog');
+const attendanceRoutes = require('./routes/attendance');
+const shiftRoutes = require('./routes/shifts');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -105,6 +109,10 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/taxes', taxRoutes);
 app.use('/api/branches', branchRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/attendance', attendanceRoutes);
+app.use('/api/shifts', shiftRoutes);
+app.use('/api/settings', settingsRoutes);
+app.use('/api/backup', backupRoutes);
 app.use('/api/audit-logs', auditLogRoutes);
 
 // Health check

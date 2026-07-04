@@ -35,7 +35,7 @@ router.put('/:id', authorize('admin'), validate.updateUser, async (req, res) => 
 
     // ⛔ Email cannot be changed via this endpoint — that would allow account takeover
     // Users can only change their email via PUT /api/auth/profile (self-service)
-    const { name, phone, role, status, branchId, password } = req.body;
+    const { name, phone, role, status, branchId, password, commissionRate } = req.body;
     const data = {};
 
     if (name) data.name = name.trim();
@@ -44,6 +44,7 @@ router.put('/:id', authorize('admin'), validate.updateUser, async (req, res) => 
     if (status) data.status = status;
     if (branchId !== undefined) data.branchId = parseInt(branchId);
     if (password) data.password = await bcrypt.hash(password, 10);
+    if (commissionRate !== undefined) data.commissionRate = parseFloat(commissionRate);
 
     const user = await prisma.user.update({
       where: { id: targetId },

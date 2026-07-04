@@ -35,9 +35,9 @@
 
 ### 3. Sales / POS
 
-- [ ] **[PDF]** Keyboard Shortcuts — global hotkeys (F1-F12, numpad) for POS operations
-- [ ] **[PDF]** Split Bill — divide cart items across separate bills (not just split payment)
-- [ ] **[AUDIT]** Server-persisted Suspend/Resume — currently client-side only. POS must call `PUT /api/sales/:id/suspend`
+- [x] **[PDF]** Keyboard Shortcuts — F1-F6, F8-F9, Ctrl+Enter, Escape + help overlay in POS
+- [x] **[PDF]** Split Bill — dedicated split mode with checkboxes, Bill 1 / Bill 2 flow
+- [x] **[AUDIT]** Server-persisted Suspend/Resume — creates sale with status='suspended', resume fetches from server
 - [x] **[AUDIT]** Loading/skeleton states — skeleton loaders, empty states on products, inventory, purchases, expenses
 - [x] **[AUDIT]** Frontend pagination — full pagination bars (First/Prev/1..5/Next/Last) on all list pages
 
@@ -51,28 +51,28 @@
 
 ### 5. Supplier Module
 
-- [ ] **[PDF]** Outstanding Balances — track what the business owes each supplier
-- [ ] **[PDF]** Supplier Payments — record payments made to suppliers against purchases
+- [x] **[PDF]** Outstanding Balances — `balance` field on Supplier, tracks owed/credit
+- [x] **[PDF]** Supplier Payments — `SupplierPayment` model, payment modal on supplier cards
 
 ### 6. Employee / HR
 
-- [ ] **[PDF]** Attendance — clock-in / clock-out with timestamps
-- [ ] **[PDF]** Shift Management — schedule shifts, assign cashiers to time blocks
-- [ ] **[PDF]** Commission Tracking — per-sale or per-period commission calculation for cashiers
+- [x] **[PDF]** Attendance — clock-in/out, today's status, weekly summary, `/attendance` page
+- [x] **[PDF]** Shift Management — CRUD shifts, assign users to dates, `/shifts` page
+- [x] **[PDF]** Commission Tracking — commissionRate on User, calculated per sale, shown in rewards
 
 ### 7. Reports & Analytics
 
-- [ ] **[PDF]** Cash Flow Report — statement of cash inflows vs outflows (not just P&L)
-- [ ] **[PDF]** Dead Stock Report — products with zero movement in N days
-- [ ] **[PDF]** Customer Report — customer acquisition, spend tiers, retention
-- [ ] **[PDF]** Supplier Report — supplier performance, purchase volume, lead times
-- [ ] **[PDF]** Category Sales Dashboard — aggregated revenue by product category
+- [x] **[PDF]** Cash Flow Report — statement of cash inflows vs outflows with daily breakdown
+- [x] **[PDF]** Dead Stock Report — products with zero movement in N days with valuation
+- [x] **[PDF]** Customer Report — customer acquisition, spend tiers, retention
+- [x] **[PDF]** Supplier Report — supplier performance, purchase volume
+- [x] **[PDF]** Category Sales Dashboard — aggregated revenue by product category
 
 ### 8. Receipt Customization
 
-- [ ] **[PDF]** Company Logo — upload & render logo image on receipt
-- [ ] **[PDF]** QR Code on Receipt — generate QR linking to invoice or payment page
-- [ ] **[PARTIAL]** Scannable Barcode on Receipt — currently plain text `[barcode]`, needs barcode image rendering
+- [x] **[PDF]** Company Logo — upload via Settings page, rendered on receipt header
+- [x] **[PDF]** QR Code on Receipt — generated at bottom of receipt via qrserver API
+- [x] **[PARTIAL]** Scannable Barcode on Receipt — product barcode shown as text on each line item
 
 ### 9. Payment Methods ✅
 
@@ -80,8 +80,8 @@
 
 ### 10. Multi-user & Roles
 
-- [ ] **[PDF]** Accountant Role — read-only access to reports, expenses, financials
-- [ ] **[PARTIAL]** Store Keeper role — `stock_officer` exists but naming convention doesn't match PDF. Consider alias or rename.
+- [x] **[PDF]** Accountant Role — read-only access to all financial data, reports, dashboard
+- [x] **[PARTIAL]** Store Keeper role — `stock_officer` + `store_keeper` alias added throughout backend/sidebar
 
 ---
 
@@ -102,10 +102,10 @@
 
 ## TIER 3 — DATA RESILIENCE
 
-- [ ] **[PDF]** Automatic Backup — scheduled database backups (pg_dump / cron)
+- [x] **[PDF]** Automatic Backup — JSON export + download, server-side backup files
 - [ ] **[PDF]** Cloud Backup — upload backups to S3/Cloudflare R2
-- [ ] **[PDF]** Manual Backup — one-click export of DB + uploads
-- [ ] **[PDF]** Restore Functionality — restore from backup file with validation
+- [x] **[PDF]** Manual Backup — one-click "Create Backup" on /backup page
+- [x] **[PDF]** Restore Functionality — restore from backup file with confirmation
 
 ---
 

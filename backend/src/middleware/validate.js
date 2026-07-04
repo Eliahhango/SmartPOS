@@ -315,9 +315,10 @@ const updateUser = [
   param('id').isInt({ min: 1 }).withMessage('Invalid user ID'),
   body('name').optional().trim().isLength({ min: 1, max: 100 }).withMessage('Name must be 1-100 chars'),
   body('phone').optional({ values: 'falsy' }).isString().isLength({ max: 20 }).withMessage('Phone too long (max 20)'),
-  body('role').optional().isIn(['admin', 'manager', 'cashier', 'stock_officer']).withMessage('Invalid role'),
+  body('role').optional().isIn(['admin', 'manager', 'cashier', 'stock_officer', 'store_keeper', 'accountant']).withMessage('Invalid role'),
   body('status').optional().isIn(['active', 'suspended']).withMessage('Status must be active or suspended'),
   body('branchId').optional({ values: 'falsy' }).isInt({ min: 1 }).withMessage('Invalid branch ID'),
+  body('commissionRate').optional({ values: 'falsy' }).isFloat({ min: 0, max: 100 }).withMessage('Commission rate must be 0-100'),
   strongPassword('password').optional(),
   handleErrors,
 ];

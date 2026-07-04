@@ -5,7 +5,8 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, ShoppingCart, Package, Tags, Truck, Users,
   ClipboardList, DollarSign, BarChart3, Settings, LogOut,
-  ChevronLeft, ChevronRight, Store, Receipt, Shield, X, History
+  ChevronLeft, ChevronRight, Store, Receipt, Shield, X, History, Database,
+  Clock, Calendar
 } from 'lucide-react';
 import { useCallback } from 'react';
 
@@ -18,12 +19,15 @@ const navItems = [
   { href: '/customers', label: 'Customers', icon: Users, roles: ['admin', 'manager', 'cashier', 'accountant'] },
   { href: '/inventory', label: 'Inventory', icon: ClipboardList, roles: ['admin', 'manager', 'stock_officer', 'store_keeper', 'accountant'] },
   { href: '/purchases', label: 'Purchases', icon: Receipt, roles: ['admin', 'manager', 'stock_officer', 'store_keeper', 'accountant'] },
+  { href: '/attendance', label: 'Attendance', icon: Clock, roles: ['admin', 'manager', 'cashier'] },
+  { href: '/shifts', label: 'Shifts', icon: Calendar, roles: ['admin', 'manager'] },
   { href: '/expenses', label: 'Expenses', icon: DollarSign, roles: ['admin', 'manager', 'accountant'] },
   { href: '/reports', label: 'Reports', icon: BarChart3, roles: ['admin', 'manager', 'accountant'] },
   { href: '/users', label: 'Users', icon: Shield, roles: ['admin'] },
   { href: '/taxes', label: 'Tax Rates', icon: Settings, roles: ['admin', 'accountant'] },
   { href: '/branches', label: 'Branches', icon: Store, roles: ['admin', 'accountant'] },
   { href: '/audit-log', label: 'Audit Log', icon: History, roles: ['admin', 'accountant'] },
+  { href: '/backup', label: 'Backup', icon: Database, roles: ['admin'] },
 ];
 
 interface SidebarProps {

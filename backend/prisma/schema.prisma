@@ -19,27 +19,67 @@ model Branch {
   purchases     Purchase[]
   expenses      Expense[]
   stockMovements StockMovement[]
+  shifts         Shift[]
 
   @@map("branches")
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  name      String
-  email     String    @unique
-  phone     String?
-  password  String
-  role      String    @default("cashier")
-  branchId  Int?      @map("branch_id")
-  branch    Branch?   @relation(fields: [branchId], references: [id])
-  status    String    @default("active")
-  createdAt DateTime  @default(now()) @map("created_at")
-  sales     Sale[]
+  id            Int       @id @default(autoincrement())
+  name          String
+  email         String    @unique
+  phone         String?
+  password      String
+  role          String    @default("cashier")
+  branchId      Int?      @map("branch_id")
+  branch        Branch?   @relation(fields: [branchId], references: [id])
+  status        String    @default("active")
+  commissionRate Float    @default(0) @map("commission_rate")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  sales         Sale[]
   stockMovements StockMovement[]
-  salesReturns SalesReturn[]
-  auditLogs AuditLog[]
+  salesReturns  SalesReturn[]
+  auditLogs     AuditLog[]
+  attendances   Attendance[]
+  shiftAssignments ShiftAssignment[]
 
   @@map("users")
+}
+
+model Attendance {
+  id        Int       @id @default(autoincrement())
+  userId    Int       @map("user_id")
+  user      User      @relation(fields: [userId], references: [id])
+  clockIn   DateTime  @default(now()) @map("clock_in")
+  clockOut  DateTime? @map("clock_out")
+  note      String?
+
+  @@map("attendances")
+}
+
+model Shift {
+  id        Int       @id @default(autoincrement())
+  name      String
+  startTime String    @map("start_time")
+  endTime   String    @map("end_time")
+  branchId  Int?      @map("branch_id")
+  branch    Branch?   @relation(fields: [branchId], references: [id])
+  createdAt DateTime  @default(now()) @map("created_at")
+  assignments ShiftAssignment[]
+
+  @@map("shifts")
+}
+
+model ShiftAssignment {
+  id        Int      @id @default(autoincrement())
+  shiftId   Int      @map("shift_id")
+  shift     Shift    @relation(fields: [shiftId], references: [id])
+  userId    Int      @map("user_id")
+  user      User     @relation(fields: [userId], references: [id])
+  date      DateTime
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("shift_assignments")
 }
 
 model Product {
@@ -62,8 +102,9 @@ model Product {
   batchNumber   String?   @map("batch_number")
   expiryDate    DateTime? @map("expiry_date")
   image         String?
-  status        String    @default("active")
-  createdAt     DateTime  @default(now()) @map("created_at")
+  status    String    @default("active")
+  commissionRate Float @default(0) @map("commission_rate")
+  createdAt DateTime  @default(now()) @map("created_at")
   saleItems     SaleItem[]
   purchaseItems PurchaseItem[]
   stockMovements StockMovement[]
@@ -286,6 +327,14 @@ model Expense {
   date        DateTime @default(now())
 
   @@map("expenses")
+}
+
+model Setting {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String
+
+  @@map("settings")
 }
 
 model AuditLog {

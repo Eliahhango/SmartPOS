@@ -180,6 +180,12 @@ router.post('/', validate.createSale, async (req, res) => {
       return s;
     });
 
+    // Calculate commission for cashier
+    let commissionEarned = 0;
+    if (req.user.commissionRate > 0) {
+      commissionEarned = parseFloat((grandTotal * (req.user.commissionRate / 100)).toFixed(2));
+    }
+
     // Check for newly low-stock products and attach warnings
     const lowStockProducts = await prisma.product.findMany({
       where: {
@@ -195,10 +201,11 @@ router.post('/', validate.createSale, async (req, res) => {
     const rewardsMeta = {};
     if (appliedBirthdayReward) rewardsMeta.birthdayDiscount = birthdayDiscount;
     if (appliedPointsRedeemed > 0) rewardsMeta.pointsRedeemed = appliedPointsRedeemed;
+    if (commissionEarned > 0) rewardsMeta.commissionEarned = commissionEarned;
     req.audit({ action: 'create', entity: 'sale', entityId: sale.id, description: 'Sale #' + sale.id + ' — ' + itemCount + ' item(s), $' + grandTotal.toFixed(2) + itemSuffix, metadata: { total: grandTotal, itemCount, customerId: customerId || null, paymentMethods: req.body.payments ? req.body.payments.map(function(p) { return p.method; }) : [], ...rewardsMeta } });
     res.status(201).json({
       ...sale,
-      rewards: { birthdayDiscount, pointsDiscount, pointsRedeemed: appliedPointsRedeemed },
+      rewards: { birthdayDiscount, pointsDiscount, pointsRedeemed: appliedPointsRedeemed, commissionEarned },
       warnings: lowStockProducts.length > 0 ? lowStockProducts.map(p => ({
         productId: p.id,
         name: p.name,
