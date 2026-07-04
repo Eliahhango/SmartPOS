@@ -8,7 +8,7 @@ router.use(authenticate);
 // POST /api/sales - Create a sale with split payments
 router.post('/', validate.createSale, async (req, res) => {
   try {
-    const { customerId, items, payments, discount = 0, status = 'completed' } = req.body;
+    const { customerId, items, payments, discount = 0, pointsRedeemed = 0, status = 'completed' } = req.body;
 
     // Calculate totals
     let subtotal = 0;
@@ -42,12 +42,58 @@ router.post('/', validate.createSale, async (req, res) => {
       });
     }
 
-    const grandTotal = subtotal + taxTotal - parseFloat(discount);
+    let finalDiscount = parseFloat(discount);
+    let birthdayDiscount = 0;
+    let pointsDiscount = 0;
+    let appliedBirthdayReward = false;
+    let appliedPointsRedeemed = 0;
+
+    // Birthday reward — 10% off if today is customer's birthday
+    if (customerId) {
+      const cust = await prisma.customer.findUnique({ where: { id: parseInt(customerId) } });
+      if (cust?.birthday) {
+        const today = new Date();
+        const bday = new Date(cust.birthday);
+        if (today.getMonth() === bday.getMonth() && today.getDate() === bday.getDate()) {
+          birthdayDiscount = parseFloat((subtotal + taxTotal) * 0.10);
+          appliedBirthdayReward = true;
+        }
+      }
+    }
+
+    // Points redemption — 100 points = $1 discount
+    const parsedPointsRedeemed = parseInt(pointsRedeemed) || 0;
+    if (parsedPointsRedeemed > 0 && customerId) {
+      const cust = await prisma.customer.findUnique({ where: { id: parseInt(customerId) } });
+      if (!cust) return res.status(400).json({ error: 'Customer not found' });
+      if (parsedPointsRedeemed > cust.points) {
+        return res.status(400).json({ error: `Insufficient points. You have ${cust.points}, requested ${parsedPointsRedeemed}` });
+      }
+      pointsDiscount = parseFloat((parsedPointsRedeemed / 100).toFixed(2));
+      appliedPointsRedeemed = parsedPointsRedeemed;
+    }
+
+    const grandTotal = subtotal + taxTotal - finalDiscount - birthdayDiscount - pointsDiscount;
 
     // Validate payments match grand total
     const totalPaid = payments.reduce((sum, p) => sum + parseFloat(p.amount), 0);
     if (Math.abs(totalPaid - grandTotal) > 0.01) {
       return res.status(400).json({ error: `Payment total (${totalPaid}) does not match grand total (${grandTotal})` });
+    }
+
+    // Handle credit payment — check customer exists and credit limit
+    const creditPayments = payments.filter(p => p.method === 'credit');
+    const hasCredit = creditPayments.length > 0;
+    if (hasCredit) {
+      if (!customerId) {
+        return res.status(400).json({ error: 'Customer is required for credit sales' });
+      }
+      const cust = await prisma.customer.findUnique({ where: { id: parseInt(customerId) } });
+      if (!cust) return res.status(400).json({ error: 'Customer not found' });
+      const creditTotal = creditPayments.reduce((s, p) => s + parseFloat(p.amount), 0);
+      if (cust.creditLimit > 0 && (cust.balance + creditTotal) > cust.creditLimit) {
+        return res.status(400).json({ error: `Credit limit exceeded (${cust.creditLimit}). Current balance: ${cust.balance}, credit in this sale: ${creditTotal}` });
+      }
     }
 
     // Create sale with items and payments in transaction
@@ -110,12 +156,24 @@ router.post('/', validate.createSale, async (req, res) => {
         });
       }
 
-      // Add loyalty points if customer
+      // Update loyalty points — earn + redeem
       if (customerId) {
-        const points = Math.floor(grandTotal / 1000); // 1 point per 1000 spent
+        const pointsEarned = Math.floor(grandTotal / 1000); // 1 point per 1000 spent
+        const netPoints = pointsEarned - appliedPointsRedeemed;
         await tx.customer.update({
           where: { id: parseInt(customerId) },
-          data: { points: { increment: points } }
+          data: netPoints >= 0
+            ? { points: { increment: netPoints } }
+            : { points: { decrement: Math.abs(netPoints) } }
+        });
+      }
+
+      // Update customer balance for credit payments
+      if (customerId && creditPayments.length > 0) {
+        const creditTotal = creditPayments.reduce((s, p) => s + parseFloat(p.amount), 0);
+        await tx.customer.update({
+          where: { id: parseInt(customerId) },
+          data: { balance: { increment: creditTotal } }
         });
       }
 
@@ -134,9 +192,13 @@ router.post('/', validate.createSale, async (req, res) => {
     const itemCount = saleItems.length;
     const firstItem = saleItems[0]?.product?.name || '';
     const itemSuffix = firstItem ? ' (' + firstItem + (itemCount > 1 ? '...' : '') + ')' : '';
-    req.audit({ action: 'create', entity: 'sale', entityId: sale.id, description: 'Sale #' + sale.id + ' — ' + itemCount + ' item(s), $' + grandTotal.toFixed(2) + itemSuffix, metadata: { total: grandTotal, itemCount, customerId: customerId || null, paymentMethods: req.body.payments ? req.body.payments.map(function(p) { return p.method; }) : [] } });
+    const rewardsMeta = {};
+    if (appliedBirthdayReward) rewardsMeta.birthdayDiscount = birthdayDiscount;
+    if (appliedPointsRedeemed > 0) rewardsMeta.pointsRedeemed = appliedPointsRedeemed;
+    req.audit({ action: 'create', entity: 'sale', entityId: sale.id, description: 'Sale #' + sale.id + ' — ' + itemCount + ' item(s), $' + grandTotal.toFixed(2) + itemSuffix, metadata: { total: grandTotal, itemCount, customerId: customerId || null, paymentMethods: req.body.payments ? req.body.payments.map(function(p) { return p.method; }) : [], ...rewardsMeta } });
     res.status(201).json({
       ...sale,
+      rewards: { birthdayDiscount, pointsDiscount, pointsRedeemed: appliedPointsRedeemed },
       warnings: lowStockProducts.length > 0 ? lowStockProducts.map(p => ({
         productId: p.id,
         name: p.name,

@@ -162,6 +162,8 @@ const updateCustomer = [
   body('email').optional({ values: 'falsy' }).isEmail().withMessage('Invalid email').normalizeEmail(),
   body('address').optional({ values: 'falsy' }).isString().isLength({ max: 500 }).withMessage('Address too long (max 500)'),
   body('points').optional({ values: 'falsy' }).isInt({ min: 0 }).withMessage('Points must be >= 0'),
+  body('creditLimit').optional({ values: 'falsy' }).isFloat({ min: 0 }).withMessage('Credit limit must be >= 0'),
+  body('birthday').optional({ values: 'falsy' }).isISO8601().withMessage('Invalid birthday date format'),
   handleErrors,
 ];
 

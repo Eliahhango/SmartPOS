@@ -12,12 +12,19 @@ export default function CustomersPage() {
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<any>(null);
-  const [form, setForm] = useState({ name: '', phone: '', email: '', address: '' });
+  const [form, setForm] = useState({ name: '', phone: '', email: '', address: '', creditLimit: '', birthday: '' });
   const [selected, setSelected] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [payModal, setPayModal] = useState<{ customerId: number; customerName: string } | null>(null);
+  const [payForm, setPayForm] = useState({ amount: '', method: 'cash', notes: '' });
+  const LIMIT = 20;
 
   const fetch = async () => {
-    const { data } = await api.get('/customers', { params: { search, page, limit: 20 } });
-    setCustomers(data.customers); setTotal(data.total);
+    setLoading(true);
+    try {
+      const { data } = await api.get('/customers', { params: { search, page, limit: 20 } });
+      setCustomers(data.customers); setTotal(data.total);
+    } catch {} finally { setLoading(false); }
   };
   useEffect(() => { fetch(); }, [page, search]);
 
@@ -26,7 +33,17 @@ export default function CustomersPage() {
     try {
       if (editing) { await api.put(`/customers/${editing.id}`, form); toast.success('Updated'); }
       else { await api.post('/customers', form); toast.success('Created'); }
-      setShowForm(false); setEditing(null); setForm({ name: '', phone: '', email: '', address: '' }); fetch();
+      setShowForm(false); setEditing(null); setForm({ name: '', phone: '', email: '', address: '', creditLimit: '', birthday: '' }); fetch();
+    } catch (err: any) { toast.error(err.response?.data?.error || 'Failed'); }
+  };
+
+  const handlePayment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!payModal) return;
+    try {
+      await api.post(`/customers/${payModal.customerId}/payments`, payForm);
+      toast.success('Payment recorded');
+      setPayModal(null); setPayForm({ amount: '', method: 'cash', notes: '' }); fetch();
     } catch (err: any) { toast.error(err.response?.data?.error || 'Failed'); }
   };
 
@@ -49,7 +66,7 @@ export default function CustomersPage() {
           <h1 className="text-2xl font-bold text-slate-800">Customers</h1>
           <p className="text-xs text-slate-400 mt-1">{total} customers total</p>
         </div>
-        <button onClick={() => { setEditing(null); setForm({ name: '', phone: '', email: '', address: '' }); setShowForm(true); }}
+        <button onClick={() => { setEditing(null); setForm({ name: '', phone: '', email: '', address: '', creditLimit: '', birthday: '' }); setShowForm(true); }}
           className="inline-flex items-center gap-1.5 px-4 py-2 bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold rounded-lg shadow-sm shadow-teal-500/10 transition-colors">
           <Plus size={16} /> Add Customer
         </button>
@@ -88,15 +105,27 @@ export default function CustomersPage() {
                       {c.name}
                     </h3>
                     {/* Modern Loyalty Tag */}
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200/30 mt-1">
-                      <Star size={10} fill="currentColor" /> {c.points} pts
-                    </span>
+                    <div className="flex gap-1.5 mt-1">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200/30">
+                        <Star size={10} fill="currentColor" /> {c.points} pts
+                      </span>
+                      {c.balance > 0 && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-red-700 border border-red-200/30">
+                          ${c.balance.toFixed(2)}
+                        </span>
+                      )}
+                      {c.creditLimit > 0 && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200/30">
+                          Limit: ${c.creditLimit.toFixed(0)}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
 
                 {/* Micro Actions Menu */}
                 <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity" onClick={e => e.stopPropagation()}>
-                  <button onClick={() => { setEditing(c); setForm({ name: c.name, phone: c.phone || '', email: c.email || '', address: c.address || '' }); setShowForm(true); }}
+                    <button onClick={() => { setEditing(c); setForm({ name: c.name, phone: c.phone || '', email: c.email || '', address: c.address || '', creditLimit: c.creditLimit || '', birthday: c.birthday ? c.birthday.slice(0, 10) : '' }); setShowForm(true); }}
                     className="p-1 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors" title="Edit">
                     <Edit size={15} />
                   </button>
@@ -131,6 +160,12 @@ export default function CustomersPage() {
               <span className="bg-slate-50/60 px-2.5 py-1 rounded-md border border-slate-100/50 text-slate-500">
                 {c._count?.sales || 0} purchases
               </span>
+              {c.balance > 0 && (
+                <button onClick={e => { e.stopPropagation(); setPayModal({ customerId: c.id, customerName: c.name }); }}
+                  className="text-red-600 hover:text-red-700 bg-red-50 px-2.5 py-1 rounded-md border border-red-100/50 text-[11px] font-bold transition-colors">
+                  Collect ${c.balance.toFixed(2)}
+                </button>
+              )}
             </div>
           </div>
         ))}
@@ -166,6 +201,12 @@ export default function CustomersPage() {
                 <Star size={14} className="text-amber-500" fill="currentColor" />
                 <span className="font-semibold">{selected.points} loyalty points</span>
               </div>
+              {selected.balance > 0 && (
+                <div className="flex items-center gap-2 text-red-700">
+                  <span className="font-semibold text-sm">Balance: ${selected.balance.toFixed(2)}</span>
+                  {selected.creditLimit > 0 && <span className="text-xs text-slate-400">(Limit: ${selected.creditLimit.toFixed(0)})</span>}
+                </div>
+              )}
               <p className="text-slate-500 text-xs mt-1">{selected.sales?.length || 0} total purchases</p>
             </div>
             {selected.sales?.length > 0 && (
@@ -188,6 +229,35 @@ export default function CustomersPage() {
         </div>
       )}
 
+      {/* Payment Modal */}
+      {payModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-sm p-6 animate-zoom-in">
+            <h3 className="text-lg font-bold text-slate-800 mb-1">Receive Payment</h3>
+            <p className="text-xs text-slate-400 mb-4">{payModal.customerName}</p>
+            <form onSubmit={handlePayment} className="space-y-3">
+              <input type="number" step="0.01" min="0.01" value={payForm.amount} onChange={e => setPayForm({ ...payForm, amount: e.target.value })} placeholder="Amount"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500" required />
+              <select value={payForm.method} onChange={e => setPayForm({ ...payForm, method: e.target.value })}
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-teal-500">
+                <option value="cash">Cash</option>
+                <option value="bank">Bank Transfer</option>
+                <option value="mobile_money">Mobile Money</option>
+                <option value="cheque">Cheque</option>
+              </select>
+              <input value={payForm.notes} onChange={e => setPayForm({ ...payForm, notes: e.target.value })} placeholder="Notes (optional)"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500" />
+              <div className="flex gap-2 pt-1">
+                <button type="button" onClick={() => setPayModal(null)}
+                  className="flex-1 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">Cancel</button>
+                <button type="submit"
+                  className="flex-1 py-2.5 bg-teal-500 hover:bg-teal-600 text-white rounded-xl text-sm font-semibold shadow-sm shadow-teal-500/10 transition-colors">Record Payment</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Form Modal */}
       {showForm && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
@@ -202,6 +272,14 @@ export default function CustomersPage() {
                 className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500" />
               <input value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} placeholder="Address"
                 className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500" />
+              {editing && (
+                <div className="grid grid-cols-2 gap-3">
+                  <input type="number" value={form.creditLimit} onChange={e => setForm({ ...form, creditLimit: e.target.value })} placeholder="Credit Limit"
+                    className="px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500" />
+                  <input type="date" value={form.birthday} onChange={e => setForm({ ...form, birthday: e.target.value })}
+                    className="px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-teal-500" />
+                </div>
+              )}
               <div className="flex gap-2 pt-1">
                 <button type="button" onClick={() => setShowForm(false)}
                   className="flex-1 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">

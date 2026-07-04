@@ -36,6 +36,12 @@ export default function POSPage() {
   const [showSuspended, setShowSuspended] = useState(false);
   const [lastSale, setLastSale] = useState<any>(null);
   const [saleWarnings, setSaleWarnings] = useState<any[]>([]);
+  const [customers, setCustomers] = useState<any[]>([]);
+  const [customerId, setCustomerId] = useState('');
+  const [customerSearch, setCustomerSearch] = useState('');
+  const [showCustomerSelect, setShowCustomerSelect] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
+  const [pointsToRedeem, setPointsToRedeem] = useState(0);
   const printReceipt = () => {
     if (!lastSale) return;
 
@@ -185,6 +191,11 @@ export default function POSPage() {
   // Load initial products on mount; refine on search
   useEffect(() => { fetchProducts(''); }, [fetchProducts]);
 
+  // Load customers for credit sales
+  useEffect(() => {
+    api.get('/customers', { params: { limit: 200 } }).then(({ data }) => setCustomers(data.customers)).catch(() => {});
+  }, []);
+
   useEffect(() => {
     if (!search && products.length > 0) return; // already loaded
     const timer = setTimeout(() => fetchProducts(search), 300);
@@ -272,7 +283,12 @@ export default function POSPage() {
     if (Math.abs(totalPaid - grandTotal) > 0.01) return toast.error('Payment total does not match grand total');
 
     try {
+      // Validate credit requires customer
+      const hasCredit = payments.some(p => p.method === 'credit');
+      if (hasCredit && !customerId) return toast.error('Credit sales require a customer');
+
       const { data } = await api.post('/sales', {
+        customerId: customerId || undefined,
         items: cart.map(i => ({ productId: i.productId, quantity: i.quantity, price: i.price })),
         payments: payments.map(p => ({
           method: p.method,
@@ -281,16 +297,24 @@ export default function POSPage() {
           changeGiven: p.changeGiven,
           referenceNo: p.referenceNo
         })),
-        discount
+        discount,
+        pointsRedeemed: pointsToRedeem || 0
       });
       setLastSale(data);
       setSaleWarnings(data.warnings || []);
       if (data.warnings?.length > 0) {
         data.warnings.forEach((w: any) => toast(w.message, { icon: '⚠️', duration: 5000 }));
       }
+      if (data.rewards?.birthdayDiscount > 0) {
+        toast('🎂 Birthday discount applied!', { duration: 4000 });
+      }
+      if (data.rewards?.pointsRedeemed > 0) {
+        toast('⭐ ' + data.rewards.pointsRedeemed + ' points redeemed ($' + data.rewards.pointsDiscount.toFixed(2) + ')', { duration: 4000 });
+      }
       setCart([]);
       setPayments([]);
       setDiscount(0);
+      setPointsToRedeem(0);
       setShowPayment(false);
       toast.success('Sale completed!');
       // Print triggered manually via the receipt confirmation overlay below
@@ -319,6 +343,7 @@ export default function POSPage() {
     { method: 'mobile_money' as const, icon: Smartphone, label: 'Mobile Money', color: 'text-teal-600' },
     { method: 'card' as const, icon: CreditCard, label: 'Card', color: 'text-teal-600' },
     { method: 'bank' as const, icon: Building, label: 'Bank Transfer', color: 'text-teal-600' },
+    { method: 'credit' as const, icon: CreditCard, label: 'Credit', color: 'text-violet-600' },
   ];
 
   return (
@@ -408,6 +433,47 @@ export default function POSPage() {
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Customer Selector */}
+          <div className="mb-3">
+            <div className="relative">
+              <input type="text" value={customerSearch} onChange={e => { setCustomerSearch(e.target.value); setShowCustomerSelect(true); }}
+                onFocus={() => setShowCustomerSelect(true)}
+                placeholder={customerId ? (customers.find(c => c.id === parseInt(customerId))?.name || 'Select customer') : 'Search customer...'}
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500" />
+              {customerId && (
+                <button onClick={() => { setCustomerId(''); setCustomerSearch(''); }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-500 text-xs font-bold bg-white px-1.5 rounded">
+                  ✕
+                </button>
+              )}
+            </div>
+            {showCustomerSelect && customerSearch && (
+              <div className="mt-1 bg-white border border-slate-200 rounded-lg shadow-md max-h-32 overflow-y-auto z-10 relative">
+                {customers.filter(c => c.name.toLowerCase().includes(customerSearch.toLowerCase())).map(c => (
+                  <button key={c.id} type="button" onClick={() => { setCustomerId(String(c.id)); setCustomerSearch(c.name); setSelectedCustomer(c); setShowCustomerSelect(false); }}
+                    className="w-full text-left px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0">
+                    <span className="font-medium">{c.name}</span>
+                    {c.balance > 0 && <span className="text-red-500 text-xs ml-2">(${c.balance.toFixed(2)})</span>}
+                    {c.points > 0 && <span className="text-amber-500 text-xs ml-2">{c.points} pts</span>}
+                  </button>
+                ))}
+                {customers.filter(c => c.name.toLowerCase().includes(customerSearch.toLowerCase())).length === 0 && (
+                  <p className="px-3 py-2 text-xs text-slate-400">No customers found</p>
+                )}
+              </div>
+            )}
+            {selectedCustomer && selectedCustomer.points > 0 && (
+              <div className="mt-2 flex items-center gap-2 text-xs">
+                <span className="text-amber-600 font-medium">{selectedCustomer.points} pts available</span>
+                <input type="number" min="0" max={selectedCustomer.points} value={pointsToRedeem}
+                  onChange={e => setPointsToRedeem(Math.min(parseInt(e.target.value) || 0, selectedCustomer.points))}
+                  placeholder="Redeem pts"
+                  className="w-20 px-2 py-1 bg-amber-50 border border-amber-200 rounded text-xs text-amber-800 placeholder-amber-400 focus:outline-none focus:border-amber-500" />
+                <span className="text-slate-400">=${((pointsToRedeem || 0) / 100).toFixed(2)}</span>
+              </div>
+            )}
           </div>
 
           {/* Checkout Calculations Panel */}
@@ -517,6 +583,24 @@ export default function POSPage() {
             <h3 className="text-lg font-bold text-slate-800 mb-1">Sale Completed</h3>
             <p className="text-xs text-slate-400 mb-1">{lastSale.invoiceNo}</p>
             <p className="text-2xl font-extrabold text-teal-600 mb-5">{formatCurrency(lastSale.grandTotal)}</p>
+            {lastSale.rewards?.birthdayDiscount > 0 && (
+              <div className="mb-3 p-2.5 bg-pink-50 border border-pink-200 rounded-xl text-left flex items-center gap-2">
+                <span className="text-lg">🎂</span>
+                <div>
+                  <p className="text-xs font-bold text-pink-700">Birthday Reward</p>
+                  <p className="text-[11px] text-pink-600">10% off — saved {formatCurrency(lastSale.rewards.birthdayDiscount)}</p>
+                </div>
+              </div>
+            )}
+            {lastSale.rewards?.pointsRedeemed > 0 && (
+              <div className="mb-3 p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-left flex items-center gap-2">
+                <span className="text-lg">⭐</span>
+                <div>
+                  <p className="text-xs font-bold text-amber-700">Points Redeemed</p>
+                  <p className="text-[11px] text-amber-600">{lastSale.rewards.pointsRedeemed} pts — saved {formatCurrency(lastSale.rewards.pointsDiscount)}</p>
+                </div>
+              </div>
+            )}
             {saleWarnings.length > 0 && (
               <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-left">
                 <p className="text-xs font-bold text-amber-800 mb-1.5 flex items-center gap-1.5">

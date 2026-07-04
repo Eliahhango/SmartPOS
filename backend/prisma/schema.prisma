@@ -81,15 +81,34 @@ model Category {
 }
 
 model Customer {
-  id        Int       @id @default(autoincrement())
-  name      String
-  phone     String?
-  email     String?
-  address   String?
-  points    Int       @default(0)
-  sales     Sale[]
+  id          Int       @id @default(autoincrement())
+  name        String
+  phone       String?
+  email       String?
+  address     String?
+  points      Int       @default(0)
+  balance     Float     @default(0)   // positive = owes us, negative = credit balance
+  creditLimit Float     @default(0)   // 0 = no credit allowed
+  birthday    DateTime?
+  sales       Sale[]
+  payments    CustomerPayment[]
 
   @@map("customers")
+}
+
+model CustomerPayment {
+  id          Int      @id @default(autoincrement())
+  customerId  Int      @map("customer_id")
+  customer    Customer @relation(fields: [customerId], references: [id])
+  amount      Float    // positive = payment received (reduces debt)
+  method      String   // "cash", "bank", "mobile_money", etc.
+  referenceNo String?  @map("reference_no")
+  notes       String?
+  saleId      Int?     @map("sale_id")  // linked sale if paying off a specific invoice
+  sale        Sale?    @relation(fields: [saleId], references: [id])
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("customer_payments")
 }
 
 model Supplier {
@@ -121,6 +140,7 @@ model Sale {
   status     String    @default("completed")
   createdAt  DateTime  @default(now()) @map("created_at")
   payments   Payment[]
+  customerPayments CustomerPayment[]
   items      SaleItem[]
   returns    SalesReturn[]
 
